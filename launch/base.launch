@@ -1,0 +1,3 @@
+<launch>
+	<node name="keyboard_driver" pkg="rpi_bot" type="keyboard_driver.py" />	
+</launch>

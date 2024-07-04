@@ -1,0 +1,4 @@
+<launch>
+    <node name="keys_to_twist" pkg="rpi_bot" type="keys_to_twist.py" />
+    <node name="motors" pkg="rpi_bot" type="motors.py" />
+</launch>
