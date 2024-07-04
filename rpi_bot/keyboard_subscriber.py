@@ -2,22 +2,21 @@
 
 import rclpy
 from rclpy.node import Node
-from geometry_msgs.msg import Twist
-import RPi_Bot
+from std_msgs.msg import String
 
 #speed = 50
 #differential = 50
 #bot = RPi_Bot()
 
-class KeyboardSubscriber(object):
+class KeyboardSubscriber(Node):
 
     def __init__(self):
         super().__init__('keyboard_subscriber')
-        self.subscription = self.create_subscription(String, 'topic', self.listener_callback, 10)
+        self.subscription = self.create_subscription(String, 'keystrokes', self.listener_callback, 10)
         self.subscription  # prevent unused variable warning
 
-    def listener_callback(self):
-        self.get_logger().info('I heard: "%s"' % msg.data)
+    def listener_callback(self, msg):
+        self.get_logger().info('Received: "%s"' % msg.data)
 
 #def command_callback(twist):
     #left_speed = speed * twist.linear.x - differential * twist.angular.z

@@ -20,6 +20,8 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
+            'talker = rpi_bot.keyboard_publisher:main',
+            'listener = rpi_bot.keyboard_subscriber:main',
         ],
     },
 )
