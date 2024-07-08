@@ -22,14 +22,14 @@ class KeyboardPublisher(Node):
         )
 
         self.publisher_ = self.create_publisher(String, 'keystrokes', qos_profile)
-        self.timer = self.create_timer(0.1, self.timer_callback)
+        self.timer = self.create_timer(0.5, self.publish_message)
         
 
         # Set terminal to raw mode
         self.old_attr = termios.tcgetattr(sys.stdin)
         tty.setcbreak(sys.stdin.fileno())
 
-    def timer_callback(self):
+    def publish_message(self):
         if select.select([sys.stdin], [], [], 0) == ([sys.stdin], [], []):
             key = sys.stdin.read(1)
             msg = String()
