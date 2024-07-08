@@ -4,6 +4,8 @@ import rclpy
 from rclpy.node import Node
 from std_msgs.msg import String
 
+from rclpy.qos import QoSProfile, ReliabilityPolicy, DurabilityPolicy, HistoryPolicy
+
 #speed = 50
 #differential = 50
 #bot = RPi_Bot()
@@ -12,7 +14,15 @@ class KeyboardSubscriber(Node):
 
     def __init__(self):
         super().__init__('keyboard_subscriber')
-        self.subscription = self.create_subscription(String, 'keystrokes', self.listener_callback, 10)
+
+        qos_profile = QoSProfile(
+            reliability=ReliabilityPolicy.RELIABLE,
+            durability=DurabilityPolicy.TRANSIENT_LOCAL,
+            history=HistoryPolicy.KEEP_LAST,
+            depth=10
+        )
+
+        self.subscription = self.create_subscription(String, 'keystrokes', self.listener_callback, qos_profile)
         self.subscription  # prevent unused variable warning
 
     def listener_callback(self, msg):

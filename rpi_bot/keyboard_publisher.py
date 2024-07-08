@@ -7,13 +7,24 @@ import select
 import termios
 import tty
 
+from rclpy.qos import QoSProfile, ReliabilityPolicy, DurabilityPolicy, HistoryPolicy
+
 class KeyboardPublisher(Node):
 
     def __init__(self):
         super().__init__('keyboard_publisher')
-        self.publisher_ = self.create_publisher(String, 'keystrokes', 10)
+
+        qos_profile = QoSProfile(
+            reliability=ReliabilityPolicy.RELIABLE,
+            durability=DurabilityPolicy.TRANSIENT_LOCAL,
+            history=HistoryPolicy.KEEP_LAST,
+            depth=10
+        )
+
+        self.publisher_ = self.create_publisher(String, 'keystrokes', qos_profile)
         self.timer = self.create_timer(0.1, self.timer_callback)
         
+
         # Set terminal to raw mode
         self.old_attr = termios.tcgetattr(sys.stdin)
         tty.setcbreak(sys.stdin.fileno())
