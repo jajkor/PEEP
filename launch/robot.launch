@@ -1,3 +1,0 @@
-<launch>
-    <node name="keyboard_subscriber" pkg="rpi_bot" type="keyboard_subscriber.py" />
-</launch>
