@@ -5,6 +5,7 @@ def generate_launch_description():
     return LaunchDescription([
         Node(
             package='rpi_bot',
-            executable='talker'
+            executable='listener',
+            name='listener'
         )
     ])

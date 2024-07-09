@@ -1,0 +1,4 @@
+[console_scripts]
+listener = rpi_bot.keyboard_subscriber:main
+talker = rpi_bot.keyboard_publisher:main
+
