@@ -25,11 +25,12 @@ class rpi_bot(object):
 		self.PWMA.start(0)
 		self.PWMB.start(0)
 
-	def forward(self):
+	def forward(self, seconds):
 		GPIO.output(self.IN1, GPIO.HIGH)
 		GPIO.output(self.IN2, GPIO.LOW)
 		GPIO.output(self.IN3, GPIO.LOW)
 		GPIO.output(self.IN4, GPIO.HIGH)
+		time.sleep(seconds)
 
 	def stop(self):
 		GPIO.output(self.IN1,GPIO.LOW)
@@ -78,3 +79,11 @@ class rpi_bot(object):
 			GPIO.output(self.IN3,GPIO.HIGH)
 			GPIO.output(self.IN4,GPIO.LOW)
 			self.PWMB.ChangeDutyCycle(0 - right)
+
+def main():
+	time.sleep(1)
+	bot = rpi_bot
+	bot.forward()
+
+if __name__=='__main__':
+	main()
