@@ -7,7 +7,7 @@ class RPi_Motors(object):
 		self.IN1 = in1
 		self.IN2 = in2
 		self.IN3 = in3
-		self.IN4 =in4
+		self.IN4 = in4
 		self.ENA = ena
 		self.ENB = enb
 
@@ -61,6 +61,15 @@ class RPi_Motors(object):
 
 	def setPWMB(self,value):
 		self.PWMB.ChangeDutyCycle(value)
+
+	def setMotors(self, left_vel, right_vel):
+		# Right Motor
+		GPIO.output(self.IN1, right_vel > 0)
+		GPIO.output(self.in2, right_vel < 0)
+
+        # Left Motor
+		GPIO.output(self.IN3, left_vel > 0)
+		GPIO.output(self.IN4, left_vel < 0)
 
 def main():
 	bot = RPi_Motors()
