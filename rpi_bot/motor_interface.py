@@ -63,13 +63,26 @@ class RPi_Motors(object):
 		self.PWMB.ChangeDutyCycle(value)
 
 	def setMotors(self, left_vel, right_vel):
-		# Right Motor
-		GPIO.output(self.IN1, right_vel > 0)
-		GPIO.output(self.IN2, right_vel < 0)
+		# Left Motor
+		if (left_vel >= 0) and (left_vel <= 100):
+			GPIO.output(self.IN1, GPIO.HIGH)
+			GPIO.output(self.IN2, GPIO.LOW)
+			GPIO.setPWMA(left_vel)
+		elif (left_vel < 0) and (left_vel >= -100):
+			GPIO.output(self.IN1, GPIO.LOW)
+			GPIO.output(self.IN2, GPIO.HIGH)
+			GPIO.setPWMA(0 - left_vel)
 
-        # Left Motor
-		GPIO.output(self.IN3, left_vel > 0)
-		GPIO.output(self.IN4, left_vel < 0)
+        # Right Motor
+		if (right_vel >= 0) and (right_vel <= 100):
+			GPIO.output(self.IN3, GPIO.LOW)
+			GPIO.output(self.IN4, GPIO.HIGH)
+			GPIO.setPWMB(right_vel)
+		elif (right_vel < 0) and (right_vel >= -100):
+			GPIO.output(self.IN3, GPIO.HIGH)
+			GPIO.output(self.IN4, GPIO.LOW)
+			GPIO.setPWMB(0 - right_vel)
+
 
 def main():
 	bot = RPi_Motors()
