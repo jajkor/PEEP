@@ -4,6 +4,7 @@ from rclpy.node import Node
 from std_msgs.msg import String
 from geometry_msgs.msg import Twist
 from rpi_bot.motor_interface import RPi_Motors
+import RPi.GPIO as GPIO
 
 class Velocity_Subscriber(Node):
 
@@ -13,12 +14,22 @@ class Velocity_Subscriber(Node):
         self.subscription  # prevent unused variable warning
 
         motors = RPi_Motors()
+        motors.setPWMA(100)
+        motors.setPWMB(100)
 
     def cmd_to_pwm_callback(self, msg):
-        right_wheel_vel = (msg.linear.x + msg.angular.x) / 2
-        left_wheels_vel = (msg.linear.x - msg.angular.x) / 2
+        right_wheel_vel = (msg.linear.x + msg.angular.z) / 2
+        left_wheel_vel = (msg.linear.x - msg.angular.z) / 2
 
-        self.get_logger().info('I heard: "%s" and "%s"' % right_wheel_vel, left_wheels_vel)
+        # Right Motor
+        GPIO.output(self.motors.IN1, right_wheel_vel > 0)
+        GPIO.output(self.motors.in2, right_wheel_vel < 0)
+
+        # Left Motor
+        GPIO.output(self.motors.IN3, left_wheel_vel > 0)
+        GPIO.output(self.motors.IN4, left_wheel_vel < 0)
+        print(right_wheel_vel, ' / ', left_wheel_vel)
+        #self.get_logger().info('I heard: "%s" and "%s"' % right_wheel_vel, left_wheels_vel)
 
 
 def main(args=None):

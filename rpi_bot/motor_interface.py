@@ -19,7 +19,7 @@ class RPi_Motors(object):
 		GPIO.setup(self.IN4,GPIO.OUT)
 		GPIO.setup(self.ENA,GPIO.OUT)
 		GPIO.setup(self.ENB,GPIO.OUT)
-		self.forward()
+		self.forward(1)
 		self.PWMA = GPIO.PWM(self.ENA,500)
 		self.PWMB = GPIO.PWM(self.ENB,500)
 		self.PWMA.start(0)
@@ -62,26 +62,8 @@ class RPi_Motors(object):
 	def setPWMB(self,value):
 		self.PWMB.ChangeDutyCycle(value)
 
-	def setMotor(self, left, right):
-		if((left >= 0) and (left <= 100)):
-			GPIO.output(self.IN1,GPIO.HIGH)
-			GPIO.output(self.IN2,GPIO.LOW)
-			self.PWMA.ChangeDutyCycle(left)
-		elif((left < 0) and (left >= -100)):
-			GPIO.output(self.IN1,GPIO.LOW)
-			GPIO.output(self.IN2,GPIO.HIGH)
-			self.PWMA.ChangeDutyCycle(0 - left)
-		if((right >= 0) and (right <= 100)):
-			GPIO.output(self.IN3,GPIO.LOW)
-			GPIO.output(self.IN4,GPIO.HIGH)
-			self.PWMB.ChangeDutyCycle(right)
-		elif((right < 0) and (right >= -100)):
-			GPIO.output(self.IN3,GPIO.HIGH)
-			GPIO.output(self.IN4,GPIO.LOW)
-			self.PWMB.ChangeDutyCycle(0 - right)
-
 def main():
-	bot = RPi_Motors
+	bot = RPi_Motors()
 	
 
 if __name__=='__main__':
