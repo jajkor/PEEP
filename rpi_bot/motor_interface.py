@@ -65,7 +65,7 @@ class RPi_Motors(object):
 	def setMotors(self, left_vel, right_vel):
 		# Right Motor
 		GPIO.output(self.IN1, right_vel > 0)
-		GPIO.output(self.in2, right_vel < 0)
+		GPIO.output(self.IN2, right_vel < 0)
 
         # Left Motor
 		GPIO.output(self.IN3, left_vel > 0)
