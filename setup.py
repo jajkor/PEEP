@@ -24,8 +24,6 @@ setup(
     entry_points={
         'console_scripts': [
             'cmd_to_pwm_node = rpi_bot.cmd_to_pwm_driver:main',
-            'talker = rpi_bot.keyboard_publisher:main',
-            'listener = rpi_bot.keyboard_subscriber:main',
         ],
     },
 )

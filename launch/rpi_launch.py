@@ -5,7 +5,7 @@ def generate_launch_description():
     return LaunchDescription([
         Node(
             package='rpi_bot',
-            executable='listener',
-            name='listener'
+            executable='cmd_to_pwm_node',
+            name='rpi',
         )
     ])

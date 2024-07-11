@@ -25,6 +25,11 @@ class RPi_Motors(object):
 		self.PWMA.start(0)
 		self.PWMB.start(0)
 
+	def __del__(self):
+		GPIO.cleanup()
+		# Test to see if deconstructor fires
+		print("GPIO has been clean up")
+
 	def forward(self, seconds):
 		GPIO.output(self.IN1, GPIO.HIGH)
 		GPIO.output(self.IN2, GPIO.LOW)
@@ -86,7 +91,6 @@ class RPi_Motors(object):
 
 def main():
 	bot = RPi_Motors()
-	
 
 if __name__=='__main__':
 	main()
