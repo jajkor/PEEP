@@ -15,15 +15,16 @@ class Velocity_Subscriber(Node):
 
         self.subscription = self.create_subscription(Twist, 'cmd_vel', self.cmd_to_pwm_callback, 10)
         self.subscription  # prevent unused variable warning
+        self.get_logger().info('Velocity Subscriber Initialized')
 
     def cmd_to_pwm_callback(self, msg):
         right_vel = (msg.linear.x + msg.angular.z) / 2
         left_vel = (msg.linear.x - msg.angular.z) / 2
 
+        self.get_logger().info(f'Received velocities: linear.x={msg.linear.x}, angular.z={msg.angular.z}')
+        self.get_logger().info(f'Setting motors: left_vel={left_vel}, right_vel={right_vel}')
+
         self.motors.setMotors(left_vel, right_vel)
-        
-        print('Left Velocity: ', left_vel, ' / ', 'Right Velocity: ', right_vel)
-        #self.get_logger().info('I heard: "%s" and "%s"' % right_wheel_vel, left_wheels_vel)
 
 
 def main(args=None):
