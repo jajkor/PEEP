@@ -9,18 +9,18 @@ class Velocity_Subscriber(Node):
     def __init__(self):
         super().__init__('velocity_subscriber')
 
-        motors = RPi_Motors()
-        motors.setPWMA(100)
-        motors.setPWMB(100)
+        self.motors = RPi_Motors()
+        self.motors.setPWMA(100)
+        self.motors.setPWMB(100)
 
         self.subscription = self.create_subscription(Twist, 'cmd_vel', self.cmd_to_pwm_callback, 10)
         self.subscription  # prevent unused variable warning
 
-    def cmd_to_pwm_callback(self, motors, msg):
+    def cmd_to_pwm_callback(self, msg):
         right_vel = (msg.linear.x + msg.angular.z) / 2
         left_vel = (msg.linear.x - msg.angular.z) / 2
 
-        motors.setMotors(left_vel, right_vel)
+        self.motors.setMotors(left_vel, right_vel)
         
         print('Left Velocity: ', left_vel, ' / ', 'Right Velocity: ', right_vel)
         #self.get_logger().info('I heard: "%s" and "%s"' % right_wheel_vel, left_wheels_vel)
