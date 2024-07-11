@@ -22,12 +22,12 @@ class Velocity_Subscriber(Node):
         left_wheel_vel = (msg.linear.x - msg.angular.z) / 2
 
         # Right Motor
-        GPIO.output(self.motors.IN1, right_wheel_vel > 0)
-        GPIO.output(self.motors.in2, right_wheel_vel < 0)
+        GPIO.output(self.IN1, right_wheel_vel > 0)
+        GPIO.output(self.in2, right_wheel_vel < 0)
 
         # Left Motor
-        GPIO.output(self.motors.IN3, left_wheel_vel > 0)
-        GPIO.output(self.motors.IN4, left_wheel_vel < 0)
+        GPIO.output(self.IN3, left_wheel_vel > 0)
+        GPIO.output(self.IN4, left_wheel_vel < 0)
         print(right_wheel_vel, ' / ', left_wheel_vel)
         #self.get_logger().info('I heard: "%s" and "%s"' % right_wheel_vel, left_wheels_vel)
 
