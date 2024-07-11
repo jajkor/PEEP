@@ -1,7 +1,7 @@
 import RPi.GPIO as GPIO
 import time
 
-class rpi_bot(object):
+class RPi_Motors(object):
 
 	def __init__(self, in1=27, in2=22, ena=17, in3=10, in4=9, enb=11):
 		self.IN1 = in1
@@ -81,9 +81,8 @@ class rpi_bot(object):
 			self.PWMB.ChangeDutyCycle(0 - right)
 
 def main():
-	time.sleep(1)
-	bot = rpi_bot
-	bot.forward()
+	bot = RPi_Motors
+	
 
 if __name__=='__main__':
 	main()
