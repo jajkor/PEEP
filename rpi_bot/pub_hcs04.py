@@ -1,8 +1,9 @@
 import rclpy
+from rclpy.node import Node
 from std_msgs.msg import String
 from rpi_bot.rpi_interface import RPi_HCS04
 
-class HCS04_Publisher(rclpy.node.Node):
+class HCS04_Publisher(Node):
 
     def __init__(self):
         super().__init__('hcs04_publisher')

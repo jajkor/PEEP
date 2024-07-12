@@ -1,8 +1,9 @@
 import rclpy
+from rclpy.node import Node
 from geometry_msgs.msg import Twist
 from rpi_bot.rpi_interface import RPi_Motors
 
-class Velocity_Subscriber(rclpy.node.Node):
+class Velocity_Subscriber(Node):
 
     def __init__(self):
         super().__init__('velocity_subscriber')
