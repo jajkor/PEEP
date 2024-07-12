@@ -16,11 +16,6 @@ class HCS04_Publisher(Node):
             ],
         )
 
-        trig = self.get_parameter('trig_pin').get_parameter_value().integer_value
-        self.get_logger().info(f'trig_pin parameter value: {trig}, type: {type(trig)}')
-        echo = self.get_parameter('echo_pin').get_parameter_value().integer_value
-        self.get_logger().info(f'echo_pin parameter value: {echo}, type: {type(echo)}')
-
         self.hcs04 = RPi_HCS04(
             self.get_parameter('trig_pin').get_parameter_value().integer_value,
             self.get_parameter('echo_pin').get_parameter_value().integer_value
