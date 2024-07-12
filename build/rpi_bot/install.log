@@ -1,9 +1,13 @@
 /home/psu/RPi_Base/src/rpi_bot/install/rpi_bot/lib/python3.10/site-packages/rpi_bot/__init__.py
-/home/psu/RPi_Base/src/rpi_bot/install/rpi_bot/lib/python3.10/site-packages/rpi_bot/cmd_to_pwm_driver.py
-/home/psu/RPi_Base/src/rpi_bot/install/rpi_bot/lib/python3.10/site-packages/rpi_bot/motor_interface.py
+/home/psu/RPi_Base/src/rpi_bot/install/rpi_bot/lib/python3.10/site-packages/rpi_bot/sub_hcs04.py
+/home/psu/RPi_Base/src/rpi_bot/install/rpi_bot/lib/python3.10/site-packages/rpi_bot/rpi_interface.py
+/home/psu/RPi_Base/src/rpi_bot/install/rpi_bot/lib/python3.10/site-packages/rpi_bot/cmd_to_pwm.py
+/home/psu/RPi_Base/src/rpi_bot/install/rpi_bot/lib/python3.10/site-packages/rpi_bot/pub_hcs04.py
 /home/psu/RPi_Base/src/rpi_bot/install/rpi_bot/lib/python3.10/site-packages/rpi_bot/__pycache__/__init__.cpython-310.pyc
-/home/psu/RPi_Base/src/rpi_bot/install/rpi_bot/lib/python3.10/site-packages/rpi_bot/__pycache__/cmd_to_pwm_driver.cpython-310.pyc
-/home/psu/RPi_Base/src/rpi_bot/install/rpi_bot/lib/python3.10/site-packages/rpi_bot/__pycache__/motor_interface.cpython-310.pyc
+/home/psu/RPi_Base/src/rpi_bot/install/rpi_bot/lib/python3.10/site-packages/rpi_bot/__pycache__/sub_hcs04.cpython-310.pyc
+/home/psu/RPi_Base/src/rpi_bot/install/rpi_bot/lib/python3.10/site-packages/rpi_bot/__pycache__/rpi_interface.cpython-310.pyc
+/home/psu/RPi_Base/src/rpi_bot/install/rpi_bot/lib/python3.10/site-packages/rpi_bot/__pycache__/cmd_to_pwm.cpython-310.pyc
+/home/psu/RPi_Base/src/rpi_bot/install/rpi_bot/lib/python3.10/site-packages/rpi_bot/__pycache__/pub_hcs04.cpython-310.pyc
 /home/psu/RPi_Base/src/rpi_bot/install/rpi_bot/share/ament_index/resource_index/packages/rpi_bot
 /home/psu/RPi_Base/src/rpi_bot/install/rpi_bot/share/rpi_bot/package.xml
 /home/psu/RPi_Base/src/rpi_bot/install/rpi_bot/share/rpi_bot/launch/rpi_launch.py
@@ -16,3 +20,5 @@
 /home/psu/RPi_Base/src/rpi_bot/install/rpi_bot/lib/python3.10/site-packages/rpi_bot-0.0.0-py3.10.egg-info/entry_points.txt
 /home/psu/RPi_Base/src/rpi_bot/install/rpi_bot/lib/python3.10/site-packages/rpi_bot-0.0.0-py3.10.egg-info/top_level.txt
 /home/psu/RPi_Base/src/rpi_bot/install/rpi_bot/lib/rpi_bot/cmd_to_pwm_node
+/home/psu/RPi_Base/src/rpi_bot/install/rpi_bot/lib/rpi_bot/pub_hcs04_node
+/home/psu/RPi_Base/src/rpi_bot/install/rpi_bot/lib/rpi_bot/sub_hcs04_node

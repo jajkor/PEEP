@@ -13,8 +13,10 @@ launch/host_launch.py
 launch/rpi_launch.py
 resource/rpi_bot
 rpi_bot/__init__.py
-rpi_bot/cmd_to_pwm_driver.py
-rpi_bot/motor_interface.py
+rpi_bot/cmd_to_pwm.py
+rpi_bot/pub_hcs04.py
+rpi_bot/rpi_interface.py
+rpi_bot/sub_hcs04.py
 test/test_copyright.py
 test/test_flake8.py
 test/test_pep257.py

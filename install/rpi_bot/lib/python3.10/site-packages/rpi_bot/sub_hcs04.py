@@ -1,4 +1,5 @@
 import rclpy
+from rclpy import Node
 from std_msgs.msg import String
 
 class HCS04_Subscriber(Node):
