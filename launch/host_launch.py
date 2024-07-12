@@ -26,12 +26,16 @@ def generate_launch_description():
             name='joy_node',
             parameters=[{'dev': joy_dev, 'deadzone': 0.3, 'autorepeat_rate': 20.0}],
         ),
-
         launch_ros.actions.Node(
             package='teleop_twist_joy', 
             executable='teleop_node',
             name='teleop_twist_joy_node',
             parameters=[teleop_twist_joy_config, {'publish_stamped_twist': publish_stamped_twist}],
             remappings={('/cmd_vel', launch.substitutions.LaunchConfiguration('joy_vel'))},
+        ),
+        launch_ros.actions.Node(
+            package='rpi_bot',
+            executable='sub_hcs04_node',
+            name='sub_hcs04',
         ),
     ])

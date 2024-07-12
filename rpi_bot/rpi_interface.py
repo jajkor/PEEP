@@ -3,7 +3,7 @@ import time
 
 class RPi_Motors(object):
 
-	def __init__(self, in1=27, in2=22, ena=17, in3=10, in4=9, enb=11):
+	def __init__(self, in1, in2, ena, in3, in4, enb):
 		self.IN1 = in1
 		self.IN2 = in2
 		self.IN3 = in3
@@ -13,12 +13,12 @@ class RPi_Motors(object):
 
 		GPIO.setmode(GPIO.BCM)
 		GPIO.setwarnings(False)
-		GPIO.setup(self.IN1,GPIO.OUT)
-		GPIO.setup(self.IN2,GPIO.OUT)
-		GPIO.setup(self.IN3,GPIO.OUT)
-		GPIO.setup(self.IN4,GPIO.OUT)
-		GPIO.setup(self.ENA,GPIO.OUT)
-		GPIO.setup(self.ENB,GPIO.OUT)
+		GPIO.setup(self.IN1, GPIO.OUT)
+		GPIO.setup(self.IN2, GPIO.OUT)
+		GPIO.setup(self.IN3, GPIO.OUT)
+		GPIO.setup(self.IN4, GPIO.OUT)
+		GPIO.setup(self.ENA, GPIO.OUT)
+		GPIO.setup(self.ENB, GPIO.OUT)
 		self.forward(1)
 		self.PWMA = GPIO.PWM(self.ENA,50)
 		self.PWMB = GPIO.PWM(self.ENB,50)
@@ -66,7 +66,7 @@ class RPi_Motors(object):
 		self.PWMB.ChangeDutyCycle(value)
 
 	def setMotors(self, left_vel, right_vel):
-		# Right Motor
+		# Right Motor(s)
 		if ((left_vel >= 0) and (left_vel <= 100)):
 			GPIO.output(self.IN1, GPIO.HIGH)
 			GPIO.output(self.IN2, GPIO.LOW)
@@ -76,7 +76,7 @@ class RPi_Motors(object):
 			GPIO.output(self.IN2, GPIO.HIGH)
 			self.PWMA.ChangeDutyCycle(0 - left_vel)
 
-        # Left Motor
+        # Left Motor(s)
 		if ((right_vel >= 0) and (right_vel <= 100)):
 			GPIO.output(self.IN3, GPIO.HIGH)
 			GPIO.output(self.IN4, GPIO.LOW)
@@ -86,9 +86,39 @@ class RPi_Motors(object):
 			GPIO.output(self.IN4, GPIO.HIGH)
 			self.PWMB.ChangeDutyCycle(0 - right_vel)
 
+class RPi_HCS04(object):
 
-def main():
-	bot = RPi_Motors()
+	def __init__(self, trig, echo):
+		self.TRIG = trig
+		self.ECHO = echo
 
-if __name__=='__main__':
-	main()
+		GPIO.setmode(GPIO.BCM)
+		GPIO.setwarnings(False)
+
+		GPIO.setmode(GPIO.BCM)
+		GPIO.setup(self.TRIG, GPIO.OUT)
+		GPIO.setup(self.ECHO, GPIO.IN)
+
+	def __del__(self):
+		GPIO.cleanup()
+
+	# In cm?
+	def distance(self):
+		GPIO.output(self.TRIG, GPIO.HIGH)
+		time.sleep(0.00001) # Setting TRIG high for 10 microseconds sends out ultrasonic sound pulse
+		GPIO.output(self.TRIG, GPIO.LOW)
+
+		startTime = time.time()
+		stopTime = time.time()
+		
+		while GPIO.input(self.ECHO) == 0:
+			startTime = time.time()
+
+		while GPIO.input(self.ECHO) == 1:
+			stopTime = time.time()
+
+		timeElapsed = stopTime - startTime
+		distance = (timeElapsed * 0.0343) / 2 # 34300 if doesnt work
+		return distance
+
+

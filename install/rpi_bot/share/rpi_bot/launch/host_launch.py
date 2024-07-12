@@ -1,22 +1,37 @@
+import os
+
 import launch
-from launch import LaunchDescription
-from launch_ros.actions import Node
+import launch_ros.actions
+from ament_index_python.packages import get_package_share_directory
 
 def generate_launch_description():
-    teleop_twist_joy_node = Node(
-        package='teleop_twist_joy',
-        executable='teleop_node',
-        name='teleop_twist_joy',
-        output='screen',
-        parameters=[{
-            'axis_linear.x': 1,  # Set the appropriate axis for linear x
-            'axis_angular.yaw': 0,  # Set the appropriate axis for angular yaw
-            'scale_linear.x': 1.0,  # Set the scale for linear x
-            'scale_angular.yaw': 1.0,  # Set the scale for angular yaw
-        }]
+    joy_dev = launch.substitutions.LaunchConfiguration('joy_dev')
+    publish_stamped_twist = launch.substitutions.LaunchConfiguration('publish_stamped_twist')
+
+    teleop_twist_joy_config = os.path.join(
+        get_package_share_directory('rpi_bot'),
+        'config',
+        'xbox.config.yaml'
     )
+    print(f"Config File: {teleop_twist_joy_config}")
 
-    return LaunchDescription([
+    return launch.LaunchDescription([
+        launch.actions.DeclareLaunchArgument('joy_vel', default_value='cmd_vel'),
+        launch.actions.DeclareLaunchArgument('joy_dev', default_value='/dev/input/js0'),
+        launch.actions.DeclareLaunchArgument('publish_stamped_twist', default_value='false'),
+           
+        launch_ros.actions.Node(
+            package='joy', 
+            executable='joy_node', 
+            name='joy_node',
+            parameters=[{'dev': joy_dev, 'deadzone': 0.3, 'autorepeat_rate': 20.0}],
+        ),
 
-        teleop_twist_joy_node
+        launch_ros.actions.Node(
+            package='teleop_twist_joy', 
+            executable='teleop_node',
+            name='teleop_twist_joy_node',
+            parameters=[teleop_twist_joy_config, {'publish_stamped_twist': publish_stamped_twist}],
+            remappings={('/cmd_vel', launch.substitutions.LaunchConfiguration('joy_vel'))},
+        ),
     ])

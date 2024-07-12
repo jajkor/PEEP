@@ -24,6 +24,8 @@ setup(
     entry_points={
         'console_scripts': [
             'cmd_to_pwm_node = rpi_bot.cmd_to_pwm_driver:main',
+            'pub_hcs04_node = rpi_bot.pub_hcs04:main',
+            'sub_hcs04_node = rpi_bot.sub_hcs04:main',
         ],
     },
 )

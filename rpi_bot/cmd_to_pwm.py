@@ -1,16 +1,35 @@
 import rclpy
 from rclpy.node import Node
-
 from geometry_msgs.msg import Twist
-from rpi_bot.motor_interface import RPi_Motors
+from rpi_bot.rpi_interface import RPi_Motors
 
 class Velocity_Subscriber(Node):
 
-    def __init__(self, speed = 100):
+    def __init__(self):
         super().__init__('velocity_subscriber')
 
-        self.speed = speed
-        self.motors = RPi_Motors()
+        self.declare_parameters(
+            namespace='',
+            parameters=[
+                ('ena_pin', rclpy.Parameter.Type.INTEGER),
+                ('in1_pin', rclpy.Parameter.Type.INTEGER),
+                ('in2_pin', rclpy.Parameter.Type.INTEGER),
+                ('in3_pin', rclpy.Parameter.Type.INTEGER),
+                ('in4_pin', rclpy.Parameter.Type.INTEGER),
+                ('enb_pin', rclpy.Parameter.Type.INTEGER),
+                ('speed', 50)
+            ],
+        )
+
+        self.speed = self.get_parameter('speed')
+        self.motors = RPi_Motors(
+            self.get_parameter('ena_pin'),
+            self.get_parameter('in1_pin'),
+            self.get_parameter('in2_pin'),
+            self.get_parameter('in3_pin'),
+            self.get_parameter('in4_pin'),
+            self.get_parameter('enb_pin')
+        )
 
         self.subscription = self.create_subscription(Twist, 'cmd_vel', self.cmd_to_pwm_callback, 10)
         self.subscription  # prevent unused variable warning
