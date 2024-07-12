@@ -1,0 +1,27 @@
+[0.356s] Invoking command in '/home/psu/RPi_Base/src/rpi_bot': PYTHONPATH=/home/psu/RPi_Base/src/rpi_bot/build/rpi_bot/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/psu/RPi_Base/src/rpi_bot/install/rpi_bot/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated setup.py egg_info --egg-base build/rpi_bot build --build-base /home/psu/RPi_Base/src/rpi_bot/build/rpi_bot/build install --record /home/psu/RPi_Base/src/rpi_bot/build/rpi_bot/install.log --single-version-externally-managed install_data
+[0.470s] running egg_info
+[0.470s] writing build/rpi_bot/rpi_bot.egg-info/PKG-INFO
+[0.471s] writing dependency_links to build/rpi_bot/rpi_bot.egg-info/dependency_links.txt
+[0.471s] writing entry points to build/rpi_bot/rpi_bot.egg-info/entry_points.txt
+[0.471s] writing requirements to build/rpi_bot/rpi_bot.egg-info/requires.txt
+[0.471s] writing top-level names to build/rpi_bot/rpi_bot.egg-info/top_level.txt
+[0.472s] reading manifest file 'build/rpi_bot/rpi_bot.egg-info/SOURCES.txt'
+[0.473s] adding license file 'LICENSE'
+[0.474s] writing manifest file 'build/rpi_bot/rpi_bot.egg-info/SOURCES.txt'
+[0.474s] running build
+[0.474s] running build_py
+[0.474s] copying rpi_bot/rpi_interface.py -> /home/psu/RPi_Base/src/rpi_bot/build/rpi_bot/build/lib/rpi_bot
+[0.474s] running install
+[0.474s] running install_lib
+[0.475s] copying /home/psu/RPi_Base/src/rpi_bot/build/rpi_bot/build/lib/rpi_bot/rpi_interface.py -> /home/psu/RPi_Base/src/rpi_bot/install/rpi_bot/lib/python3.10/site-packages/rpi_bot
+[0.475s] byte-compiling /home/psu/RPi_Base/src/rpi_bot/install/rpi_bot/lib/python3.10/site-packages/rpi_bot/rpi_interface.py to rpi_interface.cpython-310.pyc
+[0.476s] running install_data
+[0.476s] running install_egg_info
+[0.477s] removing '/home/psu/RPi_Base/src/rpi_bot/install/rpi_bot/lib/python3.10/site-packages/rpi_bot-0.0.0-py3.10.egg-info' (and everything under it)
+[0.477s] Copying build/rpi_bot/rpi_bot.egg-info to /home/psu/RPi_Base/src/rpi_bot/install/rpi_bot/lib/python3.10/site-packages/rpi_bot-0.0.0-py3.10.egg-info
+[0.478s] running install_scripts
+[0.490s] Installing cmd_to_pwm_node script to /home/psu/RPi_Base/src/rpi_bot/install/rpi_bot/lib/rpi_bot
+[0.490s] Installing pub_hcs04_node script to /home/psu/RPi_Base/src/rpi_bot/install/rpi_bot/lib/rpi_bot
+[0.490s] Installing sub_hcs04_node script to /home/psu/RPi_Base/src/rpi_bot/install/rpi_bot/lib/rpi_bot
+[0.490s] writing list of installed files to '/home/psu/RPi_Base/src/rpi_bot/build/rpi_bot/install.log'
+[0.502s] Invoked command in '/home/psu/RPi_Base/src/rpi_bot' returned '0': PYTHONPATH=/home/psu/RPi_Base/src/rpi_bot/build/rpi_bot/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/psu/RPi_Base/src/rpi_bot/install/rpi_bot/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated setup.py egg_info --egg-base build/rpi_bot build --build-base /home/psu/RPi_Base/src/rpi_bot/build/rpi_bot/build install --record /home/psu/RPi_Base/src/rpi_bot/build/rpi_bot/install.log --single-version-externally-managed install_data
