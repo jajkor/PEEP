@@ -28,7 +28,8 @@ class RPi_Motors(object):
 		self.PWMB.start(0)
 
 	def __del__(self):
-		GPIO.cleanup(self.ENA, self.IN1, self.IN2, self.IN3, self.IN4, self.ENB)
+		channels = [self.ENA, self.IN1, self.IN2, self.IN3, self.IN4, self.ENB]
+		GPIO.cleanup(channels)
 
 	def forward(self, seconds):
 		GPIO.output(self.IN1, GPIO.HIGH)
@@ -101,7 +102,7 @@ class RPi_HCS04(object):
 		GPIO.setup(self.ECHO, GPIO.IN)
 
 	def __del__(self):
-		GPIO.cleanup(self.TRIG, self.ECHO)
+		GPIO.cleanup((self.TRIG, self.ECHO))
 
 	# In cm?
 	def distance(self):
