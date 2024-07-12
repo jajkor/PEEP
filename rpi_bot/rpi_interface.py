@@ -13,12 +13,14 @@ class RPi_Motors(object):
 
 		GPIO.setmode(GPIO.BCM)
 		GPIO.setwarnings(False)
+
 		GPIO.setup(self.IN1, GPIO.OUT)
 		GPIO.setup(self.IN2, GPIO.OUT)
 		GPIO.setup(self.IN3, GPIO.OUT)
 		GPIO.setup(self.IN4, GPIO.OUT)
 		GPIO.setup(self.ENA, GPIO.OUT)
 		GPIO.setup(self.ENB, GPIO.OUT)
+
 		self.forward(1)
 		self.PWMA = GPIO.PWM(self.ENA,50)
 		self.PWMB = GPIO.PWM(self.ENB,50)
@@ -95,7 +97,6 @@ class RPi_HCS04(object):
 		GPIO.setmode(GPIO.BCM)
 		GPIO.setwarnings(False)
 
-		GPIO.setmode(GPIO.BCM)
 		GPIO.setup(self.TRIG, GPIO.OUT)
 		GPIO.setup(self.ECHO, GPIO.IN)
 

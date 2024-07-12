@@ -1,8 +1,7 @@
 import rclpy
-from rclpy.node import Node
 from std_msgs.msg import String
 
-class HCS04_Subscriber(Node):
+class HCS04_Subscriber(rclpy.Node):
 
     def __init__(self):
         super().__init__('hcs04_subscriber')
