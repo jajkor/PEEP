@@ -21,6 +21,12 @@ class Velocity_Subscriber(Node):
             ],
         )
 
+        ena = self.get_parameter('ena_pin').get_parameter_value().integer_value
+        self.get_logger().info(f'ena_pin parameter value: {ena}, type: {type(ena)}')
+
+        in1 = self.get_parameter('in1_pin').get_parameter_value().integer_value
+        self.get_logger().info(f'in1_pin parameter value: {in1}, type: {type(in1)}')
+
         self.speed = self.get_parameter('speed')
         self.motors = RPi_Motors(
             self.get_parameter('ena_pin'),
