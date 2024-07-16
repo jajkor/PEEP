@@ -122,4 +122,20 @@ class RPi_HCS04(object):
 		distance = (timeElapsed * 0.0343) / 2 # 34300 if doesnt work
 		return distance
 
+class RPi_SG90(object):
 
+	def __init__(self, IN1):
+		self.IN1 = IN1
+
+		GPIO.setmode(GPIO.BCM)
+		GPIO.setwarnings(False)
+
+		self.PWM = GPIO.PWM(self.IN1, 50)
+
+	def __del__(self):
+		GPIO.cleanup([self.IN1, self.PWM])
+
+	def set_angle(self, angle):
+		if ((angle >= -90) and (angle <= 90)):
+			self.PWM.ChangeDutyCycle(2.0 + (angle / 18.0))
+	
