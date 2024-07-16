@@ -14,7 +14,7 @@ class SG90_Subscriber(Node):
             self.get_parameter('pwm_pin').get_parameter_value().integer_value
         )
 
-        self.angle = 90
+        self.angle = 1000
 
         self.subscription = self.create_subscription(Joy, 'joy', self.cmd_to_angle_callback, 10)
         self.subscription  # prevent unused variable warning
@@ -25,11 +25,11 @@ class SG90_Subscriber(Node):
 
         if (self.angle > 0):
             if (msg.buttons[4] == 1) and (msg.buttons[5] == 0):
-                self.angle -= 1
+                self.angle -= 100
                 changed = True
         if (self.angle < 180):
             if (msg.buttons[4] == 0) and (msg.buttons[5] == 1):
-                self.angle += 1
+                self.angle += 100
                 changed = True
 
         if (changed == True):
