@@ -137,6 +137,5 @@ class RPi_SG90(object):
 		GPIO.cleanup([self.IN1, self.p])
 
 	def set_angle(self, angle):
-		if ((angle >= -90) and (angle <= 90)):
-			self.p.ChangeDutyCycle(2.0 + (angle / 18.0))
+		self.p.ChangeDutyCycle((2.0 + (angle / 18.0)))
 	
