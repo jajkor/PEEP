@@ -130,12 +130,12 @@ class RPi_SG90(object):
 		GPIO.setmode(GPIO.BCM)
 		GPIO.setwarnings(False)
 
-		self.pwm = GPIO.PWM(self.IN1, 50)
+		self.p = GPIO.PWM(self.IN1, 50)
 
 	def __del__(self):
-		GPIO.cleanup([self.IN1, self.pwm])
+		GPIO.cleanup([self.IN1, self.p])
 
 	def set_angle(self, angle):
 		if ((angle >= -90) and (angle <= 90)):
-			self.pwm.ChangeDutyCycle(2.0 + (angle / 18.0))
+			self.p.ChangeDutyCycle(2.0 + (angle / 18.0))
 	
