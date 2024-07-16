@@ -21,14 +21,19 @@ class SG90_Subscriber(Node):
         self.get_logger().info('SG90 Subscriber Initialized')
 
     def cmd_to_angle_callback(self, msg):
+        changed = False
+
         if (self.angle > -90):
             if (msg.buttons[4] == 1) and (msg.buttons[5] == 0):
                 self.angle -= 1
+                change = True
         if (self.angle < 90):
             if (msg.buttons[4] == 0) and (msg.buttons[5] == 1):
                 self.angle += 1
+                change = True
 
-        self.sg90.set_angle(self.angle)
+        if (change == True):
+            self.sg90.set_angle(self.angle)
 
         self.get_logger().info(f'Angle: {self.angle}')
         self.get_logger().info(f'Left: {str(msg.buttons[4])}, Right: {str(msg.buttons[5])}')
