@@ -147,5 +147,5 @@ class RPi_SG90(object):
 		return (2.0 + (angle / 18.0))
 
 	def set_angle(self, angle):
-		self.p.set_servo_pulsewidth(self.IN1, self.angle_to_duty_cyle(angle))
+		self.p.set_servo_pulsewidth(self.IN1, angle)
 	
