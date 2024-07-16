@@ -1,4 +1,5 @@
 import RPi.GPIO as GPIO
+import pigpio
 import time
 
 class RPi_Motors(object):
@@ -127,19 +128,26 @@ class RPi_SG90(object):
 	def __init__(self, in1):
 		self.IN1 = in1
 
-		GPIO.setmode(GPIO.BCM)
-		GPIO.setwarnings(False)
+		self.p = pigpio.pi()
+		self.p.set_mode(self.IN1, pigpio.OUTPUT)
 
-		GPIO.setup(self.IN1, GPIO.OUT)
-		self.p = GPIO.PWM(self.IN1, 50)
-		self.p.start(0)
+		self.p.set_PWM_frequency(self.IN1, 50 )
+
+		#GPIO.setmode(GPIO.BCM)
+		#GPIO.setwarnings(False)
+
+		#GPIO.setup(self.IN1, GPIO.OUT)
+		#self.p = GPIO.PWM(self.IN1, 50)
+		#self.p.start(0)
 
 	def __del__(self):
 		GPIO.cleanup()
+		self.p.set_PWM_dutycycle(self.IN1, 0 )
+		self.p.set_PWM_frequency(self.IN1, 0 )
 
 	def angle_to_duty_cyle(self, angle):
 		return (2.0 + (angle / 18.0))
 
 	def set_angle(self, angle):
-		self.p.ChangeDutyCycle(self.angle_to_duty_cyle(angle))
+		self.p.set_servo_pulsewidth(self.IN1, self.angle_to_duty_cyle(angle))
 	
