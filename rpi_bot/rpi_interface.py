@@ -130,6 +130,7 @@ class RPi_SG90(object):
 		GPIO.setmode(GPIO.BCM)
 		GPIO.setwarnings(False)
 
+		GPIO.setup(self.IN1, GPIO.OUT)
 		self.p = GPIO.PWM(self.IN1, 50)
 
 	def __del__(self):
