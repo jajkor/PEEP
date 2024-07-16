@@ -28,7 +28,7 @@ def generate_launch_description():
         ),
         launch_ros.actions.Node(
             package='rpi_bot',
-            eecutable='sub_sg90_node',
+            executable='sub_sg90_node',
             name='sub_sg90',
             parameters=[{
                 'pwm_pin': 14
