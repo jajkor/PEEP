@@ -132,10 +132,14 @@ class RPi_SG90(object):
 
 		GPIO.setup(self.IN1, GPIO.OUT)
 		self.p = GPIO.PWM(self.IN1, 50)
+		self.p.start(0)
 
 	def __del__(self):
-		GPIO.cleanup([self.IN1, self.p])
+		GPIO.cleanup()
+
+	def angle_to_duty_cyle(self, angle):
+		return (2.0 + (angle / 18.0))
 
 	def set_angle(self, angle):
-		self.p.ChangeDutyCycle((2.0 + (angle / 18.0)))
+		self.p.ChangeDutyCycle(self.angle_to_duty_cyle(angle))
 	
