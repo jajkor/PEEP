@@ -52,7 +52,6 @@ def main(args=None):
     rclpy.init(args=args)
 
     velocity_subscriber = Velocity_Subscriber()
-
     rclpy.spin(velocity_subscriber)
 
     velocity_subscriber.destroy_node()

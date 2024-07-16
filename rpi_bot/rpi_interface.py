@@ -124,8 +124,8 @@ class RPi_HCS04(object):
 
 class RPi_SG90(object):
 
-	def __init__(self, IN1):
-		self.IN1 = IN1
+	def __init__(self, in1):
+		self.IN1 = in1
 
 		GPIO.setmode(GPIO.BCM)
 		GPIO.setwarnings(False)
