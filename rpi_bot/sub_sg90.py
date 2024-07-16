@@ -1,7 +1,7 @@
 import rclpy
 from rclpy.node import Node
-from geometry_msgs.msg import Joy
-from rpi_interface import RPi_SG90
+from sensor_msgs.msg import Joy
+from rpi_bot.rpi_interface import RPi_SG90
 
 class SG90_Subscriber(Node):
 
