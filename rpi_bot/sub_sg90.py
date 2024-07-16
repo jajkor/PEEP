@@ -26,13 +26,13 @@ class SG90_Subscriber(Node):
         if (self.angle > -90):
             if (msg.buttons[4] == 1) and (msg.buttons[5] == 0):
                 self.angle -= 1
-                change = True
+                changed = True
         if (self.angle < 90):
             if (msg.buttons[4] == 0) and (msg.buttons[5] == 1):
                 self.angle += 1
-                change = True
+                changed = True
 
-        if (change == True):
+        if (changed == True):
             self.sg90.set_angle(self.angle)
 
         self.get_logger().info(f'Angle: {self.angle}')
