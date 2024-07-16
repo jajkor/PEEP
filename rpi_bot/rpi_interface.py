@@ -131,7 +131,7 @@ class RPi_SG90(object):
 		self.p = pigpio.pi()
 		self.p.set_mode(self.IN1, pigpio.OUTPUT)
 
-		self.p.set_PWM_frequency(self.IN1, 50 )
+		self.p.set_PWM_frequency(self.IN1, 50)
 
 		#GPIO.setmode(GPIO.BCM)
 		#GPIO.setwarnings(False)
@@ -141,9 +141,7 @@ class RPi_SG90(object):
 		#self.p.start(0)
 
 	def __del__(self):
-		GPIO.cleanup()
-		self.p.set_PWM_dutycycle(self.IN1, 0 )
-		self.p.set_PWM_frequency(self.IN1, 0 )
+		self.p.stop()
 
 	def angle_to_duty_cyle(self, angle):
 		return (2.0 + (angle / 18.0))
