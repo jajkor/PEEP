@@ -18,6 +18,7 @@ class Velocity_Subscriber(Node):
                 ('in4_pin', rclpy.Parameter.Type.INTEGER),
                 ('enb_pin', rclpy.Parameter.Type.INTEGER),
                 ('speed', 50)
+                ('differential', 50)
             ],
         )
 
@@ -36,8 +37,8 @@ class Velocity_Subscriber(Node):
         self.get_logger().info('Velocity Subscriber Initialized')
 
     def cmd_to_pwm_callback(self, msg):
-        left_vel = self.speed * (msg.linear.x - msg.angular.z)
-        right_vel = self.speed * (msg.linear.x + msg.angular.z)
+        left_vel = self.speed * msg.linear.x - self.differential * msg.angular.z
+        right_vel = self.speed * msg.linear.x + self.differential * msg.angular.z
 
         #self.get_logger().info(f'Received velocities: linear.x={msg.linear.x}, angular.z={msg.angular.z}')
         self.get_logger().info(f'Setting motors: left_vel={left_vel}, right_vel={right_vel}')
