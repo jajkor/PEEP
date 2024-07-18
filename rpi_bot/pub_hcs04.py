@@ -31,7 +31,7 @@ class HCS04_Publisher(Node):
         msg = String()
         msg.data = '%d' %self.hcs04.distance()
         self.publisher.publish(msg)
-        self.get_logger().info(f'Publishing Distance: {msg.data} cm')
+        #self.get_logger().info(f'Publishing Distance: {msg.data} cm')
         self.i += 1
 
     def destroy_node(self):
