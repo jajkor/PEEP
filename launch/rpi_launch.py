@@ -14,7 +14,7 @@ def generate_launch_description():
                 'in3_pin': 8,
                 'in4_pin': 25,
                 'enb_pin': 23,
-                'speed': 100,
+                'speed': 50,
                 'differential': 50
             }]
         ),
