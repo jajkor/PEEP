@@ -35,8 +35,8 @@ class SG90_Subscriber(Node):
         if (changed == True):
             self.sg90.set_angle(self.angle)
 
-        self.get_logger().info(f'Angle: {self.angle}')
-        self.get_logger().info(f'Left: {str(msg.buttons[4])}, Right: {str(msg.buttons[5])}')
+        #self.get_logger().info(f'Angle: {self.angle}')
+        #self.get_logger().info(f'Left: {str(msg.buttons[4])}, Right: {str(msg.buttons[5])}')
 
 
 def main(args=None):
