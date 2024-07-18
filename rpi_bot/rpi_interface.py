@@ -15,11 +15,12 @@ class RPi_Motors(object):
 		GPIO.setmode(GPIO.BCM)
 		GPIO.setwarnings(False)
 
+		GPIO.setup(self.ENA, GPIO.OUT)
 		GPIO.setup(self.IN1, GPIO.OUT)
 		GPIO.setup(self.IN2, GPIO.OUT)
+
 		GPIO.setup(self.IN3, GPIO.OUT)
 		GPIO.setup(self.IN4, GPIO.OUT)
-		GPIO.setup(self.ENA, GPIO.OUT)
 		GPIO.setup(self.ENB, GPIO.OUT)
 
 		self.forward(1)
@@ -51,8 +52,8 @@ class RPi_Motors(object):
 		GPIO.output(self.IN4,GPIO.LOW)
 
 	def left(self):
-		GPIO.output(self.IN1,GPIO.LOW)
-		GPIO.output(self.IN2,GPIO.HIGH)
+		GPIO.output(self.IN1,GPIO.HIGH)
+		GPIO.output(self.IN2,GPIO.LOW)
 		GPIO.output(self.IN3,GPIO.LOW)
 		GPIO.output(self.IN4,GPIO.HIGH)
 
