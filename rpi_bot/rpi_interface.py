@@ -76,8 +76,8 @@ class RPi_Motors(object):
 			GPIO.output(self.IN2, GPIO.LOW)
 			self.PWMA.ChangeDutyCycle(left_vel)
 		elif ((left_vel < 0) and (left_vel >= -100)):
-			GPIO.output(self.IN1, GPIO.LOW)
-			GPIO.output(self.IN2, GPIO.HIGH)
+			GPIO.output(self.IN1, GPIO.HIGH)
+			GPIO.output(self.IN2, GPIO.LOW)
 			self.PWMA.ChangeDutyCycle(0 - left_vel)
 
         # Left Motor(s)
