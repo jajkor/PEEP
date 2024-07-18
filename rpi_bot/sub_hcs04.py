@@ -1,13 +1,13 @@
 import rclpy
 from rclpy.node import Node
-from std_msgs.msg import Float32
+from std_msgs.msg import String
 
 class HCS04_Subscriber(Node):
 
     def __init__(self):
         super().__init__('hcs04_subscriber')
         
-        self.subscription = self.create_subscription(Float32, 'sens_dist', self.listener_callback, 10)
+        self.subscription = self.create_subscription(String, 'sens_dist', self.listener_callback, 10)
         self.subscription  # prevent unused variable warning
         self.get_logger().info('HC-S04 Subscriber Initialized')
 

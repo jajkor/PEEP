@@ -1,6 +1,6 @@
 import rclpy
 from rclpy.node import Node
-from std_msgs.msg import Float32
+from std_msgs.msg import String
 from rpi_bot.rpi_interface import RPi_HCS04
 
 class HCS04_Publisher(Node):
@@ -22,13 +22,13 @@ class HCS04_Publisher(Node):
         )
 
         self.i = 0
-        self.publisher = self.create_publisher(Float32, 'sens_dist', 10)
+        self.publisher = self.create_publisher(String, 'sens_dist', 10)
         timer_period = 0.5  # seconds
         self.timer = self.create_timer(timer_period, self.timer_callback)
         self.get_logger().info('HC-S04 Publisher Initialized')
 
     def timer_callback(self):
-        msg = Float32()
+        msg = String()
         msg.data = self.hcs04.distance()
         self.publisher.publish(msg)
         self.get_logger().info(f'Publishing Distance: {msg.data} cm')
