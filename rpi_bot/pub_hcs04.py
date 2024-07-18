@@ -29,7 +29,7 @@ class HCS04_Publisher(Node):
 
     def timer_callback(self):
         msg = String()
-        msg.data = self.hcs04.distance()
+        msg.data = '%d' %self.hcs04.distance()
         self.publisher.publish(msg)
         self.get_logger().info(f'Publishing Distance: {msg.data} cm')
         self.i += 1
