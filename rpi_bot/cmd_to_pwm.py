@@ -17,7 +17,7 @@ class Velocity_Subscriber(Node):
                 ('in3_pin', rclpy.Parameter.Type.INTEGER),
                 ('in4_pin', rclpy.Parameter.Type.INTEGER),
                 ('enb_pin', rclpy.Parameter.Type.INTEGER),
-                ('speed', 50)
+                ('speed', 50),
                 ('differential', 50)
             ],
         )
