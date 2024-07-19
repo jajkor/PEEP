@@ -82,12 +82,12 @@ class RPi_Motors(object):
 
 		# Right Motor(s)
 		if ((right_vel >= 0) and (right_vel <= 100)):
-			GPIO.output(self.IN1, GPIO.LOW)
-			GPIO.output(self.IN2, GPIO.HIGH)
-			self.PWMA.ChangeDutyCycle(right_vel)
-		elif ((right_vel < 0) and (right_vel >= -100)):
 			GPIO.output(self.IN1, GPIO.HIGH)
 			GPIO.output(self.IN2, GPIO.LOW)
+			self.PWMA.ChangeDutyCycle(right_vel)
+		elif ((right_vel < 0) and (right_vel >= -100)):
+			GPIO.output(self.IN1, GPIO.LOW)
+			GPIO.output(self.IN2, GPIO.HIGH)
 			self.PWMA.ChangeDutyCycle(0 - right_vel)
 
 class RPi_HCS04(object):
