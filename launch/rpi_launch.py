@@ -9,8 +9,8 @@ def generate_launch_description():
             name='cmd_to_pwm',
             parameters=[{
                 'ena_pin': 24,
-                'in1_pin': 1,
-                'in2_pin': 7,
+                'in1_pin': 11,
+                'in2_pin': 9,
                 'in3_pin': 8,
                 'in4_pin': 25,
                 'enb_pin': 23,
