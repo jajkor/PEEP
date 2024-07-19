@@ -71,14 +71,14 @@ class RPi_Motors(object):
 
 	def setMotors(self, left_vel, right_vel):
 		# Right Motor(s)
-		#if ((right_vel >= 0) and (right_vel <= 100)):
-		#	GPIO.output(self.IN1, GPIO.HIGH)
-		#	GPIO.output(self.IN2, GPIO.LOW)
-		#	self.PWMB.ChangeDutyCycle(right_vel)
-		#elif ((right_vel < 0) and (right_vel >= -100)):
-		#	GPIO.output(self.IN1, GPIO.LOW)
-		#	GPIO.output(self.IN2, GPIO.HIGH)
-		#	self.PWMB.ChangeDutyCycle(0 - right_vel)
+		if ((right_vel >= 0) and (right_vel <= 100)):
+			GPIO.output(self.IN1, GPIO.HIGH)
+			GPIO.output(self.IN2, GPIO.LOW)
+			self.PWMB.ChangeDutyCycle(right_vel)
+		elif ((right_vel < 0) and (right_vel >= -100)):
+			GPIO.output(self.IN1, GPIO.LOW)
+			GPIO.output(self.IN2, GPIO.HIGH)
+			self.PWMB.ChangeDutyCycle(0 - right_vel)
 
         # Left Motor(s)
 		if ((left_vel >= 0) and (left_vel <= 100)):
