@@ -35,8 +35,8 @@ class Velocity_Subscriber(Node):
 
         self.speed = self.get_parameter('speed').get_parameter_value().integer_value
         self.differential = self.get_parameter('differential').get_parameter_value().integer_value
-        self.wheel_separation = self.get_parameter('wheel_separation').get_parameter_value().integer_value
-        self.wheel_radius = self.get_parameter('wheel_radius').get_parameter_value().integer_value
+        self.wheel_separation = self.get_parameter('wheel_separation').get_parameter_value().double_value
+        self.wheel_radius = self.get_parameter('wheel_radius').get_parameter_value().double_value
 
         self.subscription = self.create_subscription(Twist, 'cmd_vel', self.cmd_to_pwm_callback, 10)
         self.subscription  # prevent unused variable warning
