@@ -24,8 +24,8 @@ class RPi_Motors(object):
 		GPIO.setup(self.ENB, GPIO.OUT)
 
 		self.forward(1)
-		self.PWMA = GPIO.PWM(self.ENA, 50)
-		self.PWMB = GPIO.PWM(self.ENB, 50)
+		self.PWMA = GPIO.PWM(self.ENA, 500)
+		self.PWMB = GPIO.PWM(self.ENB, 500)
 		self.PWMA.start(0)
 		self.PWMB.start(0)
 
@@ -82,12 +82,12 @@ class RPi_Motors(object):
 
 		# Right Motor(s)
 		if ((right_vel >= 0) and (right_vel <= 100)):
-			GPIO.output(self.IN1, GPIO.HIGH)
-			GPIO.output(self.IN2, GPIO.LOW)
-			self.PWMA.ChangeDutyCycle(right_vel)
-		elif ((right_vel < 0) and (right_vel >= -100)):
 			GPIO.output(self.IN1, GPIO.LOW)
 			GPIO.output(self.IN2, GPIO.HIGH)
+			self.PWMA.ChangeDutyCycle(right_vel)
+		elif ((right_vel < 0) and (right_vel >= -100)):
+			GPIO.output(self.IN1, GPIO.HIGH)
+			GPIO.output(self.IN2, GPIO.LOW)
 			self.PWMA.ChangeDutyCycle(0 - right_vel)
 
 class RPi_HCS04(object):
