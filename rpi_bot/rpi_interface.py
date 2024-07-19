@@ -4,12 +4,12 @@ import time
 
 class RPi_Motors(object):
 
-	def __init__(self, in1, in2, ena, in3, in4, enb):
+	def __init__(self, ena, in1, in2, in3, in4, enb):
+		self.ENA = ena
 		self.IN1 = in1
 		self.IN2 = in2
 		self.IN3 = in3
 		self.IN4 = in4
-		self.ENA = ena
 		self.ENB = enb
 
 		GPIO.setmode(GPIO.BCM)
