@@ -33,6 +33,7 @@ class RPi_Motors(object):
 
 	def setMotors(self, left_vel, right_vel):
         # Left Motor(s)
+		print(f"{left_vel}, {right_vel}")
 		if ((left_vel >= 0) and (left_vel <= 100)):
 			GPIO.output(self.IN3, GPIO.HIGH)
 			GPIO.output(self.IN4, GPIO.LOW)
