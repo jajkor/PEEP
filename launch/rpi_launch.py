@@ -8,12 +8,12 @@ def generate_launch_description():
             executable='cmd_to_pwm_node',
             name='cmd_to_pwm',
             parameters=[{
-                'ena_pin': 24,
-                'in1_pin': 11,
-                'in2_pin': 7,
-                'in3_pin': 8,
-                'in4_pin': 25,
-                'enb_pin': 23,
+                'ena_pin': 25,
+                'in1_pin': 24,
+                'in2_pin': 23,
+                'in3_pin': 22,
+                'in4_pin': 27,
+                'enb_pin': 17,
                 'speed': 75,
                 'differential': 75
             }]
