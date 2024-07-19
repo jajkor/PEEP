@@ -52,7 +52,8 @@ class Velocity_Subscriber(Node):
         pwm_right_vel = self.map_velocity_to_pwm(right_vel, -2.0, 2.0)
 
         self.get_logger().info(f'Received velocities: linear.x={msg.linear.x}, angular.z={msg.angular.z}')
-        self.get_logger().info(f'Setting motors: left_vel={pwm_left_vel}, right_vel={pwm_right_vel}')
+        self.get_logger().info(f'Setting motors: left_vel={left_vel}, right_vel={right_vel}')
+        self.get_logger().info(f'Setting motors: pwm_left_vel={pwm_left_vel}, pwm_right_vel={pwm_right_vel}')
 
         self.motors.setMotors(pwm_left_vel, pwm_right_vel)
 
