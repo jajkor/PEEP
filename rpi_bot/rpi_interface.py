@@ -74,20 +74,24 @@ class RPi_Motors(object):
 		if ((left_vel >= 0) and (left_vel <= 100)):
 			GPIO.output(self.IN3, GPIO.HIGH)
 			GPIO.output(self.IN4, GPIO.LOW)
+			print(f"LEFT: {left_vel}")
 			self.PWMB.ChangeDutyCycle(left_vel)
 		elif ((left_vel < 0) and (left_vel >= -100)):
 			GPIO.output(self.IN3, GPIO.LOW)
 			GPIO.output(self.IN4, GPIO.HIGH)
+			print(f"LEFT REVERSE: {0 - left_vel}")
 			self.PWMB.ChangeDutyCycle(0 - left_vel)
 
 		# Right Motor(s)
 		if ((right_vel >= 0) and (right_vel <= 100)):
 			GPIO.output(self.IN1, GPIO.LOW)
 			GPIO.output(self.IN2, GPIO.HIGH)
+			print(f"RIGHT: {right_vel}")
 			self.PWMB.ChangeDutyCycle(right_vel)
 		elif ((right_vel < 0) and (right_vel >= -100)):
 			GPIO.output(self.IN1, GPIO.HIGH)
 			GPIO.output(self.IN2, GPIO.LOW)
+			print(f"RIGHT REVERSE: {0 - right_vel}")
 			self.PWMB.ChangeDutyCycle(0 - right_vel)
 
 class RPi_HCS04(object):
