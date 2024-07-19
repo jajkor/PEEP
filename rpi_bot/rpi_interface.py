@@ -1,5 +1,3 @@
-from rclpy.node import Node
-
 import RPi.GPIO as GPIO
 import pigpio
 import time
@@ -76,24 +74,24 @@ class RPi_Motors(object):
 		if ((left_vel >= 0) and (left_vel <= 100)):
 			GPIO.output(self.IN3, GPIO.HIGH)
 			GPIO.output(self.IN4, GPIO.LOW)
-			self.get_logger().info(f'left_vel={left_vel}')
+			print(f"LEFT: {left_vel}")
 			self.PWMB.ChangeDutyCycle(left_vel)
 		elif ((left_vel < 0) and (left_vel >= -100)):
 			GPIO.output(self.IN3, GPIO.LOW)
 			GPIO.output(self.IN4, GPIO.HIGH)
-			self.get_logger().info(f'left_vel reverse={0 - left_vel}')
+			print(f"LEFT REVERSE: {0 - left_vel}")
 			self.PWMB.ChangeDutyCycle(0 - left_vel)
 
 		# Right Motor(s)
 		if ((right_vel >= 0) and (right_vel <= 100)):
 			GPIO.output(self.IN1, GPIO.LOW)
 			GPIO.output(self.IN2, GPIO.HIGH)
-			self.get_logger().info(f'right_vel={right_vel}')
+			print(f"RIGHT: {right_vel}")
 			self.PWMB.ChangeDutyCycle(right_vel)
 		elif ((right_vel < 0) and (right_vel >= -100)):
 			GPIO.output(self.IN1, GPIO.HIGH)
 			GPIO.output(self.IN2, GPIO.LOW)
-			self.get_logger().info(f'right_vel reverse={0 - right_vel}')
+			print(f"RIGHT REVERSE: {0 - right_vel}")
 			self.PWMB.ChangeDutyCycle(0 - right_vel)
 
 class RPi_HCS04(object):
