@@ -19,8 +19,8 @@ class Velocity_Subscriber(Node):
                 ('enb_pin', rclpy.Parameter.Type.INTEGER),
                 ('speed', 50),
                 ('differential', 50),
-                ('wheel_separation', rclpy.Parameter.Type.INTEGER),
-                ('wheel_radius', rclpy.Parameter.Type.INTEGER)
+                ('wheel_separation', rclpy.Parameter.Type.DOUBLE),
+                ('wheel_radius', rclpy.Parameter.Type.DOUBLE)
             ],
         )
 
