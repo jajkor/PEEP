@@ -44,9 +44,9 @@ class Velocity_Subscriber(Node):
 
     def cmd_to_pwm_callback(self, msg):
         #left_vel = self.speed * msg.linear.x - self.differential * msg.angular.z
-        left_vel = self.speed * ((msg.linear.x - msg.angular.z * self.wheel_separation / 2.0) / self.wheel_radius)
+        left_vel = ((2.0 * msg.linear.x - msg.angular.z * self.wheel_separation) / 2.0 * self.wheel_radius)
         #right_vel = self.speed * msg.linear.x + self.differential * msg.angular.z
-        right_vel = self.speed * ((msg.linear.x + msg.angular.z * self.wheel_separation / 2.0) / self.wheel_radius)
+        right_vel = ((2.0 * msg.linear.x + msg.angular.z * self.wheel_separation) / 2.0 * self.wheel_radius)
 
         self.get_logger().info(f'Received velocities: linear.x={msg.linear.x}, angular.z={msg.angular.z}')
         self.get_logger().info(f'Setting motors: left_vel={left_vel}, right_vel={right_vel}')
