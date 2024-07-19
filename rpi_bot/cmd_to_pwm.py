@@ -38,20 +38,36 @@ class Velocity_Subscriber(Node):
         self.wheel_separation = self.get_parameter('wheel_separation').get_parameter_value().double_value
         self.wheel_radius = self.get_parameter('wheel_radius').get_parameter_value().double_value
 
-        self.subscription = self.create_subscription(Twist, 'cmd_vel', self.cmd_to_pwm_callback, 10)
+        self.subscription = self.create_subscription(Twist, 'cmd_vel', self.calculate_wheel_velocity_callback, 10)
         self.subscription  # prevent unused variable warning
         self.get_logger().info('Velocity Subscriber Initialized')
 
-    def cmd_to_pwm_callback(self, msg):
+    def calculate_wheel_velocity_callback(self, msg):
         #left_vel = self.speed * msg.linear.x - self.differential * msg.angular.z
-        left_vel = ((2.0 * msg.linear.x - msg.angular.z * self.wheel_separation) / 2.0 * self.wheel_radius)
+        left_vel = ((2 * msg.linear.x - msg.angular.z * self.wheel_separation) / (2 * self.wheel_radius))
         #right_vel = self.speed * msg.linear.x + self.differential * msg.angular.z
-        right_vel = ((2.0 * msg.linear.x + msg.angular.z * self.wheel_separation) / 2.0 * self.wheel_radius)
+        right_vel = ((2 * msg.linear.x + msg.angular.z * self.wheel_separation) / (2 * self.wheel_radius))
+
+        pwm_left_vel = self.map_velocity_to_pwm(left_vel, -2.0, 2.0)
+        pwm_right_vel = self.map_velocity_to_pwm(right_vel, -2.0, 2.0)
 
         self.get_logger().info(f'Received velocities: linear.x={msg.linear.x}, angular.z={msg.angular.z}')
-        self.get_logger().info(f'Setting motors: left_vel={left_vel}, right_vel={right_vel}')
+        self.get_logger().info(f'Setting motors: left_vel={pwm_left_vel}, right_vel={pwm_right_vel}')
 
-        self.motors.setMotors(left_vel, right_vel)
+        self.motors.setMotors(pwm_left_vel, pwm_right_vel)
+
+    def map_velocity_to_pwm(velocity, min_velocity, max_velocity):
+        """
+        Map the velocity to a PWM duty cycle percentage.
+        """
+        if velocity > max_velocity:
+            velocity = max_velocity
+        elif velocity < min_velocity:
+            velocity = min_velocity
+        
+        # Map the velocity to a range between 0 and 100 (PWM duty cycle)
+        duty_cycle = ((velocity - min_velocity) / (max_velocity - min_velocity)) * 100
+        return duty_cycle
 
     def destroy_node(self):
         self.get_logger().info('Velocity Subscriber Destroyed')

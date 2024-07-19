@@ -24,8 +24,8 @@ class RPi_Motors(object):
 		GPIO.setup(self.ENB, GPIO.OUT)
 
 		self.forward(1)
-		self.PWMA = GPIO.PWM(self.ENA, 50)
-		self.PWMB = GPIO.PWM(self.ENB, 50)
+		self.PWMA = GPIO.PWM(self.ENA, 1000)
+		self.PWMB = GPIO.PWM(self.ENB, 1000)
 		self.PWMA.start(0)
 		self.PWMB.start(0)
 
