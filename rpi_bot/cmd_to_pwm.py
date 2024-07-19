@@ -18,7 +18,9 @@ class Velocity_Subscriber(Node):
                 ('in4_pin', rclpy.Parameter.Type.INTEGER),
                 ('enb_pin', rclpy.Parameter.Type.INTEGER),
                 ('speed', 50),
-                ('differential', 50)
+                ('differential', 50),
+                ('wheel_separation', rclpy.Parameter.Type.INTEGER),
+                ('wheel_radius', rclpy.Parameter.Type.INTEGER)
             ],
         )
 
@@ -33,14 +35,18 @@ class Velocity_Subscriber(Node):
 
         self.speed = self.get_parameter('speed').get_parameter_value().integer_value
         self.differential = self.get_parameter('differential').get_parameter_value().integer_value
+        self.wheel_separation = self.get_parameter('wheel_separation').get_parameter_value().integer_value
+        self.wheel_radius = self.get_parameter('wheel_radius').get_parameter_value().integer_value
 
         self.subscription = self.create_subscription(Twist, 'cmd_vel', self.cmd_to_pwm_callback, 10)
         self.subscription  # prevent unused variable warning
         self.get_logger().info('Velocity Subscriber Initialized')
 
     def cmd_to_pwm_callback(self, msg):
-        left_vel = self.speed * msg.linear.x - self.differential * msg.angular.z
-        right_vel = self.speed * msg.linear.x + self.differential * msg.angular.z
+        #left_vel = self.speed * msg.linear.x - self.differential * msg.angular.z
+        left_vel = (msg.linear.x - msg.anglular.z * self.wheel_separation / 2.0) / self.wheel_radius
+        #right_vel = self.speed * msg.linear.x + self.differential * msg.angular.z
+        right_vel = (msg.linear.x + msg.anglular.z * self.wheel_separation / 2.0) / self.wheel_radius
 
         self.get_logger().info(f'Received velocities: linear.x={msg.linear.x}, angular.z={msg.angular.z}')
         self.get_logger().info(f'Setting motors: left_vel={left_vel}, right_vel={right_vel}')

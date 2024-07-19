@@ -15,7 +15,9 @@ def generate_launch_description():
                 'in4_pin': 27,
                 'enb_pin': 17,
                 'speed': 75,
-                'differential': 75
+                'differential': 75,
+                'wheel_separation': 0.16,
+                'wheel_radius': 0.06,
             }]
         ),
         launch_ros.actions.Node(
