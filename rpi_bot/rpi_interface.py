@@ -1,3 +1,5 @@
+from rclpy.node import Node
+
 import RPi.GPIO as GPIO
 import pigpio
 import time
