@@ -56,7 +56,7 @@ class Velocity_Subscriber(Node):
 
         self.motors.setMotors(pwm_left_vel, pwm_right_vel)
 
-    def map_velocity_to_pwm(velocity, min_velocity, max_velocity):
+    def map_velocity_to_pwm(self, velocity, min_velocity, max_velocity):
         """
         Map the velocity to a PWM duty cycle percentage.
         """
