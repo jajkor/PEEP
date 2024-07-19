@@ -58,22 +58,6 @@ class Velocity_Subscriber(Node):
         #self.motors.setMotors(pwm_left_vel, pwm_right_vel)
         self.motors.setMotors(left_vel, right_vel)
 
-    def map_velocity_to_pwm(self, velocity, min_velocity, max_velocity):
-        """
-        Map the velocity to a PWM duty cycle percentage.
-        """
-        if velocity > max_velocity:
-            velocity = max_velocity
-        elif velocity < min_velocity:
-            velocity = min_velocity
-        
-        # Map the velocity to a range between 0 and 100 (PWM duty cycle)
-        duty_cycle = ((velocity - min_velocity) / (max_velocity - min_velocity)) * 100
-        return duty_cycle
-
-    def destroy_node(self):
-        self.get_logger().info('Velocity Subscriber Destroyed')
-        self.motors.__del__()
 
 def main(args=None):
     rclpy.init(args=args)

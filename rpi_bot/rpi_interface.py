@@ -23,7 +23,6 @@ class RPi_Motors(object):
 		GPIO.setup(self.IN4, GPIO.OUT)
 		GPIO.setup(self.ENB, GPIO.OUT)
 
-		self.forward(1)
 		self.PWMA = GPIO.PWM(self.ENA, 500)
 		self.PWMB = GPIO.PWM(self.ENB, 500)
 		self.PWMA.start(0)
@@ -31,43 +30,6 @@ class RPi_Motors(object):
 
 	def __del__(self):
 		GPIO.cleanup([self.ENA, self.IN1, self.IN2, self.IN3, self.IN4, self.ENB])
-
-	def forward(self, seconds):
-		GPIO.output(self.IN1, GPIO.HIGH)
-		GPIO.output(self.IN2, GPIO.LOW)
-		GPIO.output(self.IN3, GPIO.LOW)
-		GPIO.output(self.IN4, GPIO.HIGH)
-		time.sleep(seconds)
-
-	def stop(self):
-		GPIO.output(self.IN1,GPIO.LOW)
-		GPIO.output(self.IN2,GPIO.LOW)
-		GPIO.output(self.IN3,GPIO.LOW)
-		GPIO.output(self.IN4,GPIO.LOW)
-
-	def backward(self):
-		GPIO.output(self.IN1,GPIO.LOW)
-		GPIO.output(self.IN2,GPIO.HIGH)
-		GPIO.output(self.IN3,GPIO.HIGH)
-		GPIO.output(self.IN4,GPIO.LOW)
-
-	def left(self):
-		GPIO.output(self.IN1,GPIO.HIGH)
-		GPIO.output(self.IN2,GPIO.LOW)
-		GPIO.output(self.IN3,GPIO.LOW)
-		GPIO.output(self.IN4,GPIO.HIGH)
-
-	def right(self):
-		GPIO.output(self.IN1,GPIO.HIGH)
-		GPIO.output(self.IN2,GPIO.LOW)
-		GPIO.output(self.IN3,GPIO.HIGH)
-		GPIO.output(self.IN4,GPIO.LOW)
-
-	def setPWMA(self,value):
-		self.PWMA.ChangeDutyCycle(value)
-
-	def setPWMB(self,value):
-		self.PWMB.ChangeDutyCycle(value)
 
 	def setMotors(self, left_vel, right_vel):
         # Left Motor(s)
