@@ -30,7 +30,7 @@ class Velocity_Subscriber(Node):
             self.get_parameter('in4_pin').get_parameter_value().integer_value,
             self.get_parameter('enb_pin').get_parameter_value().integer_value
         )
-        
+
         self.speed = self.get_parameter('speed').get_parameter_value().integer_value
         self.differential = self.get_parameter('differential').get_parameter_value().integer_value
 
@@ -42,7 +42,7 @@ class Velocity_Subscriber(Node):
         left_vel = self.speed * msg.linear.x - self.differential * msg.angular.z
         right_vel = self.speed * msg.linear.x + self.differential * msg.angular.z
 
-        self.get_logger().info(f'Received velocities: linear.x={msg.linear.x}, angular.z={msg.angular.z}')
+        #self.get_logger().info(f'Received velocities: linear.x={msg.linear.x}, angular.z={msg.angular.z}')
         self.get_logger().info(f'Setting motors: left_vel={left_vel}, right_vel={right_vel}')
 
         self.motors.setMotors(left_vel, right_vel)
