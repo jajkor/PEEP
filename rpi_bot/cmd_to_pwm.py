@@ -22,7 +22,6 @@ class Velocity_Subscriber(Node):
             ],
         )
 
-        self.speed = self.get_parameter('speed').get_parameter_value().integer_value
         self.motors = RPi_Motors(
             self.get_parameter('ena_pin').get_parameter_value().integer_value,
             self.get_parameter('in1_pin').get_parameter_value().integer_value,
@@ -31,6 +30,8 @@ class Velocity_Subscriber(Node):
             self.get_parameter('in4_pin').get_parameter_value().integer_value,
             self.get_parameter('enb_pin').get_parameter_value().integer_value
         )
+        
+        self.speed = self.get_parameter('speed').get_parameter_value().integer_value
         self.differential = self.get_parameter('differential').get_parameter_value().integer_value
 
         self.subscription = self.create_subscription(Twist, 'cmd_vel', self.cmd_to_pwm_callback, 10)
