@@ -31,27 +31,25 @@ class RPi_Motors(object):
 	def __del__(self):
 		GPIO.cleanup([self.ENA, self.IN1, self.IN2, self.IN3, self.IN4, self.ENB])
 
-	def setMotors(self, left_vel, right_vel):
-        # Left Motor(s)
-		if ((left_vel >= 0) and (left_vel <= 100)):
-			GPIO.output(self.IN3, GPIO.LOW)
-			GPIO.output(self.IN4, GPIO.HIGH)
-			self.PWMB.ChangeDutyCycle(left_vel)
-		elif ((left_vel < 0) and (left_vel >= -100)):
-			GPIO.output(self.IN3, GPIO.HIGH)
-			GPIO.output(self.IN4, GPIO.LOW)
-			self.PWMB.ChangeDutyCycle(0 - left_vel)
+	def setMotors(self, left, right):
+		if((left >= 0) and (left <= 100)):
+			GPIO.output(self.IN1,GPIO.HIGH)
+			GPIO.output(self.IN2,GPIO.LOW)
+			self.PWMA.ChangeDutyCycle(left)
+		elif((left < 0) and (left >= -100)):
+			GPIO.output(self.IN1,GPIO.LOW)
+			GPIO.output(self.IN2,GPIO.HIGH)
+			self.PWMA.ChangeDutyCycle(0 - left)
+		if((right >= 0) and (right <= 100)):
+			GPIO.output(self.IN3,GPIO.LOW)
+			GPIO.output(self.IN4,GPIO.HIGH)
+			self.PWMB.ChangeDutyCycle(right)
+		elif((right < 0) and (right >= -100)):
+			GPIO.output(self.IN3,GPIO.HIGH)
+			GPIO.output(self.IN4,GPIO.LOW)
+			self.PWMB.ChangeDutyCycle(0 - right)
 
-		# Right Motor(s)
-		if ((right_vel >= 0) and (right_vel <= 100)):
-			GPIO.output(self.IN1, GPIO.HIGH)
-			GPIO.output(self.IN2, GPIO.LOW)
-			self.PWMA.ChangeDutyCycle(right_vel)
-		elif ((right_vel < 0) and (right_vel >= -100)):
-			GPIO.output(self.IN1, GPIO.LOW)
-			GPIO.output(self.IN2, GPIO.HIGH)
-			self.PWMA.ChangeDutyCycle(0 - right_vel)
-
+			
 class RPi_HCS04(object):
 
 	def __init__(self, trig, echo):
