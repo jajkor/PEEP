@@ -18,10 +18,12 @@ class RPi_Motors(object):
 		GPIO.setup(self.ENA, GPIO.OUT)
 		GPIO.setup(self.IN1, GPIO.OUT)
 		GPIO.setup(self.IN2, GPIO.OUT)
+		GPIO.output(self.ENA, GPIO.HIGH)
 
 		GPIO.setup(self.IN3, GPIO.OUT)
 		GPIO.setup(self.IN4, GPIO.OUT)
 		GPIO.setup(self.ENB, GPIO.OUT)
+		GPIO.output(self.ENB, GPIO.HIGH)
 
 		self.PWMA = GPIO.PWM(self.ENA, 500)
 		self.PWMB = GPIO.PWM(self.ENB, 500)
