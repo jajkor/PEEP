@@ -23,8 +23,8 @@ def generate_launch_description():
             executable='pub_hcs04_node',
             name='pub_hcs04',
             parameters=[{
-                'trig_pin': 18,
-                'echo_pin': 24
+                'trig_pin': 3,
+                'echo_pin': 2
             }]
         ),
         launch_ros.actions.Node(
@@ -32,7 +32,7 @@ def generate_launch_description():
             executable='sub_sg90_node',
             name='sub_sg90',
             parameters=[{
-                'pwm_pin': 14
+                'pwm_pin': 4
             }]
         )
     ])
