@@ -84,7 +84,7 @@ class RPi_HCS04(object):
 			stopTime = time.time()
 
 		timeElapsed = stopTime - startTime
-		distance = (timeElapsed * 34300) / 2 # 34300 if doesnt work
+		distance = (timeElapsed * 34300) / 2
 		return distance
 
 class RPi_SG90(object):
