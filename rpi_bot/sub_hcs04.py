@@ -15,7 +15,7 @@ class HCS04_Subscriber(Node):
             durability=QoSDurabilityPolicy.VOLATILE,
         )
         
-        self.subscription = self.create_subscription(String, 'sens_dist', self.listener_callback, 10)
+        self.subscription = self.create_subscription(String, 'sens_dist', self.listener_callback, qos_profile)
         self.subscription  # prevent unused variable warning
         self.get_logger().info('HC-S04 Subscriber Initialized')
 

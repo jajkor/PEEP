@@ -29,7 +29,7 @@ class HCS04_Publisher(Node):
             self.get_parameter('echo_pin').get_parameter_value().integer_value
         )
 
-        self.publisher = self.create_publisher(String, 'sens_dist', 10)
+        self.publisher = self.create_publisher(String, 'sens_dist', qos_profile)
         timer_period = 0.1  # seconds
         self.timer = self.create_timer(timer_period, self.sensor_callback)
         self.get_logger().info('HC-S04 Publisher Initialized')
