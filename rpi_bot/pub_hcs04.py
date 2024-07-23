@@ -13,6 +13,7 @@ class HCS04_Publisher(Node):
             reliability=QoSReliabilityPolicy.BEST_EFFORT,
             history=QoSHistoryPolicy.KEEP_LAST,
             depth=5,
+            durability=QoSDurabilityPolicy.VOLATILE,
         )
 
         self.declare_parameters(
