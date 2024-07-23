@@ -25,11 +25,11 @@ class SG90_Subscriber(Node):
 
         if (self.angle > 500):
             if (msg.buttons[4] == 0) and (msg.buttons[5] == 1):
-                self.angle += 100
+                self.angle -= 10
                 changed = True
         if (self.angle < 2500):
             if (msg.buttons[4] == 1) and (msg.buttons[5] == 0):
-                self.angle -= 100
+                self.angle += 10
                 changed = True
 
         if (changed == True):
