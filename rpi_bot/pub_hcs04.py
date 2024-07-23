@@ -29,8 +29,7 @@ class HCS04_Publisher(Node):
             self.get_parameter('echo_pin').get_parameter_value().integer_value
         )
 
-        self.i = 0
-        self.publisher = self.create_publisher(String, 'sens_dist', qos_profile)
+        self.publisher = self.create_publisher(String, 'sens_dist', 10)
         timer_period = 0.1  # seconds
         self.timer = self.create_timer(timer_period, self.sensor_callback)
         self.get_logger().info('HC-S04 Publisher Initialized')
@@ -40,13 +39,11 @@ class HCS04_Publisher(Node):
         msg.data = '%d' %self.hcs04.distance()
         self.publisher.publish(msg)
         self.get_logger().info(f'Publishing Distance: {msg.data} cm')
-        self.i += 1
 
     def destroy_node(self):
         self.get_logger().info('HC-S04 Subscriber Destroyed')
         self.hcs04.__del__()
 
-# May need to change 'args=None'
 def main(args=None):
     rclpy.init(args=args)
 
