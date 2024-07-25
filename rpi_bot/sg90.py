@@ -18,7 +18,7 @@ class ServoControl(Node):
         self.pca.frequency = 50
     
         self.servo = servo.Servo(self.pca.channels[self.get_parameter('pwm_channel').get_parameter_value().integer_value])
-        self.servo.angle = 90.183001220008
+        self.servo.angle = 90
         
         self.subscription = self.create_subscription(Joy, 'joy', self.cmd_to_angle_callback, 10)
         self.subscription  # prevent unused variable warning
