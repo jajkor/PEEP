@@ -62,7 +62,9 @@ class ServoControl(Node):
         temp = self.clamp(temp, ServoControl.MIN_ANGLE, ServoControl.MAX_ANGLE)
         self.servo.angle = temp
 
-        self.get_logger().info(f'Angle: {self.servo.angle}')
+        #self.get_logger().info(f'Angle: {self.servo.angle}')
+        self.get_logger().info(f'D-PAD: {msg.axes[6]}')
+        self.get_logger().info(f'D-PAD 2: {msg.axes[7]}')
 
     def destroy(self):
         self.pca.deinit()
