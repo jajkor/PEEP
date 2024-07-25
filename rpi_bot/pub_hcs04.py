@@ -26,7 +26,7 @@ class HCS04_Publisher(Node):
         self.get_logger().info('HC-S04 Publisher Initialized')
 
     def timer_callback(self):
-        distance = self.measure_distance()
+        distance = self.hcs04.measure_distance()
         range_msg = Range()
         range_msg.header.stamp = self.get_clock().now().to_msg()
         range_msg.radiation_type = Range.ULTRASOUND
@@ -36,9 +36,6 @@ class HCS04_Publisher(Node):
         range_msg.range = float(distance)
 
         self.publisher.publish(range_msg)
-
-    def measure_distance(self):
-        return self.hcs04.distance
 
     def destroy_node(self):
         self.get_logger().info('HC-S04 Subscriber Destroyed')

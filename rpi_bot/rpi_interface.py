@@ -69,7 +69,7 @@ class RPi_HCS04(object):
 		GPIO.cleanup([self.TRIG, self.ECHO])
 
 	# In cm?
-	def distance(self):
+	def measure_distance(self):
 		GPIO.output(self.TRIG, GPIO.HIGH)
 		time.sleep(0.00001) # Setting TRIG high for 10 microseconds sends out ultrasonic sound pulse
 		GPIO.output(self.TRIG, GPIO.LOW)
