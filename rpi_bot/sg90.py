@@ -21,7 +21,7 @@ class ServoControl(Node):
         
         #self.subscription = self.create_subscription(Float32, 'servo_angle', self.servo_callback, 10)
         
-        self.subscription = self.create_subscription(Joy, 'servo_angle', self.cmd_to_angle_callback, 10)
+        self.subscription = self.create_subscription(Joy, 'joy', self.cmd_to_angle_callback, 10)
         self.subscription  # prevent unused variable warning
         self.get_logger().info('SG90 Subscriber Initialized')
 
