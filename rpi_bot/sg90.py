@@ -20,7 +20,7 @@ class ServoControl(Node):
         
         #self.subscription = self.create_subscription(Float32, 'servo_angle', self.servo_callback, 10)
         
-        self.subscription = self.create_subscription(Joy, 'servo_angle', self.servo_callback, 10)
+        self.subscription = self.create_subscription(Joy, 'servo_angle', self.cmd_to_angle_callback, 10)
         self.subscription  # prevent unused variable warning
 
     def cmd_to_angle_callback(self, msg):
@@ -34,9 +34,9 @@ class ServoControl(Node):
         #self.get_logger().info(f'Angle: {self.angle}')
         self.get_logger().info(f'Left: {str(msg.buttons[4])}, Right: {str(msg.buttons[5])}')
 
-    def servo_callback(self, msg):
-        angle = msg.data
-        self.servo.angle = angle
+    #def servo_callback(self, msg):
+    #    angle = msg.data
+    #    self.servo.angle = angle
 
     def destroy(self):
         self.pca.deinit()
