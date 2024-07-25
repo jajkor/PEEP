@@ -39,9 +39,9 @@ class ServoControl(Node):
         if (temp > 0):
             if (msg.buttons[self.left_btn] == 1) and (msg.buttons[self.right_btn] == 0):
                 if self.reversed: 
-                    temp -= 10 
+                    temp -= 1
                 else: 
-                    temp += 10
+                    temp += 1
                 if (temp < 0):
                     temp = 0
 
