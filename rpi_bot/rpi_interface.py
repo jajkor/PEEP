@@ -86,7 +86,7 @@ class RPi_HCS04(object):
 		distance = round(distance, 2)
 
 		if distance < 2 or distance > 400:
-			return float('inf')
+			return -1
 		return distance
 
 class RPi_SG90(object):
