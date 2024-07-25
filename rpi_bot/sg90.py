@@ -33,7 +33,7 @@ class ServoControl(Node):
                 if (temp < 0):
                     temp = 0
 
-        if (temp < 180):
+        if (temp <= 180):
             if (msg.buttons[4] == 0) and (msg.buttons[5] == 1):
                 temp += 10
                 if (temp > 180):
