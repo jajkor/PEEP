@@ -33,7 +33,7 @@ class ServoControl(Node):
         self.subscription  # prevent unused variable warning
         self.get_logger().info('SG90 Subscriber Initialized')
 
-    def clamp(n, min, max):
+    def clamp(self, n, min, max):
         if n < min:
             n = min
         elif n > max:
