@@ -27,7 +27,7 @@ setup(
             'pub_hcs04_node = rpi_bot.pub_hcs04:main',
             'sub_hcs04_node = rpi_bot.sub_hcs04:main',
             'sub_sg90_node = rpi_bot.sub_sg90:main',
-            'sg90_node = rpi_bot.sg90:main',
+            #'sg90_node = rpi_bot.sg90:main',
         ],
     },
 )

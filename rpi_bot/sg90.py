@@ -1,6 +1,7 @@
 import rclpy
 from rclpy.node import Node
 from std_msgs.msg import Float32
+from sensor_msgs.msg import Joy
 import board
 import busio
 from adafruit_pca9685 import PCA9685
@@ -9,16 +10,29 @@ from adafruit_motor import servo
 class ServoControl(Node):
     def __init__(self):
         super().__init__('servo_control')
+
+        self.declare_parameter('pwm_channel', rclpy.Parameter.Type.INTEGER)
+        
         i2c = busio.I2C(board.SCL, board.SDA)
         self.pca = PCA9685(i2c)
         self.pca.frequency = 50
-        self.servo = servo.Servo(self.pca.channels[0])
-        self.subscription = self.create_subscription(
-            Float32,
-            'servo_angle',
-            self.servo_callback,
-            10)
+        self.servo = servo.Servo(self.pca.channels[self.get_parameter('pwm_pin').get_parameter_value().integer_value])
+        
+        #self.subscription = self.create_subscription(Float32, 'servo_angle', self.servo_callback, 10)
+        
+        self.subscription = self.create_subscription(Joy, 'servo_angle', self.servo_callback, 10)
         self.subscription  # prevent unused variable warning
+
+    def cmd_to_angle_callback(self, msg):
+        if (self.angle > 0):
+            if (msg.buttons[4] == 1) and (msg.buttons[5] == 0):
+                self.servo.angle -= 10
+        if (self.angle < 180):
+            if (msg.buttons[4] == 0) and (msg.buttons[5] == 1):
+                self.servo.angle += 10
+
+        #self.get_logger().info(f'Angle: {self.angle}')
+        #self.get_logger().info(f'Left: {str(msg.buttons[4])}, Right: {str(msg.buttons[5])}')
 
     def servo_callback(self, msg):
         angle = msg.data
@@ -29,8 +43,10 @@ class ServoControl(Node):
 
 def main(args=None):
     rclpy.init(args=args)
+
     servo_control = ServoControl()
     rclpy.spin(servo_control)
+
     servo_control.destroy()
     servo_control.destroy_node()
     rclpy.shutdown()

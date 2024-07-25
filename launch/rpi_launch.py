@@ -32,7 +32,8 @@ def generate_launch_description():
             executable='sub_sg90_node',
             name='sub_sg90',
             parameters=[{
-                'pwm_pin': 4
+                #'pwm_pin': 4
+                'pwm_channel': 0,
             }]
         )
     ])
