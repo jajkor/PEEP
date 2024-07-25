@@ -33,9 +33,37 @@ class ServoControl(Node):
         self.subscription  # prevent unused variable warning
         self.get_logger().info('SG90 Subscriber Initialized')
 
+    def clamp(n, min, max):
+        if n < min:
+            n = min
+        elif n > max:
+            n = max
+        else:
+            return n
+
     def cmd_to_angle_callback(self, msg):
         temp = self.servo.angle
 
+        if (msg.buttons[self.left_btn] == 1) and (msg.buttons[self.right_btn] == 0):
+            if self.reversed: 
+                temp -= 10
+            else: 
+                temp += 10
+
+        if (msg.buttons[self.left_btn] == 0) and (msg.buttons[self.right_btn] == 1):
+            if self.reversed: 
+                temp += 10 
+            else: 
+                temp -= 10
+
+        self.clamp(temp, 0, 180)
+        
+        self.servo.angle = temp
+
+        self.get_logger().info(f'Angle: {self.servo.angle}')
+        #self.get_logger().info(f'Left: {str(msg.buttons[4])}, Right: {str(msg.buttons[5])}')
+
+        '''
         if (temp > 0):
             if (msg.buttons[self.left_btn] == 1) and (msg.buttons[self.right_btn] == 0):
                 if self.reversed: 
@@ -51,13 +79,9 @@ class ServoControl(Node):
                     temp += 10 
                 else: 
                     temp -= 10
-            if (temp > 180):
-                temp = 180
-
-        self.servo.angle = temp
-
-        self.get_logger().info(f'Angle: {self.servo.angle}')
-        #self.get_logger().info(f'Left: {str(msg.buttons[4])}, Right: {str(msg.buttons[5])}')
+                if (temp > 180):
+                    temp = 180
+        '''
 
     #def servo_callback(self, msg):
     #    angle = msg.data
