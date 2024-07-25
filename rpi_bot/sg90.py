@@ -45,19 +45,12 @@ class ServoControl(Node):
         temp = self.servo.angle
 
         if (msg.buttons[self.left_btn] == 1) and (msg.buttons[self.right_btn] == 0):
-            if self.reversed: 
-                temp -= 10
-            else: 
-                temp += 10
+            temp -= 10
 
         if (msg.buttons[self.left_btn] == 0) and (msg.buttons[self.right_btn] == 1):
-            if self.reversed: 
-                temp += 10 
-            else: 
-                temp -= 10
+            temp += 10 
 
         temp = self.clamp(temp, 0, 180)
-        
         self.servo.angle = temp
 
         self.get_logger().info(f'Angle: {self.servo.angle}')
