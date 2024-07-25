@@ -32,8 +32,10 @@ def generate_launch_description():
             executable='sg90_node',
             name='sg90',
             parameters=[{
-                #'pwm_pin': 4
                 'pwm_channel': 0,
+                'left_btn': 4,
+                'right_btn': 5,
+                'reversed': True
             }]
         )
     ])

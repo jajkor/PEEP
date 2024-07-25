@@ -1,6 +1,5 @@
 import rclpy
 from rclpy.node import Node
-from std_msgs.msg import Float32
 from sensor_msgs.msg import Joy
 import board
 import busio
@@ -11,13 +10,23 @@ class ServoControl(Node):
     def __init__(self):
         super().__init__('sg90_subscriber')
 
-        self.declare_parameter('pwm_channel', rclpy.Parameter.Type.INTEGER)
-        
+        self.declare_parameters(
+            namespace='',
+            parameters=[
+                ('pwm_channel', rclpy.Parameter.Type.INTEGER),
+                ('left_btn', rclpy.Parameter.Type.INTEGER),
+                ('right_btn', rclpy.Parameter.Type.INTEGER),
+                ('reversed', rclpy.Parameter.Type.BOOL)
+            ],
+        )
         i2c = busio.I2C(board.SCL, board.SDA)
         self.pca = PCA9685(i2c)
         self.pca.frequency = 50
     
         self.servo = servo.Servo(self.pca.channels[self.get_parameter('pwm_channel').get_parameter_value().integer_value])
+        self.left_btn = self.get_parameter('left_btn').get_parameter_value().integer_value
+        self.right_btn = self.get_parameter('right_btn').get_parameter_value().integer_value
+        self.reversed = self.get_parameter('reversed').get_parameter_value().bool_value
         self.servo.angle = 90
         
         self.subscription = self.create_subscription(Joy, 'joy', self.cmd_to_angle_callback, 10)
@@ -28,13 +37,13 @@ class ServoControl(Node):
         temp = self.servo.angle
 
         if (temp > 0):
-            if (msg.buttons[4] == 1) and (msg.buttons[5] == 0):
+            if (msg.buttons[self.left_btn] == 1) and (msg.buttons[self.right_btn] == 0):
                 temp -= 10
                 if (temp < 0):
                     temp = 0
 
         if (temp < 180):
-            if (msg.buttons[4] == 0) and (msg.buttons[5] == 1):
+            if (msg.buttons[self.left_btn] == 0) and (msg.buttons[self.right_btn] == 1):
                 temp += 10
                 if (temp > 180):
                     temp = 180
