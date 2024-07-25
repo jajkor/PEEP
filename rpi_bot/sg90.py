@@ -47,15 +47,17 @@ class ServoControl(Node):
     def cmd_to_angle_callback(self, msg):
         temp = self.servo.angle
 
-        if (msg.buttons[self.left_btn] == 1) and (msg.buttons[self.right_btn] == 0) and (self.reversed):
-            temp -= ServoControl.SPEED
-        else:
-            temp += ServoControl.SPEED
+        if (msg.buttons[self.left_btn] == 1) and (msg.buttons[self.right_btn] == 0):
+            if self.reversed:
+                temp -= ServoControl.SPEED
+            else:
+                temp += ServoControl.SPEED
 
-        if (msg.buttons[self.left_btn] == 0) and (msg.buttons[self.right_btn] == 1) and (self.reversed):
-            temp += ServoControl.SPEED
-        else:
-            temp -= ServoControl.SPEED
+        if (msg.buttons[self.left_btn] == 0) and (msg.buttons[self.right_btn] == 1):
+            if self.reversed:
+                temp += ServoControl.SPEED
+            else:
+                temp -= ServoControl.SPEED
 
         temp = self.clamp(temp, ServoControl.MIN_ANGLE, ServoControl.MAX_ANGLE)
         self.servo.angle = temp
