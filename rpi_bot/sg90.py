@@ -38,8 +38,7 @@ class ServoControl(Node):
             n = min
         elif n > max:
             n = max
-        else:
-            return n
+        return n
 
     def cmd_to_angle_callback(self, msg):
         temp = self.servo.angle
@@ -49,6 +48,7 @@ class ServoControl(Node):
 
         if (msg.buttons[self.left_btn] == 0) and (msg.buttons[self.right_btn] == 1):
             temp += 10 
+
         self.get_logger().info(f'FAngle: {temp}')
 
         temp = self.clamp(temp, 0, 180)
