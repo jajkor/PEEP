@@ -31,6 +31,7 @@ class ServoControl(Node):
         self.left_btn = self.get_parameter('left_btn').get_parameter_value().integer_value
         self.right_btn = self.get_parameter('right_btn').get_parameter_value().integer_value
         self.reversed = self.get_parameter('reversed').get_parameter_value().bool_value
+        self.servo.angle = 90
         
         self.subscription = self.create_subscription(Joy, 'joy', self.cmd_to_angle_callback, 10)
         self.subscription  # prevent unused variable warning
