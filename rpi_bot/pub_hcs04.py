@@ -35,7 +35,7 @@ class HCS04_Publisher(Node):
         range_msg.max_range = 4.0  # 4 meters
         range_msg.range = distance
 
-        self.publisher_.publish(range_msg)
+        self.publisher.publish(range_msg)
 
     def measure_distance(self):
         return self.hcs04.distance
