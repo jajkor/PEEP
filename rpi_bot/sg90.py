@@ -32,8 +32,8 @@ class ServoControl(Node):
             if (msg.buttons[4] == 0) and (msg.buttons[5] == 1):
                 self.servo.angle += 10
 
-        #self.get_logger().info(f'Angle: {self.angle}')
-        self.get_logger().info(f'Left: {str(msg.buttons[4])}, Right: {str(msg.buttons[5])}')
+        self.get_logger().info(f'Angle: {self.angle}')
+        #self.get_logger().info(f'Left: {str(msg.buttons[4])}, Right: {str(msg.buttons[5])}')
 
     #def servo_callback(self, msg):
     #    angle = msg.data
