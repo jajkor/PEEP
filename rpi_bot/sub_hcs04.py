@@ -11,7 +11,7 @@ class HCS04_Subscriber(Node):
         self.get_logger().info('HC-S04 Subscriber Initialized')
 
     def listener_callback(self, msg):
-        #self.get_logger().info(f'Received Distance: {msg.range} cm')
+        self.get_logger().info(f'Received Distance: {1} cm')
 
 
 def main(args=None):
