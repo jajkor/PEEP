@@ -35,9 +35,9 @@ class ServoControl(Node):
 
     def clamp(self, n, min, max):
         if n < min:
-            n = min
+            return min
         elif n > max:
-            n = max
+            return max
         return n
 
     def cmd_to_angle_callback(self, msg):
