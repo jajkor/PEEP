@@ -31,8 +31,6 @@ class ServoControl(Node):
         self.left_btn = self.get_parameter('left_btn').get_parameter_value().integer_value
         self.right_btn = self.get_parameter('right_btn').get_parameter_value().integer_value
         self.reversed = self.get_parameter('reversed').get_parameter_value().bool_value
-        self.servo.angle = 90
-        self.speed = 10
         
         self.subscription = self.create_subscription(Joy, 'joy', self.cmd_to_angle_callback, 10)
         self.subscription  # prevent unused variable warning
@@ -48,41 +46,20 @@ class ServoControl(Node):
     def cmd_to_angle_callback(self, msg):
         temp = self.servo.angle
 
-        if (msg.buttons[self.left_btn] == 1) and (msg.buttons[self.right_btn] == 0):
+        if (msg.buttons[self.left_btn] == 1) and (msg.buttons[self.right_btn] == 0) and (self.reversed):
             temp -= ServoControl.SPEED
-
-        if (msg.buttons[self.left_btn] == 0) and (msg.buttons[self.right_btn] == 1):
+        else:
             temp += ServoControl.SPEED
+
+        if (msg.buttons[self.left_btn] == 0) and (msg.buttons[self.right_btn] == 1) and (self.reversed):
+            temp += ServoControl.SPEED
+        else:
+            temp -= ServoControl.SPEED
 
         temp = self.clamp(temp, ServoControl.MIN_ANGLE, ServoControl.MAX_ANGLE)
         self.servo.angle = temp
 
-        self.get_logger().info(f'Angle: {temp}')
-        #self.get_logger().info(f'Left: {str(self.left_btn)}, Right: {str(right_btn)}')
-
-        '''
-        if (temp > 0):
-            if (msg.buttons[self.left_btn] == 1) and (msg.buttons[self.right_btn] == 0):
-                if self.reversed: 
-                    temp -= 10
-                else: 
-                    temp += 10
-            if (temp < 0):
-                temp = 0
-
-        if (temp < 180):
-            if (msg.buttons[self.left_btn] == 0) and (msg.buttons[self.right_btn] == 1):
-                if self.reversed: 
-                    temp += 10 
-                else: 
-                    temp -= 10
-                if (temp > 180):
-                    temp = 180
-        '''
-
-    #def servo_callback(self, msg):
-    #    angle = msg.data
-    #    self.servo.angle = angle
+        self.get_logger().info(f'Angle: {self.servo.angle}')
 
     def destroy(self):
         self.pca.deinit()
