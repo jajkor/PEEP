@@ -25,7 +25,7 @@ class HCS04_Publisher(Node):
         self.timer = self.create_timer(0.1, self.timer_callback)
         self.get_logger().info('HC-S04 Publisher Initialized')
 
-    def timer_callback(self, range_msg):
+    def timer_callback(self):
         distance = self.measure_distance()
         range_msg = Range()
         range_msg.header.stamp = self.get_clock().now().to_msg()
