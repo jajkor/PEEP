@@ -33,11 +33,11 @@ class ServoControl(Node):
                 if (temp <= 0):
                     temp = 0
 
-        if (temp < 180):
+        if (temp < 360):
             if (msg.buttons[4] == 0) and (msg.buttons[5] == 1):
                 temp += 10
-                if (temp > 180):
-                    temp = 180
+                if (temp > 360):
+                    temp = 360
 
         self.servo.angle = temp
 
