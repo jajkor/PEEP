@@ -24,7 +24,7 @@ class ServoControl(Node):
             ],
         )
         i2c = busio.I2C(board.SCL, board.SDA)
-        self.pca = PCA9685(i2c)
+        self.pca = PCA9685(i2c, address = 0x40)
         self.pca.frequency = 50
     
         self.servo = servo.Servo(self.pca.channels[self.get_parameter('pwm_channel').get_parameter_value().integer_value])
