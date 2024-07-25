@@ -16,7 +16,8 @@ class ServoControl(Node):
         i2c = busio.I2C(board.SCL, board.SDA)
         self.pca = PCA9685(i2c)
         self.pca.frequency = 50
-        self.servo = servo.Servo(self.pca.channels[self.get_parameter('pwm_channel').get_parameter_value().integer_value])
+        #self.get_parameter('pwm_channel').get_parameter_value().integer_value
+        self.servo = servo.Servo(self.pca.channels[0])
         
         #self.subscription = self.create_subscription(Float32, 'servo_angle', self.servo_callback, 10)
         
