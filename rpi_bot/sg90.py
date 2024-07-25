@@ -27,10 +27,10 @@ class ServoControl(Node):
     def cmd_to_angle_callback(self, msg):
         if (self.servo.angle > 0):
             if (msg.buttons[4] == 1) and (msg.buttons[5] == 0):
-                self.servo.angle -= 20
+                self.servo.angle -= 10
         if (self.servo.angle < 180):
             if (msg.buttons[4] == 0) and (msg.buttons[5] == 1):
-                self.servo.angle += 20
+                self.servo.angle += 10
 
         self.get_logger().info(f'Angle: {self.servo.angle}')
         #self.get_logger().info(f'Left: {str(msg.buttons[4])}, Right: {str(msg.buttons[5])}')
