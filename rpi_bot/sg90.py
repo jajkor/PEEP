@@ -19,7 +19,6 @@ class ServoControl(Node):
     
         self.servo = servo.Servo(self.pca.channels[self.get_parameter('pwm_channel').get_parameter_value().integer_value])
         self.servo.angle = 90
-        self.servo.actuation_range = 360
         
         self.subscription = self.create_subscription(Joy, 'joy', self.cmd_to_angle_callback, 10)
         self.subscription  # prevent unused variable warning
@@ -31,14 +30,14 @@ class ServoControl(Node):
         if (temp > 0):
             if (msg.buttons[4] == 1) and (msg.buttons[5] == 0):
                 temp -= 10
-                if (temp <= 0):
+                if (temp < 0):
                     temp = 0
 
-        if (temp < 360):
+        if (temp < 180):
             if (msg.buttons[4] == 0) and (msg.buttons[5] == 1):
                 temp += 10
-                if (temp > 360):
-                    temp = 360
+                if (temp > 180):
+                    temp = 180
 
         self.servo.angle = temp
 
