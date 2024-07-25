@@ -18,6 +18,7 @@ class ServoControl(Node):
         self.pca.frequency = 50
         #self.get_parameter('pwm_channel').get_parameter_value().integer_value
         self.servo = servo.Servo(self.pca.channels[0])
+        self.servo.angle = 90
         
         #self.subscription = self.create_subscription(Float32, 'servo_angle', self.servo_callback, 10)
         
