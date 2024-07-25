@@ -1,20 +1,12 @@
 import rclpy
 from rclpy.node import Node
-from rclpy.qos import QoSProfile, QoSReliabilityPolicy, QoSHistoryPolicy, QoSDurabilityPolicy
-from std_msgs.msg import String
+from sensor_msgs.msg import Range
 from rpi_bot.rpi_interface import RPi_HCS04
 
 class HCS04_Publisher(Node):
 
     def __init__(self):
         super().__init__('hcs04_publisher')
-
-        qos_profile = QoSProfile(
-            reliability=QoSReliabilityPolicy.BEST_EFFORT,
-            history=QoSHistoryPolicy.KEEP_LAST,
-            depth=5,
-            durability=QoSDurabilityPolicy.VOLATILE,
-        )
 
         self.declare_parameters(
             namespace='',
@@ -29,16 +21,24 @@ class HCS04_Publisher(Node):
             self.get_parameter('echo_pin').get_parameter_value().integer_value
         )
 
-        self.publisher = self.create_publisher(String, 'sens_dist', qos_profile)
-        timer_period = 0.1  # seconds
-        self.timer = self.create_timer(timer_period, self.sensor_callback)
+        self.publisher = self.create_publisher(Range, 'range', 10)
+        self.timer = self.create_timer(0.1, self.timer_callback)
         self.get_logger().info('HC-S04 Publisher Initialized')
 
-    def sensor_callback(self):
-        msg = String()
-        msg.data = '%d' %self.hcs04.distance()
-        self.publisher.publish(msg)
-        self.get_logger().info(f'Publishing Distance: {msg.data} cm')
+    def timer_callback(self):
+        distance = self.measure_distance()
+        range_msg = Range()
+        range_msg.header.stamp = self.get_clock().now().to_msg()
+        range_msg.radiation_type = Range.ULTRASOUND
+        range_msg.field_of_view = 0.05  # Assuming a field of view of 5 degrees
+        range_msg.min_range = 0.02  # 2 cm
+        range_msg.max_range = 4.0  # 4 meters
+        range_msg.range = distance
+
+        self.publisher_.publish(range_msg)
+
+    def measure_distance(self):
+        return self.hcs04.distance
 
     def destroy_node(self):
         self.get_logger().info('HC-S04 Subscriber Destroyed')

@@ -73,18 +73,20 @@ class RPi_HCS04(object):
 		GPIO.output(self.TRIG, GPIO.HIGH)
 		time.sleep(0.00001) # Setting TRIG high for 10 microseconds sends out ultrasonic sound pulse
 		GPIO.output(self.TRIG, GPIO.LOW)
-
-		startTime = time.time()
-		stopTime = time.time()
 		
 		while GPIO.input(self.ECHO) == 0:
-			startTime = time.time()
+			pulseStart = time.time()
 
 		while GPIO.input(self.ECHO) == 1:
-			stopTime = time.time()
+			pulseStop = time.time()
 
-		timeElapsed = stopTime - startTime
-		distance = (timeElapsed * 34300) / 2
+		pulseDuration = pulseStop - pulseStart
+
+		distance = pulseDuration * 17150
+		distance = round(distance, 2)
+
+		if distance < 2 or distance > 400:
+			return float('inf')
 		return distance
 
 class RPi_SG90(object):

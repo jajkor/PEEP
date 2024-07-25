@@ -35,7 +35,7 @@ def generate_launch_description():
                 'pwm_channel': 0,
                 'left_btn': 4,
                 'right_btn': 5,
-                'reversed': True
+                'reverse': True
             }]
         )
     ])

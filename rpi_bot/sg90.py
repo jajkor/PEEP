@@ -20,7 +20,7 @@ class ServoControl(Node):
                 ('pwm_channel', rclpy.Parameter.Type.INTEGER),
                 ('left_btn', rclpy.Parameter.Type.INTEGER),
                 ('right_btn', rclpy.Parameter.Type.INTEGER),
-                ('reversed', rclpy.Parameter.Type.BOOL)
+                ('reverse', rclpy.Parameter.Type.BOOL)
             ],
         )
         i2c = busio.I2C(board.SCL, board.SDA)
@@ -30,10 +30,10 @@ class ServoControl(Node):
         self.servo = servo.Servo(self.pca.channels[self.get_parameter('pwm_channel').get_parameter_value().integer_value])
         self.left_btn = self.get_parameter('left_btn').get_parameter_value().integer_value
         self.right_btn = self.get_parameter('right_btn').get_parameter_value().integer_value
-        self.reversed = self.get_parameter('reversed').get_parameter_value().bool_value
+        self.reverse = self.get_parameter('reverse').get_parameter_value().bool_value
         self.servo.angle = 90
         
-        self.subscription = self.create_subscription(Joy, 'joy', self.cmd_to_angle_callback, 10)
+        self.subscription = self.create_subscription(Joy, 'joy', self.btn_callback, 10)
         self.subscription  # prevent unused variable warning
         self.get_logger().info('SG90 Subscriber Initialized')
 
@@ -44,17 +44,17 @@ class ServoControl(Node):
             return max
         return n
 
-    def cmd_to_angle_callback(self, msg):
+    def btn_callback(self, msg):
         temp = self.servo.angle
 
         if (msg.buttons[self.left_btn] == 1) and (msg.buttons[self.right_btn] == 0):
-            if self.reversed:
+            if self.reverse:
                 temp -= ServoControl.SPEED
             else:
                 temp += ServoControl.SPEED
 
         if (msg.buttons[self.left_btn] == 0) and (msg.buttons[self.right_btn] == 1):
-            if self.reversed:
+            if self.reverse:
                 temp += ServoControl.SPEED
             else:
                 temp -= ServoControl.SPEED
