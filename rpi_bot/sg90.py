@@ -49,12 +49,12 @@ class ServoControl(Node):
 
         if (msg.buttons[self.left_btn] == 0) and (msg.buttons[self.right_btn] == 1):
             temp += 10 
-        self.get_logger().info(f'Angle: {temp}')
+        self.get_logger().info(f'FAngle: {temp}')
 
         temp = self.clamp(temp, 0, 180)
         self.servo.angle = temp
 
-        self.get_logger().info(f'Angle: {temp}')
+        self.get_logger().info(f'SAngle: {temp}')
         #self.get_logger().info(f'Left: {str(msg.buttons[4])}, Right: {str(msg.buttons[5])}')
 
         '''
