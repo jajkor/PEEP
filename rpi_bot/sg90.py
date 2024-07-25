@@ -9,7 +9,7 @@ from adafruit_motor import servo
 
 class ServoControl(Node):
     def __init__(self):
-        super().__init__('servo_control')
+        super().__init__('sg90_subscriber')
 
         self.declare_parameter('pwm_channel', rclpy.Parameter.Type.INTEGER)
         
@@ -22,6 +22,7 @@ class ServoControl(Node):
         
         self.subscription = self.create_subscription(Joy, 'servo_angle', self.cmd_to_angle_callback, 10)
         self.subscription  # prevent unused variable warning
+        self.get_logger().info('SG90 Subscriber Initialized')
 
     def cmd_to_angle_callback(self, msg):
         if (self.angle > 0):
