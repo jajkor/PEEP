@@ -56,7 +56,7 @@ class ServoControl(Node):
             else: 
                 temp -= 10
 
-        self.clamp(temp, 0, 180)
+        temp = self.clamp(temp, 0, 180)
         
         self.servo.angle = temp
 
