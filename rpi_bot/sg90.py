@@ -39,9 +39,9 @@ class ServoControl(Node):
         elif (temp> 180):
             temp = 180
 
-        self.servo.angle = temp
+        #self.servo.angle = temp
 
-        self.get_logger().info(f'Angle: {self.servo.angle}')
+        self.get_logger().info(f'Angle: {temp}')
         #self.get_logger().info(f'Left: {str(msg.buttons[4])}, Right: {str(msg.buttons[5])}')
 
     #def servo_callback(self, msg):
