@@ -7,10 +7,9 @@ from adafruit_pca9685 import PCA9685
 from adafruit_motor import servo
 
 class ServoControl(Node):
-    global min_angle
-    min_angle = 0
-    global max_angle
-    max_angle = 180
+    MIN_ANGLE = 0
+    MAX_ANGLE = 180
+    SPEED = 10
 
     def __init__(self):
         super().__init__('sg90_subscriber')
@@ -33,6 +32,7 @@ class ServoControl(Node):
         self.right_btn = self.get_parameter('right_btn').get_parameter_value().integer_value
         self.reversed = self.get_parameter('reversed').get_parameter_value().bool_value
         self.servo.angle = 90
+        self.speed = 10
         
         self.subscription = self.create_subscription(Joy, 'joy', self.cmd_to_angle_callback, 10)
         self.subscription  # prevent unused variable warning
@@ -49,12 +49,12 @@ class ServoControl(Node):
         temp = self.servo.angle
 
         if (msg.buttons[self.left_btn] == 1) and (msg.buttons[self.right_btn] == 0):
-            temp -= 10
+            temp -= ServoControl.SPEED
 
         if (msg.buttons[self.left_btn] == 0) and (msg.buttons[self.right_btn] == 1):
-            temp += 10 
+            temp += ServoControl.SPEED
 
-        temp = self.clamp(temp, min_angle, max_angle)
+        temp = self.clamp(temp, ServoControl.MIN_ANGLE, ServoControl.MAX_ANGLE)
         self.servo.angle = temp
 
         self.get_logger().info(f'Angle: {temp}')
