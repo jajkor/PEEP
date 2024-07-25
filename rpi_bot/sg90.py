@@ -25,17 +25,21 @@ class ServoControl(Node):
         self.get_logger().info('SG90 Subscriber Initialized')
 
     def cmd_to_angle_callback(self, msg):
-        if (self.servo.angle >= 0):
-            if (msg.buttons[4] == 1) and (msg.buttons[5] == 0):
-                self.servo.angle -= 10
-        elif (self.servo.angle < 0):
-            self.servo.angle = 0
+        temp = self.servo.angle
 
-        if (self.servo.angle <= 180):
+        if (temp >= 0):
+            if (msg.buttons[4] == 1) and (msg.buttons[5] == 0):
+                temp -= 10
+        elif (temp < 0):
+            temp = 0
+
+        if (temp <= 180):
             if (msg.buttons[4] == 0) and (msg.buttons[5] == 1):
-                self.servo.angle += 10
-        elif (self.servo.angle > 180):
-            self.servo.angle = 180
+                temp += 10
+        elif (temp> 180):
+            temp = 180
+
+        self.servo.angle = temp
 
         self.get_logger().info(f'Angle: {self.servo.angle}')
         #self.get_logger().info(f'Left: {str(msg.buttons[4])}, Right: {str(msg.buttons[5])}')
