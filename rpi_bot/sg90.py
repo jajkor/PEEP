@@ -25,10 +25,10 @@ class ServoControl(Node):
         self.get_logger().info('SG90 Subscriber Initialized')
 
     def cmd_to_angle_callback(self, msg):
-        if (self.servo.angle > 0):
+        if (self.servo.angle > 5.490036600244002):
             if (msg.buttons[4] == 1) and (msg.buttons[5] == 0):
                 self.servo.angle -= 10
-        if (self.servo.angle < 180):
+        if (self.servo.angle < 179.41439609597398):
             if (msg.buttons[4] == 0) and (msg.buttons[5] == 1):
                 self.servo.angle += 10
 
