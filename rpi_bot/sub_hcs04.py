@@ -7,7 +7,7 @@ class HCS04_Subscriber(Node):
         super().__init__('hcs04_subscriber')
         
         self.subscription = self.create_subscription(Range, 'range', self.listener_callback, 10)
-        self.subscription  # prevent unused variable warning
+        self.subscription  # prevent unused variable warnings
         self.get_logger().info('HC-S04 Subscriber Initialized')
 
     def listener_callback(self, msg):
