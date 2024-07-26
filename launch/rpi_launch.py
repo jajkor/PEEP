@@ -45,7 +45,7 @@ def generate_launch_description():
             executable='sub_sg90_node',
             name='sub_pan_sg90',
             parameters=[{
-                'pwm_channel': 1,
+                'pwm_channel': 2,
                 'left_btn': -1,
                 'right_btn': -1,
                 'reverse': False,
@@ -58,7 +58,7 @@ def generate_launch_description():
             executable='sub_sg90_node',
             name='sub_tilt_sg90',
             parameters=[{
-                'pwm_channel': 2,
+                'pwm_channel': 1,
                 'left_btn': -1,
                 'right_btn': -1,
                 'reverse': True,
