@@ -23,8 +23,8 @@ def generate_launch_description():
             executable='pub_hcs04_node',
             name='pub_hcs04',
             parameters=[{
-                'trig_pin': 3,
-                'echo_pin': 2
+                'trig_pin': 14,
+                'echo_pin': 15
             }]
         ),
         launch_ros.actions.Node(
