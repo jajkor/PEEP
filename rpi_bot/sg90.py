@@ -68,6 +68,7 @@ class ServoControl(Node):
         temp = self.clamp(temp, ServoControl.MIN_ANGLE, ServoControl.MAX_ANGLE)
         self.servo.angle = temp
         self.get_logger().info(f'Angle: {self.servo.angle}')
+        self.get_logger().info(f'Pad: {msg.axes[self.left_btn], msg.axes[self.right_btn]}')
 
     def btn_callback(self, msg):
         temp = self.servo.angle
