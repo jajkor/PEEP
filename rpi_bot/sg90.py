@@ -63,7 +63,7 @@ class ServoControl(Node):
             if self.reverse:
                 temp += ServoControl.SPEED * msg.axes[self.left_btn]
             else:
-                temp -= ServoControl.SPEED * msg.axes[self.left_btn]
+                temp -= ServoControl.SPEED * -msg.axes[self.left_btn]
 
         temp = self.clamp(temp, ServoControl.MIN_ANGLE, ServoControl.MAX_ANGLE)
         self.servo.angle = temp
