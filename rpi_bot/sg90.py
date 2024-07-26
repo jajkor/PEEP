@@ -20,7 +20,8 @@ class ServoControl(Node):
                 ('pwm_channel', rclpy.Parameter.Type.INTEGER),
                 ('left_btn', rclpy.Parameter.Type.INTEGER),
                 ('right_btn', rclpy.Parameter.Type.INTEGER),
-                ('reverse', rclpy.Parameter.Type.BOOL)
+                ('reverse', rclpy.Parameter.Type.BOOL),
+                ('pad', rclpy.Parameter.Type.BOOL)
             ],
         )
         i2c = busio.I2C(board.SCL, board.SDA)
@@ -31,9 +32,14 @@ class ServoControl(Node):
         self.left_btn = self.get_parameter('left_btn').get_parameter_value().integer_value
         self.right_btn = self.get_parameter('right_btn').get_parameter_value().integer_value
         self.reverse = self.get_parameter('reverse').get_parameter_value().bool_value
+        self.pad = self.get_parameter('pad').get_parameter_value().bool_value
         self.servo.angle = 90
         
-        self.subscription = self.create_subscription(Joy, 'joy', self.btn_callback, 10)
+        if self.pad:
+            self.subscription = self.create_subscription(Joy, 'joy', self.pad_callback, 10)
+        else:
+            self.subscription = self.create_subscription(Joy, 'joy', self.btn_callback, 10)
+
         self.subscription  # prevent unused variable warning
         self.get_logger().info('SG90 Subscriber Initialized')
 
@@ -43,6 +49,25 @@ class ServoControl(Node):
         elif n > max:
             return max
         return n
+
+    def pad_callback(self, msg):
+        temp = self.servo.angle
+
+        if (msg.axes[self.left_btn] == 1) and (msg.axes[self.right_btn] == 0):
+            if self.reverse:
+                temp -= ServoControl.SPEED
+            else:
+                temp += ServoControl.SPEED
+
+        if (msg.axes[self.left_btn] == 0) and (msg.axes[self.right_btn] == 1):
+            if self.reverse:
+                temp += ServoControl.SPEED
+            else:
+                temp -= ServoControl.SPEED
+
+        temp = self.clamp(temp, ServoControl.MIN_ANGLE, ServoControl.MAX_ANGLE)
+        self.servo.angle = temp
+        self.get_logger().info(f'Angle: {self.servo.angle}')
 
     def btn_callback(self, msg):
         temp = self.servo.angle
@@ -61,10 +86,7 @@ class ServoControl(Node):
 
         temp = self.clamp(temp, ServoControl.MIN_ANGLE, ServoControl.MAX_ANGLE)
         self.servo.angle = temp
-
         self.get_logger().info(f'Angle: {self.servo.angle}')
-        self.get_logger().info(f'D-PAD: {msg.axes[6]}')
-        self.get_logger().info(f'D-PAD 2: {msg.axes[7]}')
 
     def destroy(self):
         self.pca.deinit()
