@@ -53,13 +53,13 @@ class ServoControl(Node):
     def axes_callback(self, msg):
         temp = self.servo.angle
 
-        if (msg.axes[self.left_btn] >= 0):
+        if (msg.axes[self.left_btn] > 0):
             if self.reverse:
                 temp -= ServoControl.SPEED
             else:
                 temp += ServoControl.SPEED
 
-        if (msg.axes[self.left_btn] >= -0):
+        if (msg.axes[self.left_btn] < 0):
             if self.reverse:
                 temp += ServoControl.SPEED
             else:
