@@ -27,15 +27,16 @@ def generate_launch_description():
                 'echo_pin': 15
             }]
         ),
-        launch_ros.actions.Node(
+        launch_ros.actions.Node( # HC-S04
             package='rpi_bot',
-            executable='sg90_node',
-            name='sg90',
+            executable='sub_sg90_node',
+            name='sub_sg90',
             parameters=[{
                 'pwm_channel': 0,
                 'left_btn': 4,
                 'right_btn': 5,
-                'reverse': True
+                'reverse': True,
+                'axes': False,
             }]
         )
     ])
