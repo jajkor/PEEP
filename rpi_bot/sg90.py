@@ -21,7 +21,7 @@ class ServoControl(Node):
                 ('left_btn', rclpy.Parameter.Type.INTEGER),
                 ('right_btn', rclpy.Parameter.Type.INTEGER),
                 ('reverse', rclpy.Parameter.Type.BOOL),
-                ('pad', rclpy.Parameter.Type.BOOL)
+                ('axes', rclpy.Parameter.Type.BOOL)
             ],
         )
         i2c = busio.I2C(board.SCL, board.SDA)
@@ -32,11 +32,11 @@ class ServoControl(Node):
         self.left_btn = self.get_parameter('left_btn').get_parameter_value().integer_value
         self.right_btn = self.get_parameter('right_btn').get_parameter_value().integer_value
         self.reverse = self.get_parameter('reverse').get_parameter_value().bool_value
-        self.pad = self.get_parameter('pad').get_parameter_value().bool_value
+        self.axes = self.get_parameter('axes').get_parameter_value().bool_value
         self.servo.angle = 90
         
-        if self.pad:
-            self.subscription = self.create_subscription(Joy, 'joy', self.pad_callback, 10)
+        if self.axes:
+            self.subscription = self.create_subscription(Joy, 'joy', self.axes_callback, 10)
         else:
             self.subscription = self.create_subscription(Joy, 'joy', self.btn_callback, 10)
 
@@ -50,16 +50,16 @@ class ServoControl(Node):
             return max
         return n
 
-    def pad_callback(self, msg):
+    def axes_callback(self, msg):
         temp = self.servo.angle
 
-        if (msg.axes[self.left_btn] == 1):
+        if (msg.axes[self.left_btn] <= 0.5):
             if self.reverse:
                 temp -= ServoControl.SPEED
             else:
                 temp += ServoControl.SPEED
 
-        if (msg.axes[self.left_btn] == -1):
+        if (msg.axes[self.left_btn] <= -0.5):
             if self.reverse:
                 temp += ServoControl.SPEED
             else:
@@ -68,7 +68,7 @@ class ServoControl(Node):
         temp = self.clamp(temp, ServoControl.MIN_ANGLE, ServoControl.MAX_ANGLE)
         self.servo.angle = temp
         self.get_logger().info(f'Angle: {self.servo.angle}')
-        self.get_logger().info(f'Pad: {msg.axes[self.left_btn], msg.axes[self.right_btn]}')
+        self.get_logger().info(f'Axes: {msg.axes[self.left_btn]}')
 
     def btn_callback(self, msg):
         temp = self.servo.angle
