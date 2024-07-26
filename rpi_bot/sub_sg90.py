@@ -18,11 +18,11 @@ class ServoControl(Node):
             namespace='',
             parameters=[
                 ('pwm_channel', rclpy.Parameter.Type.INTEGER),
-                ('left_btn', -1),
-                ('right_btn', -1),
-                ('reverse', False),
-                ('axes', False),
-                ('axes_btn', -1)
+                ('left_btn', rclpy.Parameter.Type.INTEGER),
+                ('right_btn', rclpy.Parameter.Type.INTEGER),
+                ('reverse', rclpy.Parameter.Type.BOOL),
+                ('axes', rclpy.Parameter.Type.BOOL),
+                ('axes_btn', rclpy.Parameter.Type.INTEGER)
             ],
         )
         i2c = busio.I2C(board.SCL, board.SDA)
