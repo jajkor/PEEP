@@ -27,16 +27,43 @@ def generate_launch_description():
                 'echo_pin': 15
             }]
         ),
-        launch_ros.actions.Node( # HC-S04
+        launch_ros.actions.Node( # HC-S04 Servo
             package='rpi_bot',
             executable='sub_sg90_node',
-            name='sub_sg90',
+            name='sub_hcs04_sg90',
             parameters=[{
                 'pwm_channel': 0,
                 'left_btn': 4,
                 'right_btn': 5,
                 'reverse': True,
                 'axes': False,
+                'axes_btn': -1
             }]
-        )
+        ),
+        launch_ros.actions.Node( # Pan Servo
+            package='rpi_bot',
+            executable='sub_sg90_node',
+            name='sub_pan_sg90',
+            parameters=[{
+                'pwm_channel': 1,
+                'left_btn': -1,
+                'right_btn': -1,
+                'reverse': False,
+                'axes': True,
+                'axes_btn': 6
+            }]
+        ),
+        launch_ros.actions.Node( # Tilt Servo
+            package='rpi_bot',
+            executable='sub_sg90_node',
+            name='sub_tilt_sg90',
+            parameters=[{
+                'pwm_channel': 2,
+                'left_btn': -1,
+                'right_btn': -1,
+                'reverse': False,
+                'axes': True,
+                'axes_btn': 7
+            }]
+        ),
     ])
