@@ -12,9 +12,7 @@ class ServoControl(Node):
     SPEED = 10
 
     def __init__(self):
-        super().__init__('sg90_subscriber',
-                     allow_undeclared_parameters=True,
-                     automatically_declare_parameters_from_overrides=True)
+        super().__init__('sg90_subscriber')
 
         self.declare_parameters(
             namespace='',
@@ -37,7 +35,7 @@ class ServoControl(Node):
         self.right_btn = self.get_parameter('right_btn').get_parameter_value().integer_value
         self.reverse = self.get_parameter('reverse').get_parameter_value().bool_value
         self.axes = self.get_parameter('axes').get_parameter_value().bool_value
-        self.axes_btn = self.get_parameter('axes_btn').get_parameter_value().bool_value
+        self.axes_btn = self.get_parameter('axes_btn').get_parameter_value().integer_value
         self.servo.angle = 90
         
         if self.axes:
