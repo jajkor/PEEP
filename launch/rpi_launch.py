@@ -40,7 +40,7 @@ def generate_launch_description():
                 'axes_btn': -1
             }]
         ),
-        launch_ros.actions.Node( # Camera Pan Servo
+        launch_ros.actions.Node( # Camera Pan Servo (D-Pad = 6, Joy = 3)
             package='rpi_bot',
             executable='sub_sg90_node',
             name='sub_pan_sg90',
@@ -50,10 +50,10 @@ def generate_launch_description():
                 'right_btn': -1,
                 'reverse': False,
                 'axes': True,
-                'axes_btn': 6
+                'axes_btn': 3
             }]
         ),
-        launch_ros.actions.Node( # Camera Tilt Servo
+        launch_ros.actions.Node( # Camera Tilt Servo (D-Pad = 7, Joy = 4)
             package='rpi_bot',
             executable='sub_sg90_node',
             name='sub_tilt_sg90',
@@ -63,7 +63,7 @@ def generate_launch_description():
                 'right_btn': -1,
                 'reverse': False,
                 'axes': True,
-                'axes_btn': 7
+                'axes_btn': 4
             }]
         ),
     ])
