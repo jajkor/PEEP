@@ -53,13 +53,13 @@ class ServoControl(Node):
     def pad_callback(self, msg):
         temp = self.servo.angle
 
-        if (msg.axes[self.left_btn] == 1) and (msg.axes[self.right_btn] == 0):
+        if (msg.axes[self.left_btn] == 1):
             if self.reverse:
                 temp -= ServoControl.SPEED
             else:
                 temp += ServoControl.SPEED
 
-        if (msg.axes[self.left_btn] == 0) and (msg.axes[self.right_btn] == 1):
+        if (msg.axes[self.left_btn] == -1):
             if self.reverse:
                 temp += ServoControl.SPEED
             else:
