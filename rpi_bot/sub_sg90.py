@@ -12,7 +12,9 @@ class ServoControl(Node):
     SPEED = 10
 
     def __init__(self):
-        super().__init__('sg90_subscriber')
+        super().__init__('sg90_subscriber',
+                     allow_undeclared_parameters=True,
+                     automatically_declare_parameters_from_overrides=True)
 
         self.declare_parameters(
             namespace='',
