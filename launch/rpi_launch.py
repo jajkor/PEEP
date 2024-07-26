@@ -61,7 +61,7 @@ def generate_launch_description():
                 'pwm_channel': 2,
                 'left_btn': -1,
                 'right_btn': -1,
-                'reverse': False,
+                'reverse': True,
                 'axes': True,
                 'axes_btn': 4
             }]
