@@ -66,4 +66,16 @@ def generate_launch_description():
                 'axes_btn': 4
             }]
         ),
+        launch_ros.actions.Node(
+            package='v4l2_camera',
+            executable='v4l2_camera_node',
+            name='camera',
+            output='screen',
+            parameters=[{
+                'video_device': '/dev/video0',
+                'image_size': [640, 480],
+                'pixel_format': 'YUYV',
+                'camera_frame_id': 'camera_frame'
+            }]
+        ),
     ])
