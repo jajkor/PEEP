@@ -67,15 +67,16 @@ def generate_launch_description():
             }]
         ),
         launch_ros.actions.Node(
-            package='v4l2_camera',
-            executable='v4l2_camera_node',
-            name='camera',
+            package='usb_cam',
+            executable='usb_cam_node_exe',
+            name='usb_cam',
             output='screen',
             parameters=[{
                 'video_device': '/dev/video0',
-                'image_size': [640, 480],
-                'pixel_format': 'MJPG',
-                'camera_frame_id': 'camera_frame'
-            }]
+                'image_width': 640,
+                'image_height': 480,
+                'pixel_format': 'yuyv',
+                'camera_frame_id': 'camera_frame',
+            }],
         ),
     ])
