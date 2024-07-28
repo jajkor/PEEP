@@ -88,10 +88,10 @@ class ServoControl(Node):
             else:
                 temp -= ServoControl.SPEED
 
-        temp = self.clamp(temp, ServoControl.MIN_ANGLE, ServoControl.MAX_ANGLE)
-        self.servo.angle = temp
-
-        self.get_logger().info(f'Angle: {self.servo.angle}')
+        if temp != self.servo.angle:
+            temp = self.clamp(temp, ServoControl.MIN_ANGLE, ServoControl.MAX_ANGLE)
+            self.servo.angle = temp
+            self.get_logger().info(f'Angle: {self.servo.angle}')
 
     def destroy(self):
         self.pca.deinit()

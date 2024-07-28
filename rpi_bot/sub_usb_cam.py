@@ -1,45 +1,27 @@
 import rclpy
-from rclpy.node import Node 
+from rclpy.node import Node
 from sensor_msgs.msg import Image
 from cv_bridge import CvBridge
-import cv2 
-    
-class ObjectDetection(Node):
+import cv2
+
+class ObjectDetectionNode(Node):
     def __init__(self):
-        super().__init__('object_detection')
+        super().__init__('object_detection_node')
+        self.subscription = self.create_subscription(Image, '/image_raw', self.listener_callback, 10)
+        self.bridge = CvBridge()
 
-        self.publisher_ = self.create_publisher(Image, 'video_output' , 10)
-        self.timer = self.create_timer(0.1, self.timer_callback)
-
-        self.cap = cv2.VideoCapture(0)
-        self.br = CvBridge()
-
-        self.subscription = self.create_subscription(Image, 'image_raw', self.img_callback, 10)
-        self.subscription 
-        self.br = CvBridge()
-
-
-    def timer_callback(self):
-        ret, frame = self.cap.read()     
-        if ret == True:
-            self.publisher_.publish(self.br.cv2_to_imgmsg(frame))
-        self.get_logger().info('Publishing video frame')
-
-
-    def img_callback(self, data):
-        self.get_logger().info('Receiving video frame')
-        current_frame = self.br.imgmsg_to_cv2(data)
-        cv2.imshow("camera", current_frame)   
+    def listener_callback(self, msg):
+        cv_image = self.bridge.imgmsg_to_cv2(msg, 'bgr8')
+        # Perform object detection here
+        # Example: cv2.imshow("Image Window", cv_image)
         cv2.waitKey(1)
-
 
 def main(args=None):
     rclpy.init(args=args)
-    simple_pub_sub = ObjectDetection()
-    rclpy.spin(simple_pub_sub)
-    simple_pub_sub.destroy_node()
+    node = ObjectDetectionNode()
+    rclpy.spin(node)
+    node.destroy_node()
     rclpy.shutdown()
 
-  
 if __name__ == '__main__':
-  main()
+    main()
