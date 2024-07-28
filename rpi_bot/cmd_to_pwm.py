@@ -50,6 +50,8 @@ class Velocity_Subscriber(Node):
 
         if (left_temp != self.left_vel) and (right_temp != self.right_vel):
             self.get_logger().info(f'Setting motors: left_vel={left_temp}, right_vel={right_temp}')
+            self.left_vel = left_temp
+            self.right_vel = right_temp
             self.motors.setMotors(left_temp, right_temp)
 
 
