@@ -38,4 +38,9 @@ def generate_launch_description():
             executable='sub_hcs04_node',
             name='sub_hcs04',
         ),
+        launch_ros.actions.Node(
+            package='rpi_bot',
+            executable='sub_usb_cam_node',
+            name='sub_usb_cam',
+        ),
     ])
