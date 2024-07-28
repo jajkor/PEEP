@@ -91,30 +91,3 @@ class RPi_HCS04(object):
 		if distance < 2 or distance > 400:
 			return -1
 		return distance
-
-class RPi_SG90(object):
-
-	def __init__(self, in1):
-		self.IN1 = in1
-
-		self.p = pigpio.pi()
-		self.p.set_mode(self.IN1, pigpio.OUTPUT)
-
-		self.p.set_PWM_frequency(self.IN1, 50)
-
-		#GPIO.setmode(GPIO.BCM)
-		#GPIO.setwarnings(False)
-
-		#GPIO.setup(self.IN1, GPIO.OUT)
-		#self.p = GPIO.PWM(self.IN1, 50)
-		#self.p.start(0)
-
-	def __del__(self):
-		self.p.stop()
-
-	def angle_to_duty_cyle(self, angle):
-		return (2.0 + (angle / 18.0))
-
-	def set_angle(self, angle):
-		self.p.set_servo_pulsewidth(self.IN1, angle)
-	
