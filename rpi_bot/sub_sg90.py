@@ -67,11 +67,11 @@ class ServoControl(Node):
                 temp += ServoControl.SPEED * -msg.axes[self.axes_btn]
             else:
                 temp -= ServoControl.SPEED * -msg.axes[self.axes_btn]
-
-        temp = self.clamp(temp, ServoControl.MIN_ANGLE, ServoControl.MAX_ANGLE)
-        self.servo.angle = temp
-
-        self.get_logger().info(f'Angle: {self.servo.angle}')
+        
+        if temp != self.servo.angle:
+            temp = self.clamp(temp, ServoControl.MIN_ANGLE, ServoControl.MAX_ANGLE)
+            self.servo.angle = temp
+            self.get_logger().info(f'Angle: {self.servo.angle}')
 
     def btn_callback(self, msg):
         temp = self.servo.angle
