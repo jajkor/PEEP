@@ -32,7 +32,7 @@ class HCS04_Subscriber(Node):
         left_temp = self.speed * msg.linear.x - self.differential * msg.angular.z
         right_temp = self.speed * msg.linear.x + self.differential * msg.angular.z
         
-        self.get_logger().info(f'Setting Motors: left_vel={left_temp}, right_vel={right_temp}')
+        #self.get_logger().info(f'Setting Motors: left_vel={left_temp}, right_vel={right_temp}')
         #self.velocity_publisher.publish()
 
         #if (left_temp != self.left_vel) and (right_temp != self.right_vel):
