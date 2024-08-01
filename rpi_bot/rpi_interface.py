@@ -84,6 +84,7 @@ class RPi_HCS04(object):
 			pulseStop = time.time()
 
 		pulseDuration = pulseStop - pulseStart
+		print(pulseDuration)
 
 		distance = pulseDuration * 17150
 		distance = round(distance, 2)
