@@ -22,7 +22,7 @@ class HCS04_Publisher(Node):
         )
 
         self.publisher = self.create_publisher(Range, 'range', 10)
-        self.timer = self.create_timer(0.1, self.timer_callback)
+        self.timer = self.create_timer(0.5, self.timer_callback)
         self.get_logger().info('HC-S04 Publisher Initialized')
 
     def timer_callback(self):
