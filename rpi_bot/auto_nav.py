@@ -19,11 +19,11 @@ class HCS04_Subscriber(Node):
         
         self.get_logger().info('Auto Nav Initialized')
 
-    def range_listener(self, msg):
-        distance = msg * 17150
+    def range_listener(self, range_msg):
+        distance = range_msg.range * 17150
         distance = round(distance, 2)
 
-        self.get_logger().info(f'Received Pulse Duration: {msg.range}, Calculated Distance: {distance} cm')
+        self.get_logger().info(f'Received Pulse Duration: {range_msg.range}, Calculated Distance: {distance} cm')
 
     def calculate_wheel_velocity_callback(self, msg):
         #left_temp = self.left_vel
