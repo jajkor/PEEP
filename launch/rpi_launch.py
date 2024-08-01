@@ -21,7 +21,7 @@ def generate_launch_description():
         launch_ros.actions.Node(
             package='rpi_bot',
             executable='hcs04_driver_node',
-            name='hcs04_driver',
+            name='hcs04_front',
             parameters=[{
                 'trig_pin': 15,
                 'echo_pin': 14
