@@ -6,7 +6,7 @@ from rpi_bot.rpi_interface import RPi_Motors
 class Velocity_Subscriber(Node):
 
     def __init__(self):
-        super().__init__('velocity_subscriber')
+        super().__init__('pwm_driver')
 
         self.declare_parameters(
             namespace='',
