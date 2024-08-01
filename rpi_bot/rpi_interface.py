@@ -86,7 +86,7 @@ class RPi_HCS04(object):
 		pulseDuration = pulseStop - pulseStart
 
 		distance = pulseDuration * 17150
-		#distance = round(distance, 2)
+		distance = round(distance, 2)
 
 		#if distance < 2 or distance > 400:
 		#	return -1
