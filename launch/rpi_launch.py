@@ -66,6 +66,7 @@ def generate_launch_description():
                 'axes_btn': 4
             }]
         ),
+        '''
         launch_ros.actions.Node(
             package='usb_cam',
             executable='usb_cam_node_exe',
@@ -79,4 +80,5 @@ def generate_launch_description():
                 'camera_frame_id': 'camera_frame',
             }],
         ),
+        '''
     ])
