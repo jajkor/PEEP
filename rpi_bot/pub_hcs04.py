@@ -30,9 +30,9 @@ class HCS04_Publisher(Node):
         range_msg.header.stamp = self.get_clock().now().to_msg()
         range_msg.radiation_type = Range.ULTRASOUND
         range_msg.field_of_view = 0.05  # Assuming a field of view of 5 degrees
-        #range_msg.min_range = 0.02  # 2 cm
-        #range_msg.max_range = 4.0  # 4 meters
-        range_msg.range = float(self.hcs04.measure_distance())
+        range_msg.min_range = 0.02  # 2 cm
+        range_msg.max_range = 4.0  # 4 meters
+        range_msg.range = self.hcs04.measure_distance()
 
         self.publisher.publish(range_msg)
         self.get_logger().info(f'Published Distance: {range_msg.range} cm')
