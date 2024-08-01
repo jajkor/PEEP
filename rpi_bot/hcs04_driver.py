@@ -6,7 +6,7 @@ from rpi_bot.rpi_interface import RPi_HCS04
 class HCS04_Publisher(Node):
 
     def __init__(self):
-        super().__init__('hcs04_publisher')
+        super().__init__('hcs04_driver')
 
         self.declare_parameters(
             namespace='',
@@ -23,7 +23,8 @@ class HCS04_Publisher(Node):
 
         self.publisher = self.create_publisher(Range, 'range', 10)
         self.timer = self.create_timer(0.5, self.timer_callback)
-        self.get_logger().info('HC-S04 Publisher Initialized')
+
+        self.get_logger().info('HC-S04 Driver Initialized')
 
     def timer_callback(self):
         range_msg = Range()
@@ -32,13 +33,12 @@ class HCS04_Publisher(Node):
         range_msg.field_of_view = 0.26179938779915  # Assuming a field of view of 15 degrees
         range_msg.min_range = 2 
         range_msg.max_range = 1200
-        range_msg.range = float(self.hcs04.measure_distance())
-
+        range_msg.range = float(self.hcs04.measure_pulse_duration())
+        
         self.publisher.publish(range_msg)
-        self.get_logger().info(f'Published Distance: {range_msg.range} cm')
 
     def destroy_node(self):
-        self.get_logger().info('HC-S04 Subscriber Destroyed')
+        self.get_logger().info('HC-S04 Driver Destroyed')
         self.hcs04.__del__()
 
 def main(args=None):

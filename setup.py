@@ -25,7 +25,7 @@ setup(
         'console_scripts': [
             'pwm_driver_node = rpi_bot.pwm_driver:main',
             'auto_nav_node = rpi_bot.auto_nav:main',
-            'pub_hcs04_node = rpi_bot.pub_hcs04:main',
+            'hcs04_driver_node = rpi_bot.hcs04_driver:main',
             'sub_sg90_node = rpi_bot.sub_sg90:main',
             'sub_usb_cam_node = rpi_bot.sub_usb_cam:main',
         ],

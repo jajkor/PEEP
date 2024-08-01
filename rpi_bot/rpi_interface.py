@@ -68,36 +68,18 @@ class RPi_HCS04(object):
 	def __del__(self):
 		GPIO.cleanup([self.TRIG, self.ECHO])
 
-	# In cm?
-	def measure_distance(self):
-		GPIO.output(self.TRIG, True)
+	def measure_pulse_duration(self):
+		GPIO.output(self.TRIG, GPIO.HIGH)
 		time.sleep(0.00001) # Setting TRIG high for 10 microseconds sends out ultrasonic sound pulse
-		GPIO.output(self.TRIG, False)
+		GPIO.output(self.TRIG, GPIO.LOW)
 
 		pulseStart = time.time()
 		pulseStop = time.time()
-		timeoutTime = time.time()
 		
 		while GPIO.input(self.ECHO) == 0:
 			pulseStart = time.time()
 
-			if pulseStart - pulseStop > timeoutTime:
-				return -1
-
 		while GPIO.input(self.ECHO) == 1:
 			pulseStop = time.time()
 
-			if pulseStart - pulseStop > timeoutTime:
-				return -1
-
-		if pulseStart != 0 and pulseStop != 0:
-			pulseDuration = pulseStop - pulseStart
-
-			distance = pulseDuration * 17150
-
-			if distance >= 0:
-				return distance
-			else :
-				return -1		
-		else :
-			return -1
+		return pulseStop - pulseStart

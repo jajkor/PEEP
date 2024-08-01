@@ -37,22 +37,12 @@ class Velocity_Subscriber(Node):
         self.right_vel = 0
         self.left_vel = 0
 
-        self.subscription = self.create_subscription(Twist, 'cmd_vel', self.calculate_wheel_velocity_callback, 10)
+        self.subscription = self.create_subscription(Twist, 'cmd_vel', self.velocity_listener, 10)
         self.subscription  # prevent unused variable warning
         self.get_logger().info('Velocity Subscriber Initialized')
 
-    def calculate_wheel_velocity_callback(self, msg):
-        left_temp = self.left_vel
-        right_temp = self.right_vel
-
-        left_temp = self.speed * msg.linear.x - self.differential * msg.angular.z
-        right_temp = self.speed * msg.linear.x + self.differential * msg.angular.z
-
-        if (left_temp != self.left_vel) and (right_temp != self.right_vel):
-            self.get_logger().info(f'Setting motors: left_vel={left_temp}, right_vel={right_temp}')
-            self.left_vel = left_temp
-            self.right_vel = right_temp
-            self.motors.setMotors(left_temp, right_temp)
+    def velocity_listener(self, msg):
+        self.motors.setMotors(msg, msg)
 
 
 def main(args=None):
