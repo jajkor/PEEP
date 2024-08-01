@@ -1,6 +1,5 @@
 import rclpy
 from rclpy.node import Node
-from geometry_msgs.msg import Twist
 from rpi_bot.rpi_interface import RPi_Motors
 from rpi_bot.msg import Velocity
 

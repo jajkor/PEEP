@@ -1,5 +1,4 @@
 import RPi.GPIO as GPIO
-import pigpio
 import time
 
 class RPi_Motors(object):
@@ -51,7 +50,6 @@ class RPi_Motors(object):
 			GPIO.output(self.IN1, GPIO.LOW)
 			GPIO.output(self.IN2, GPIO.HIGH)
 			self.PWMA.ChangeDutyCycle(0 - right_vel)
-
 
 class RPi_HCS04(object):
 
