@@ -1,7 +1,9 @@
 import rclpy
 from rclpy.node import Node
 from sensor_msgs.msg import Range
-from geometry_msgs.msg import Twist
+from rpi_bot.msg import Velocity
+
+
 class HCS04_Subscriber(Node):
 
     def __init__(self):
@@ -11,11 +13,10 @@ class HCS04_Subscriber(Node):
         self.differential = 75
 
         self.range_listener = self.create_subscription(Range, 'range', self.range_listener, 10)
-        
-        self.twist_listener = self.create_subscription(Twist, 'cmd_vel', self.calculate_wheel_velocity_callback, 10)
+        self.velocity_publisher = self.create_publisher(Velocity, 'motor_vel', self.calculate_wheel_velocity_callback, 10)
 
         self.range_listener  # prevent unused variable warnings
-        self.twist_listener  # prevent unused variable warnings
+        self.velocity_publisher  # prevent unused variable warnings
         
         self.get_logger().info('Auto Nav Initialized')
 
@@ -23,7 +24,7 @@ class HCS04_Subscriber(Node):
         distance = range_msg.range * 17150
         distance = round(distance, 2)
 
-        self.get_logger().info(f'Received Pulse Duration: {range_msg.range}, Calculated Distance: {distance} cm')
+        self.get_logger().info(f'Received Pulse: {range_msg.range}, Calculated Distance: {distance} cm')
 
     def calculate_wheel_velocity_callback(self, msg):
         #left_temp = self.left_vel
@@ -31,6 +32,14 @@ class HCS04_Subscriber(Node):
 
         left_temp = self.speed * msg.linear.x - self.differential * msg.angular.z
         right_temp = self.speed * msg.linear.x + self.differential * msg.angular.z
+
+        msg.left_vel = left_temp
+        msg.right_vel = right_temp
+
+        if self.distance >= 50:
+            self.velocity_publisher.publish(msg)
+            #self.get_logger().info(f'Publishing Velocity: left={left_temp}, right={right_temp}')
+
         
         #self.get_logger().info(f'Setting Motors: left_vel={left_temp}, right_vel={right_temp}')
         #self.velocity_publisher.publish()

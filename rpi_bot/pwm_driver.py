@@ -2,8 +2,9 @@ import rclpy
 from rclpy.node import Node
 from geometry_msgs.msg import Twist
 from rpi_bot.rpi_interface import RPi_Motors
+from rpi_bot.msg import Velocity
 
-class Velocity_Subscriber(Node):
+class PWM_Driver(Node):
 
     def __init__(self):
         super().__init__('pwm_driver')
@@ -29,19 +30,18 @@ class Velocity_Subscriber(Node):
             self.get_parameter('enb_pin').get_parameter_value().integer_value
         )
 
-        self.subscription = self.create_subscription(Twist, 'cmd_vel', self.velocity_listener, 10)
+        self.subscription = self.create_subscription(Velocity, 'motor_vel', self.velocity_listener, 10)
         self.subscription  # prevent unused variable warning
         self.get_logger().info('Velocity Subscriber Initialized')
 
     def velocity_listener(self, msg):
-        #self.motors.setMotors(msg, msg)
-        print()
-
+        self.motors.setMotors(msg.left_vel, msg.right_vel)
+        self.get_logger().info(f'Publishing Velocity: left={msg.left_vel}, right={msg.right_vel}')
 
 def main(args=None):
     rclpy.init(args=args)
 
-    velocity_subscriber = Velocity_Subscriber()
+    velocity_subscriber = PWM_Driver()
     rclpy.spin(velocity_subscriber)
 
     velocity_subscriber.destroy_node()

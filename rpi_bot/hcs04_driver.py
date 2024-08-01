@@ -3,7 +3,7 @@ from rclpy.node import Node
 from sensor_msgs.msg import Range
 from rpi_bot.rpi_interface import RPi_HCS04
 
-class HCS04_Publisher(Node):
+class HCS04_Driver(Node):
 
     def __init__(self):
         super().__init__('hcs04_driver')
@@ -30,9 +30,6 @@ class HCS04_Publisher(Node):
         range_msg = Range()
         range_msg.header.stamp = self.get_clock().now().to_msg()
         range_msg.radiation_type = Range.ULTRASOUND
-        #range_msg.field_of_view = 0.05
-        #range_msg.min_range = 0 
-        #range_msg.max_range = 1
         range_msg.range = float(self.hcs04.measure_pulse_duration())
         
         self.publisher.publish(range_msg)
@@ -44,7 +41,7 @@ class HCS04_Publisher(Node):
 def main(args=None):
     rclpy.init(args=args)
 
-    hcs04_publisher = HCS04_Publisher()
+    hcs04_publisher = HCS04_Driver()
     rclpy.spin(hcs04_publisher)
 
     hcs04_publisher.destroy_node()
