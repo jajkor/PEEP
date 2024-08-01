@@ -23,8 +23,8 @@ def generate_launch_description():
             executable='pub_hcs04_node',
             name='pub_hcs04',
             parameters=[{
-                'trig_pin': 14,
-                'echo_pin': 15
+                'trig_pin': 15,
+                'echo_pin': 14
             }]
         ),
         launch_ros.actions.Node( # HC-S04 Servo

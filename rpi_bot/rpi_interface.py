@@ -76,19 +76,29 @@ class RPi_HCS04(object):
 
 		pulseStart = time.time()
 		pulseStop = time.time()
+		timeoutTime = time.time()
 		
 		while GPIO.input(self.ECHO) == 0:
 			pulseStart = time.time()
 
+			if pulseStart - pulseStop > timeoutTime:
+				return -1
+
 		while GPIO.input(self.ECHO) == 1:
 			pulseStop = time.time()
 
-		pulseDuration = pulseStop - pulseStart
-		print(pulseDuration)
+			if pulseStart - pulseStop > timeoutTime:
+				return -1
 
-		distance = pulseDuration * 17150
-		distance = round(distance, 2)
 
-		#if distance < 2 or distance > 400:
-		#	return -1
-		return distance
+		if pulseStart != 0 and pulseStop != 0:
+			pulseDuration = pulseStop - pulseStart
+
+			distance = (pulseDuration * 34300) / 2
+
+			if distance >= 0:
+				return distance
+			else :
+				return -1		
+		else :
+			return -1
