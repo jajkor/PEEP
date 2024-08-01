@@ -30,9 +30,9 @@ class HCS04_Publisher(Node):
         range_msg = Range()
         range_msg.header.stamp = self.get_clock().now().to_msg()
         range_msg.radiation_type = Range.ULTRASOUND
-        range_msg.field_of_view = 0.05 # Assuming a field of view of 15 degrees
-        range_msg.min_range = 2 
-        range_msg.max_range = 1200
+        range_msg.field_of_view = 0.05
+        range_msg.min_range = 0 
+        range_msg.max_range = 1
         range_msg.range = float(self.hcs04.measure_pulse_duration())
         
         self.publisher.publish(range_msg)
