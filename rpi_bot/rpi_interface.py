@@ -81,6 +81,8 @@ class RPi_HCS04(object):
 		while GPIO.input(self.ECHO) == 0:
 			pulseStart = time.time()
 
+			if pulseStart - pulseStop > timeoutTime:
+				return -1
 
 		while GPIO.input(self.ECHO) == 1:
 			pulseStop = time.time()

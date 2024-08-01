@@ -35,7 +35,7 @@ def generate_launch_description():
         ),
         launch_ros.actions.Node(
             package='rpi_bot',
-            executable='sub_hcs04_node',
-            name='sub_hcs04',
+            executable='auto_nav_node',
+            name='auto_nav',
         ),
     ])

@@ -23,9 +23,9 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'cmd_to_pwm_node = rpi_bot.cmd_to_pwm:main',
+            'pwm_driver_node = rpi_bot.pwm_driver:main',
+            'auto_nav_node = rpi_bot.auto_nav:main',
             'pub_hcs04_node = rpi_bot.pub_hcs04:main',
-            'sub_hcs04_node = rpi_bot.sub_hcs04:main',
             'sub_sg90_node = rpi_bot.sub_sg90:main',
             'sub_usb_cam_node = rpi_bot.sub_usb_cam:main',
         ],

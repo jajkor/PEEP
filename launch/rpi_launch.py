@@ -5,8 +5,8 @@ def generate_launch_description():
     return launch.LaunchDescription([
         launch_ros.actions.Node(
             package='rpi_bot',
-            executable='cmd_to_pwm_node',
-            name='cmd_to_pwm',
+            executable='pwm_driver_node',
+            name='pwm_driver',
             parameters=[{
                 'ena_pin': 6,
                 'in1_pin': 12,
