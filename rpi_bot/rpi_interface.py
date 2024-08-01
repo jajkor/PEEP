@@ -90,7 +90,6 @@ class RPi_HCS04(object):
 			if pulseStart - pulseStop > timeoutTime:
 				return -1
 
-
 		if pulseStart != 0 and pulseStop != 0:
 			pulseDuration = pulseStop - pulseStart
 
