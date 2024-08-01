@@ -32,7 +32,7 @@ class HCS04_Publisher(Node):
         range_msg.field_of_view = 0.26179938779915  # Assuming a field of view of 15 degrees
         range_msg.min_range = 3 
         range_msg.max_range = 400
-        range_msg.range = self.hcs04.measure_distance()
+        range_msg.range = float(self.hcs04.measure_distance())
 
         self.publisher.publish(range_msg)
         self.get_logger().info(f'Published Distance: {range_msg.range} cm')
