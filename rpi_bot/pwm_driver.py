@@ -42,7 +42,8 @@ class Velocity_Subscriber(Node):
         self.get_logger().info('Velocity Subscriber Initialized')
 
     def velocity_listener(self, msg):
-        self.motors.setMotors(msg, msg)
+        #self.motors.setMotors(msg, msg)
+        print()
 
 
 def main(args=None):
