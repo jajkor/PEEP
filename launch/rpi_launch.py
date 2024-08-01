@@ -13,9 +13,7 @@ def generate_launch_description():
                 'in2_pin': 13,
                 'in3_pin': 20,
                 'in4_pin': 21,
-                'enb_pin': 26,
-                'speed': 75,
-                'differential': 75,
+                'enb_pin': 26
             }]
         ),
         launch_ros.actions.Node(

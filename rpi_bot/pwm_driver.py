@@ -17,8 +17,6 @@ class Velocity_Subscriber(Node):
                 ('in3_pin', rclpy.Parameter.Type.INTEGER),
                 ('in4_pin', rclpy.Parameter.Type.INTEGER),
                 ('enb_pin', rclpy.Parameter.Type.INTEGER),
-                ('speed', 50),
-                ('differential', 50),
             ],
         )
 
@@ -30,12 +28,6 @@ class Velocity_Subscriber(Node):
             self.get_parameter('in4_pin').get_parameter_value().integer_value,
             self.get_parameter('enb_pin').get_parameter_value().integer_value
         )
-
-        self.speed = self.get_parameter('speed').get_parameter_value().integer_value
-        self.differential = self.get_parameter('differential').get_parameter_value().integer_value
-
-        self.right_vel = 0
-        self.left_vel = 0
 
         self.subscription = self.create_subscription(Twist, 'cmd_vel', self.velocity_listener, 10)
         self.subscription  # prevent unused variable warning
