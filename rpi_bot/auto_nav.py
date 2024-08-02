@@ -27,9 +27,8 @@ class HCS04_Subscriber(Node):
         self.get_logger().info(f'Received Pulse: {range_msg.range}, Calculated Distance: {self.distance} cm')
 
     def calculate_wheel_velocity(self):
-        #left_temp = self.left_vel
-        #right_temp = self.right_vel
         vel_msg = Velocity()
+        
         left_temp = self.speed * 0.5 - self.differential * 0.5
         right_temp = self.speed * 0.5 + self.differential * 0.5
 
@@ -37,18 +36,6 @@ class HCS04_Subscriber(Node):
         vel_msg.right_vel = right_temp
 
         self.velocity_publisher.publish(vel_msg)
-        self.get_logger().info(f'Publishing Velocity: left_vel={vel_msg.left_vel}, right_vel={vel_msg.right_vel}')
-            #self.get_logger().info(f'Publishing Velocity: left={left_temp}, right={right_temp}')
-
-        
-        #self.get_logger().info(f'Setting Motors: left_vel={left_temp}, right_vel={right_temp}')
-        #self.velocity_publisher.publish()
-
-        #if (left_temp != self.left_vel) and (right_temp != self.right_vel):
-            #self.get_logger().info(f'Setting motors: left_vel={left_temp}, right_vel={right_temp}')
-            #self.left_vel = left_temp
-            #self.right_vel = right_temp
-            #self.velocity_publisher.publish()
 
 def main(args=None):
     rclpy.init(args=args)
