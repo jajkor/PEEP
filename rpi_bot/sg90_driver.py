@@ -3,7 +3,7 @@ from rclpy.node import Node
 from rclpy.action import ActionServer
 from sensor_msgs.msg import Joy
 from rpi_bot.rpi_interface import RPi_SG90
-from rpi_bot_interfaces.action import Full_Scan
+from rpi_bot_interfaces.action import FullScan
 import time
 
 class ServoControl(Node):
@@ -37,7 +37,7 @@ class ServoControl(Node):
             self.get_parameter('pwm_channel').get_parameter_value().integer_value
         )
 
-        self._action_server = ActionServer(self, Full_Scan, 'full_scan', self.execute_callback)
+        self._action_server = ActionServer(self, FullScan, 'full_scan', self.execute_callback)
         
         if self.axes:
             self.subscription = self.create_subscription(Joy, 'joy', self.axes_callback, 10)
@@ -50,7 +50,7 @@ class ServoControl(Node):
     def execute_callback(self, goal_handle):
         self.get_logger().info('Executing goal...')
 
-        feedback_msg = Full_Scan.Feedback()
+        feedback_msg = FullScan.Feedback()
         feedback_msg.partial_sequence = [0, 1]
 
         for i in range(1, goal_handle.request.order):
@@ -62,7 +62,7 @@ class ServoControl(Node):
 
         goal_handle.succeed()
 
-        result = Full_Scan.Result()
+        result = FullScan.Result()
         result.sequence = feedback_msg.partial_sequence
         return result
 

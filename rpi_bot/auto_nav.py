@@ -3,7 +3,7 @@ from rclpy.node import Node
 from rclpy.action import ActionClient
 from sensor_msgs.msg import Range
 from rpi_bot_interfaces.msg import Velocity
-from rpi_bot_interfaces.action import Full_Scan
+from rpi_bot_interfaces.action import FullScan
 
 class Auto_Nav(Node):
 
@@ -20,7 +20,7 @@ class Auto_Nav(Node):
         self.velocity_publisher = self.create_publisher(Velocity, 'motor_vel', 10)
         self.timer = self.create_timer(0.1, self.calculate_motor_velocity)
 
-        self._action_client = ActionClient(self, Full_Scan, 'full_scan')
+        self._action_client = ActionClient(self, FullScan, 'full_scan')
 
         self.range_listener  # prevent unused variable warnings
         self.velocity_publisher  # prevent unused variable warnings
@@ -51,7 +51,7 @@ class Auto_Nav(Node):
 
 
     def send_goal(self, order):
-        goal_msg = Full_Scan.Goal()
+        goal_msg = FullScan.Goal()
         goal_msg.order = order
 
         self._action_client.wait_for_server()
