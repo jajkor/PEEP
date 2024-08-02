@@ -52,7 +52,7 @@ class ServoControl(Node):
         self.get_logger().info('Executing goal...')
 
         feedback_msg = FullScan.Feedback()
-        feedback_msg.list_partial = [0, 1]
+        feedback_msg.list_partial = [0.0, 1.0]
 
         for i in range(1, goal_handle.request.start_angle):
             feedback_msg.list_partial.append(
