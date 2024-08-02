@@ -31,7 +31,7 @@ class PWM_Driver(Node):
 
         self.subscription = self.create_subscription(Velocity, 'motor_vel', self.velocity_listener, 10)
         self.subscription  # prevent unused variable warning
-        self.get_logger().info('Velocity Subscriber Initialized')
+        self.get_logger().info('PWM Driver Initialized')
 
     def velocity_listener(self, msg):
         self.motors.setMotors(msg.left_vel, msg.right_vel)

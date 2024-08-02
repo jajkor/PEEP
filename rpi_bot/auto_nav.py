@@ -25,7 +25,7 @@ class HCS04_Subscriber(Node):
 
         self.get_logger().info(f'Received Pulse: {range_msg.range}, Calculated Distance: {self.distance} cm')
 
-    def calculate_wheel_velocity_callback(self):
+    def calculate_wheel_velocity(self):
         #left_temp = self.left_vel
         #right_temp = self.right_vel
         msg = Velocity()
@@ -35,8 +35,7 @@ class HCS04_Subscriber(Node):
         msg.left_vel = left_temp
         msg.right_vel = right_temp
 
-        if self.distance >= 50:
-            self.velocity_publisher.publish(msg)
+        self.velocity_publisher.publish(msg)
             #self.get_logger().info(f'Publishing Velocity: left={left_temp}, right={right_temp}')
 
         
