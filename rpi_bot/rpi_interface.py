@@ -96,7 +96,7 @@ class RPi_SG90(object):
 		self.pca = PCA9685(i2c, address = 0x40)
 		self.pca.frequency = 50
     
-		self.servo = servo.Servo(self.pca.channels[self.PWM_CHANNEL])
+		self.servo = servo.Servo(self.pca.channels[self.PWM_CHANNEL], min_pulse=500, max_pulse=2500)
 		self.set_angle(angle)
 
 	def __del__(self):
