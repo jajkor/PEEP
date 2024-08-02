@@ -46,6 +46,7 @@ class HCS04_Subscriber(Node):
         vel_msg.right_vel = right_temp
 
         self.velocity_publisher.publish(vel_msg)
+        self.get_logger().info(f'Publishing Velocity: left={vel_msg.left_vel}, right={vel_msg.right_vel}')
 
 def main(args=None):
     rclpy.init(args=args)
