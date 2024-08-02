@@ -51,19 +51,19 @@ class ServoControl(Node):
         self.get_logger().info('Executing goal...')
 
         feedback_msg = FullScan.Feedback()
-        feedback_msg.partial_sequence = [0, 1]
+        feedback_msg.list_partial = [0, 1]
 
-        for i in range(1, goal_handle.request.order):
-            feedback_msg.partial_sequence.append(
-                feedback_msg.partial_sequence[i] + feedback_msg.partial_sequence[i-1])
-            self.get_logger().info('Feedback: {0}'.format(feedback_msg.partial_sequence))
+        for i in range(1, goal_handle.request.start_angle):
+            feedback_msg.list_partial.append(
+                feedback_msg.list_partial[i] + feedback_msg.list_partial[i-1])
+            self.get_logger().info('Feedback: {0}'.format(feedback_msg.list_partial))
             goal_handle.publish_feedback(feedback_msg)
             time.sleep(1)
 
         goal_handle.succeed()
 
         result = FullScan.Result()
-        result.sequence = feedback_msg.partial_sequence
+        result.start_angle = feedback_msg.list_partial
         return result
 
     def clamp(self, angle, min, max):

@@ -50,9 +50,9 @@ class Auto_Nav(Node):
         #self.get_logger().info(f'Publishing Velocity: left={vel_msg.left_vel}, right={vel_msg.right_vel}')
 
 
-    def send_goal(self, order):
+    def send_goal(self, start_angle):
         goal_msg = FullScan.Goal()
-        goal_msg.order = order
+        goal_msg.start_angle = start_angle
 
         self._action_client.wait_for_server()
 
@@ -73,12 +73,12 @@ class Auto_Nav(Node):
 
     def get_result_callback(self, future):
         result = future.result().result
-        self.get_logger().info('Result: {0}'.format(result.sequence))
+        self.get_logger().info('Result: {0}'.format(result.list_full))
         rclpy.shutdown()
 
     def feedback_callback(self, feedback_msg):
         feedback = feedback_msg.feedback
-        self.get_logger().info('Received feedback: {0}'.format(feedback.partial_sequence))
+        self.get_logger().info('Received feedback: {0}'.format(feedback.list_partial))
 
 def main(args=None):
     rclpy.init(args=args)
