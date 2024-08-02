@@ -31,11 +31,7 @@ def generate_launch_description():
             name='sg90_scanner',
             parameters=[{
                 'pwm_channel': 0,
-                'left_btn': 4,
-                'right_btn': 5,
-                'reverse': True,
-                'axes': False,
-                'axes_btn': -1
+                'reversed': True
             }]
         ),
     ])

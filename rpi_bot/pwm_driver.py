@@ -40,7 +40,7 @@ class PWM_Driver(Node):
         if (self.left != vel_msg.left_vel) or (self.right != vel_msg.right_vel):
             self.left = vel_msg.left_vel
             self.right = vel_msg.right_vel
-            self.motors.setMotors(vel_msg.left_vel, vel_msg.right_vel)
+            self.motors.set_motors(vel_msg.left_vel, vel_msg.right_vel)
             self.get_logger().info(f'Setting Velocity: left={vel_msg.left_vel}, right={vel_msg.right_vel}')
 
 def main(args=None):

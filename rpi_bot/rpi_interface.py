@@ -35,7 +35,7 @@ class RPi_Motors(object):
 	def __del__(self):
 		GPIO.cleanup([self.ENA, self.IN1, self.IN2, self.IN3, self.IN4, self.ENB])
 
-	def setMotors(self, left_vel, right_vel):
+	def set_motors(self, left_vel, right_vel):
    		# Left Motor(s)
 		if ((left_vel >= 0) and (left_vel <= 100)):
 			GPIO.output(self.IN3, GPIO.HIGH)
@@ -89,7 +89,7 @@ class RPi_HCS04(object):
 	
 class RPi_SG90(object):
 
-	def __init__(self, pwm_channel):
+	def __init__(self, pwm_channel, angle):
 		self.PWM_CHANNEL = pwm_channel
 
 		i2c = busio.I2C(board.SCL, board.SDA)
@@ -97,6 +97,7 @@ class RPi_SG90(object):
 		self.pca.frequency = 50
     
 		self.servo = servo.Servo(self.pca.channels[self.PWM_CHANNEL])
+		self.set_angle(angle)
 
 	def __del__(self):
 		self.pca.deinit()

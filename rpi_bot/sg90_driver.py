@@ -1,9 +1,10 @@
 import rclpy
 from rclpy.node import Node
 from rclpy.action import ActionServer
-from sensor_msgs.msg import Range
 from rpi_bot.rpi_interface import RPi_SG90
-from rpi_bot_interfaces.action import FullScan
+from std_msgs.msg import Empty
+from std_msgs.msg import Float32
+from rpi_bot_interfaces.action import Scan
 
 class ServoControl(Node):
 
@@ -14,68 +15,64 @@ class ServoControl(Node):
             namespace='',
             parameters=[
                 ('pwm_channel', rclpy.Parameter.Type.INTEGER),
-                ('left_btn', rclpy.Parameter.Type.INTEGER),
-                ('right_btn', rclpy.Parameter.Type.INTEGER),
-                ('reverse', rclpy.Parameter.Type.BOOL),
-                ('axes', rclpy.Parameter.Type.BOOL),
-                ('axes_btn', rclpy.Parameter.Type.INTEGER)
+                ('reversed', rclpy.Parameter.Type.BOOL)
             ],
         )
 
-        self.left_btn = self.get_parameter('left_btn').get_parameter_value().integer_value
-        self.right_btn = self.get_parameter('right_btn').get_parameter_value().integer_value
-        self.reverse = self.get_parameter('reverse').get_parameter_value().bool_value
-        self.axes = self.get_parameter('axes').get_parameter_value().bool_value
-        self.axes_btn = self.get_parameter('axes_btn').get_parameter_value().integer_value
-
         self.sg90 = RPi_SG90(
-            self.get_parameter('pwm_channel').get_parameter_value().integer_value
+            self.get_parameter('pwm_channel').get_parameter_value().integer_value,
+            90
         )
 
-        self.sg90.set_angle(90)
+        self.is_running = True
+        self.reversed = self.get_parameter('reversed').get_parameter_value().bool_value
 
-        self.action_server = ActionServer(self, FullScan, 'full_scan', self.execute_callback)
-        self.range_listener = self.create_subscription(Range, 'range', self.range_listener, 10)
+        self.action_server = ActionServer(self, Scan, 'scan', self.execute_callback)
 
-        self.range_listener
+        self.start_service = self.create_service(Empty, 'start', self.start_callback)
+        self.stop_service = self.create_service(Empty, 'stop', self.stop_callback)
+
         self.get_logger().info('SG90 Subscriber Initialized')
 
-    def range_listener(self, range_msg):
-        self.distance = range_msg.range * 17150
-        self.distance = round(self.distance, 2)
-
-        self.get_logger().info(f'Received Pulse: {range_msg.range}, Calculated Distance: {self.distance} cm')
-    
-    def get_distance(self):
-        return self.distance
-
     def execute_callback(self, goal_handle):
-        self.get_logger().info('Executing goal...')
+        if self.is_running:
+            self.get_logger().info('Executing goal...')
+            feedback_msg = Scan.Feedback()
+            result_msg = Scan.Result()
 
-        feedback_msg = FullScan.Feedback()
-        feedback_msg.current_angles = []
-        feedback_msg.current_distances = []
+            for i in range(goal_handle.request.start_angle, goal_handle.request.stop_angle, 10.0):
+                feedback_msg.current_angle = float(self.sg90.get_angle())
+                goal_handle.publish_feedback(feedback_msg)
+                self.get_logger().info(f'Feedback: {feedback_msg.current_angle}')
 
-        for i in range (goal_handle.request.start_angle, goal_handle.request.end_angle, 10):
-            feedback_msg.current_angles.append(float(i))
-            feedback_msg.current_distances.append(float(self.get_distance()))
-            self.get_logger().info('Feedback: {0}, {1}'.format(feedback_msg.current_angles, feedback_msg.current_distances))
+                self.sg90.set_angle(i)
+                if goal_handle.is_cancel_requested:
+                    goal_handle.canceled()
+                    self.get_logger().info('Goal canceled')
+                    return Scan.Result()
 
-            goal_handle.publish_feedback(feedback_msg)
+            result_msg.result = goal_handle.request.final_angle
+            goal_handle.succeed()
+            self.get_logger().info('Goal succeeded')
+            return result_msg
+        else:
+            self.get_logger().info('Not Running')
 
-        goal_handle.succeed()
+    def start_callback(self, request, response):
+        if not self.is_running:
+            self.is_running = True
+            self.get_logger().info('Node started')
+        else:
+            self.get_logger().info('Node is already running')
+        return response
 
-        result = FullScan.Result()
-        result.list_angles = feedback_msg.current_angles
-        result.list_distances = feedback_msg.current_distances
-        return result
-
-    def clamp(self, angle, min, max):
-        if angle < min:
-            return min
-        elif angle > max:
-            return max
-        return angle
+    def stop_callback(self, request, response):
+        if self.is_running:
+            self.is_running = False
+            self.get_logger().info('Node stopped')
+        else:
+            self.get_logger().info('Node is already stopped')
+        return response
 
 def main(args=None):
     rclpy.init(args=args)

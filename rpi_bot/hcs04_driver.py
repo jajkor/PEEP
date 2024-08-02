@@ -21,7 +21,7 @@ class HCS04_Driver(Node):
             self.get_parameter('echo_pin').get_parameter_value().integer_value
         )
 
-        self.publisher = self.create_publisher(Range, 'range', 10)
+        self.range_publisher = self.create_publisher(Range, 'scanner_range', 10)
         self.timer = self.create_timer(0.5, self.timer_callback)
 
         self.get_logger().info('HC-S04 Driver Initialized')
@@ -32,7 +32,7 @@ class HCS04_Driver(Node):
         range_msg.radiation_type = Range.ULTRASOUND
         range_msg.range = float(self.hcs04.measure_pulse_duration())
         
-        self.publisher.publish(range_msg)
+        self.range_publisher.publish(range_msg)
 
     def destroy_node(self):
         self.get_logger().info('HC-S04 Driver Destroyed')
