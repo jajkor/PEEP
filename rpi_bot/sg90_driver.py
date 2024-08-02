@@ -5,6 +5,7 @@ from rpi_bot.rpi_interface import RPi_SG90
 from std_msgs.msg import Empty
 from std_msgs.msg import Float32
 from rpi_bot_interfaces.action import Scan
+import time
 
 class ServoControl(Node):
 
@@ -41,6 +42,7 @@ class ServoControl(Node):
             result_msg = Scan.Result()
 
             for i in range(int(goal_handle.request.start_angle), int(goal_handle.request.stop_angle), 10):
+                time.sleep(0.5)
                 self.sg90.set_angle(i)
 
                 feedback_msg.current_angle = float(self.sg90.get_angle())
