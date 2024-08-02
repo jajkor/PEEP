@@ -16,13 +16,13 @@ class Auto_Nav(Node):
         self.angular = 0
         self.distance = 0
 
-        self.range_listener = self.create_subscription(Range, 'range', self.range_listener, 10)
+        #self.range_listener = self.create_subscription(Range, 'range', self.range_listener, 10)
         self.velocity_publisher = self.create_publisher(Velocity, 'motor_vel', 10)
         self.timer = self.create_timer(0.1, self.calculate_motor_velocity)
 
-        self._action_client = ActionClient(self, FullScan, 'full_scan')
+        self.action_client = ActionClient(self, FullScan, 'full_scan')
 
-        self.range_listener  # prevent unused variable warnings
+        #self.range_listener  # prevent unused variable warnings
         self.velocity_publisher  # prevent unused variable warnings
         
         self.get_logger().info('Auto Nav Initialized')
@@ -47,18 +47,17 @@ class Auto_Nav(Node):
         vel_msg.right_vel = self.speed * self.linear + self.differential * self.angular
 
         self.velocity_publisher.publish(vel_msg)
-        #self.get_logger().info(f'Publishing Velocity: left={vel_msg.left_vel}, right={vel_msg.right_vel}')
 
-
-    def send_goal(self, start_angle):
+    def send_goal(self, start_angle, end_angle):
         goal_msg = FullScan.Goal()
         goal_msg.start_angle = start_angle
+        goal_msg.end_angle = end_angle
 
-        self._action_client.wait_for_server()
+        self.action_client.wait_for_server()
 
-        self._send_goal_future = self._action_client.send_goal_async(goal_msg, feedback_callback=self.feedback_callback)
+        self.send_goal_future = self.action_client.send_goal_async(goal_msg, feedback_callback=self.feedback_callback)
 
-        self._send_goal_future.add_done_callback(self.goal_response_callback)
+        self.send_goal_future.add_done_callback(self.goal_response_callback)
 
     def goal_response_callback(self, future):
         goal_handle = future.result()
@@ -73,18 +72,17 @@ class Auto_Nav(Node):
 
     def get_result_callback(self, future):
         result = future.result().result
-        self.get_logger().info('Result: {0}'.format(result.list_full))
+        self.get_logger().info('Feedback: {0}, {0}'.format(result.current_angles, result.current_distances))
         rclpy.shutdown()
 
     def feedback_callback(self, feedback_msg):
         feedback = feedback_msg.feedback
-        self.get_logger().info('Received feedback: {0}'.format(feedback.list_partial))
+        self.get_logger().info('Feedback: {0}, {0}'.format(feedback.current_angles, feedback.current_distances))
 
 def main(args=None):
     rclpy.init(args=args)
 
     auto_nav = Auto_Nav()
-    auto_nav.send_goal(10)
     rclpy.spin(auto_nav)
 
     auto_nav.destroy_node()

@@ -1,15 +1,11 @@
 import rclpy
 from rclpy.node import Node
 from rclpy.action import ActionServer
-from sensor_msgs.msg import Joy
+from sensor_msgs.msg import Range
 from rpi_bot.rpi_interface import RPi_SG90
 from rpi_bot_interfaces.action import FullScan
-import time
 
 class ServoControl(Node):
-    MIN_ANGLE = 0
-    MAX_ANGLE = 180
-    SPEED = 10
 
     def __init__(self):
         super().__init__('sg90_driver')
@@ -38,33 +34,40 @@ class ServoControl(Node):
 
         self.sg90.set_angle(90)
 
-        self._action_server = ActionServer(self, FullScan, 'full_scan', self.execute_callback)
-        
-        if self.axes:
-            self.subscription = self.create_subscription(Joy, 'joy', self.axes_callback, 10)
-        else:
-            self.subscription = self.create_subscription(Joy, 'joy', self.btn_callback, 10)
+        self.action_server = ActionServer(self, FullScan, 'full_scan', self.execute_callback)
+        self.range_listener = self.create_subscription(Range, 'range', self.range_listener, 10)
 
-        self.subscription  # prevent unused variable warning
+        self.range_listener
         self.get_logger().info('SG90 Subscriber Initialized')
+
+    def range_listener(self, range_msg):
+        self.distance = range_msg.range * 17150
+        self.distance = round(self.distance, 2)
+
+        self.get_logger().info(f'Received Pulse: {range_msg.range}, Calculated Distance: {self.distance} cm')
+    
+    def get_distance(self):
+        return self.distance
 
     def execute_callback(self, goal_handle):
         self.get_logger().info('Executing goal...')
 
         feedback_msg = FullScan.Feedback()
-        feedback_msg.list_partial = [0.0, 1.0]
+        feedback_msg.current_angles = []
+        feedback_msg.current_distances = []
 
-        for i in range(1, goal_handle.request.start_angle):
-            feedback_msg.list_partial.append(
-                feedback_msg.list_partial[i] + feedback_msg.list_partial[i-1])
-            self.get_logger().info('Feedback: {0}'.format(feedback_msg.list_partial))
+        for i in range (goal_handle.request.start_angle, goal_handle.request.end_angle, 10):
+            feedback_msg.current_angles.append(i)
+            self.get_logger().info('Feedback: {0}, {0}'.format(feedback_msg.current_angles, feedback_msg.current_distances))
+            feedback_msg.current_distances.append(self.get_distance())
+
             goal_handle.publish_feedback(feedback_msg)
-            time.sleep(1)
 
         goal_handle.succeed()
 
         result = FullScan.Result()
-        result.start_angle = feedback_msg.list_partial
+        result.list_angles = feedback_msg.current_angles
+        result.list_distances = feedback_msg.current_distances
         return result
 
     def clamp(self, angle, min, max):
@@ -73,51 +76,6 @@ class ServoControl(Node):
         elif angle > max:
             return max
         return angle
-
-    def axes_callback(self, msg):
-        temp = self.sg90.get_angle()
-
-        if self.axes:
-            list = msg.axes[self.axes_btn]
-        else:
-            list = msg.buttons[self.left_btn, self.right_btn]
-
-        if (msg.axes[self.axes_btn] > 0):
-            if self.reverse:
-                temp -= ServoControl.SPEED * msg.axes[self.axes_btn]
-            else:
-                temp += ServoControl.SPEED * msg.axes[self.axes_btn]
-
-        if (msg.axes[self.axes_btn] < 0):
-            if self.reverse:
-                temp += ServoControl.SPEED * -msg.axes[self.axes_btn]
-            else:
-                temp -= ServoControl.SPEED * -msg.axes[self.axes_btn]
-        
-        if temp != self.sg90.get_angle():
-            temp = self.clamp(temp, ServoControl.MIN_ANGLE, ServoControl.MAX_ANGLE)
-            self.sg90.set_angle(temp)
-            self.get_logger().info(f'Angle: {self.sg90.get_angle()}')
-
-    def btn_callback(self, msg):
-        temp = self.sg90.get_angle()
-
-        if (msg.buttons[self.left_btn] == 1) and (msg.buttons[self.right_btn] == 0):
-            if self.reverse:
-                temp -= ServoControl.SPEED
-            else:
-                temp += ServoControl.SPEED
-
-        if (msg.buttons[self.left_btn] == 0) and (msg.buttons[self.right_btn] == 1):
-            if self.reverse:
-                temp += ServoControl.SPEED
-            else:
-                temp -= ServoControl.SPEED
-
-        if temp != self.sg90.get_angle():
-            temp = self.clamp(temp, ServoControl.MIN_ANGLE, ServoControl.MAX_ANGLE)
-            self.sg90.set_angle(temp)
-            self.get_logger().info(f'Angle: {self.sg90.get_angle()}')
 
 def main(args=None):
     rclpy.init(args=args)
