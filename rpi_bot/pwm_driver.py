@@ -37,14 +37,11 @@ class PWM_Driver(Node):
         self.get_logger().info('PWM Driver Initialized')
 
     def velocity_listener(self, vel_msg):
-        self.get_logger().info(f'left={self.left}, right={self.right}, msg_left={vel_msg.left_vel}, msg_right={vel_msg.right_vel}')
         if (self.left != vel_msg.left_vel) or (self.right != vel_msg.right_vel):
             self.left = vel_msg.left_vel
             self.right = vel_msg.right_vel
             self.motors.setMotors(vel_msg.left_vel, vel_msg.right_vel)
             self.get_logger().info(f'Setting Velocity: left={vel_msg.left_vel}, right={vel_msg.right_vel}')
-        else:
-            self.get_logger().info(f"No velocity change")
 
 def main(args=None):
     rclpy.init(args=args)
