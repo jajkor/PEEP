@@ -38,7 +38,7 @@ class PWM_Driver(Node):
 
     def velocity_listener(self, vel_msg):
         self.get_logger().info(f'left={self.left}, right={self.right}, msg_left={vel_msg.left_vel}, msg_right={vel_msg.right_vel}')
-        if (self.left != vel_msg.left_vel) and (self.left != vel_msg.left_vel):
+        if (self.left != vel_msg.left_vel) or (self.left != vel_msg.left_vel):
             self.left = vel_msg.left_vel
             self.right = vel_msg.right_vel
             self.motors.setMotors(vel_msg.left_vel, vel_msg.right_vel)
