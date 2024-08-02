@@ -32,9 +32,11 @@ class Auto_Nav(Node):
         self.distance = round(self.distance, 2)
 
         if self.distance <= 30:
-            self.send_goal(0.0, 180.0)
-        #else:
-            #self.send_goal(60, 120)
+            #self.send_goal(60.0, 120.0)
+            self.get_logger().info("Inside range")
+        else:
+            self.get_logger().info("Outside range")
+            self.send_goal(60, 120)
 
         self.get_logger().info(f'Received Pulse: {range_msg.range}, Calculated Distance: {self.distance} cm')
 
