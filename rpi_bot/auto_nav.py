@@ -36,8 +36,8 @@ class HCS04_Subscriber(Node):
             self.linear = 0.5
             self.angular = 0.5
         else:
-            self.linear = 0
-            self.angular = 0
+            self.linear = 0.0
+            self.angular = 0.0
 
         left_temp = self.speed * self.linear - self.differential * self.angular
         right_temp = self.speed * self.linear + self.differential * self.angular
