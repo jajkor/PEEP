@@ -40,7 +40,6 @@ class ServoControl(Node):
             result_msg = Scan.Result()
 
             for i in range(int(goal_handle.request.start_angle), int(goal_handle.request.stop_angle), 10):
-                time.sleep(0.5)
                 self.sg90.set_angle(i)
 
                 feedback_msg.current_angles = float(self.sg90.get_angle())
@@ -50,6 +49,7 @@ class ServoControl(Node):
                     goal_handle.canceled()
                     self.get_logger().info('Goal canceled')
                     return Scan.Result()
+                time.sleep(0.5)
 
             result_msg.final_angles = feedback_msg.current_angles
             goal_handle.succeed()
