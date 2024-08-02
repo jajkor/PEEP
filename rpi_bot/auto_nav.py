@@ -33,10 +33,9 @@ class Auto_Nav(Node):
 
         if self.distance <= 30:
             #self.send_goal(60.0, 120.0)
-            self.get_logger().info("Inside range")
+            self.get_logger().info()
         else:
-            self.get_logger().info("Outside range")
-            self.send_goal(60, 120)
+            self.send_goal(60.0, 130.0)
 
         self.get_logger().info(f'Received Pulse: {range_msg.range}, Calculated Distance: {self.distance} cm')
 
@@ -75,11 +74,11 @@ class Auto_Nav(Node):
         self.get_result_future.add_done_callback(self.get_result_callback)
 
     def feedback_callback(self, feedback_msg):
-        self.get_logger().info(f'Feedback: {feedback_msg.feedback.current_angle}')
+        self.get_logger().info(f'Feedback: {feedback_msg.feedback.current_angles}')
 
     def get_result_callback(self, future):
         result = future.result().result
-        self.get_logger().info(f'Result: {result.final_angle}')
+        self.get_logger().info(f'Result: {result.final_angles}')
 
 def main(args=None):
     rclpy.init(args=args)
