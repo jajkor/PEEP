@@ -30,8 +30,8 @@ class HCS04_Subscriber(Node):
         #left_temp = self.left_vel
         #right_temp = self.right_vel
         vel_msg = Velocity()
-        left_temp = self.speed * self.linear.x - self.differential * self.angular.z
-        right_temp = self.speed * self.linear.x + self.differential * self.angular.z
+        left_temp = self.speed * 0.5 - self.differential * 0.5
+        right_temp = self.speed * 0.5 + self.differential * 0.5
 
         vel_msg.left_vel = left_temp
         vel_msg.right_vel = right_temp
