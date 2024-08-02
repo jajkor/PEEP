@@ -10,6 +10,9 @@ class HCS04_Subscriber(Node):
 
         self.speed = 75
         self.differential = 75
+        self.linear = 0
+        self.angular = 0
+        self.distance = 0
 
         self.range_listener = self.create_subscription(Range, 'range', self.range_listener, 10)
         self.velocity_publisher = self.create_publisher(Velocity, 'motor_vel', 10)
@@ -28,9 +31,16 @@ class HCS04_Subscriber(Node):
 
     def calculate_wheel_velocity(self):
         vel_msg = Velocity()
-        
-        left_temp = self.speed * 0.5 - self.differential * 0.5
-        right_temp = self.speed * 0.5 + self.differential * 0.5
+
+        if self.distance >= 30:
+            self.linear = 0.5
+            self.angular = 0.5
+        else:
+            self.linear = 0
+            self.angular = 0
+
+        left_temp = self.speed * self.linear - self.differential * self.angular
+        right_temp = self.speed * self.linear + self.differential * self.angular
 
         vel_msg.left_vel = left_temp
         vel_msg.right_vel = right_temp
