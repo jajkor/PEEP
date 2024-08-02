@@ -1,7 +1,10 @@
 import rclpy
 from rclpy.node import Node
+from rclpy.action import ActionServer
 from sensor_msgs.msg import Joy
 from rpi_bot.rpi_interface import RPi_SG90
+from rpi_bot_interfaces.action import Full_Scan
+import time
 
 class ServoControl(Node):
     MIN_ANGLE = 0
@@ -33,6 +36,8 @@ class ServoControl(Node):
         self.sg90 = RPi_SG90(
             self.get_parameter('pwm_channel').get_parameter_value().integer_value
         )
+
+        self._action_server = ActionServer(self, Full_Scan, 'full_scan', self.execute_callback)
         
         if self.axes:
             self.subscription = self.create_subscription(Joy, 'joy', self.axes_callback, 10)
@@ -41,6 +46,25 @@ class ServoControl(Node):
 
         self.subscription  # prevent unused variable warning
         self.get_logger().info('SG90 Subscriber Initialized')
+
+    def execute_callback(self, goal_handle):
+        self.get_logger().info('Executing goal...')
+
+        feedback_msg = Full_Scan.Feedback()
+        feedback_msg.partial_sequence = [0, 1]
+
+        for i in range(1, goal_handle.request.order):
+            feedback_msg.partial_sequence.append(
+                feedback_msg.partial_sequence[i] + feedback_msg.partial_sequence[i-1])
+            self.get_logger().info('Feedback: {0}'.format(feedback_msg.partial_sequence))
+            goal_handle.publish_feedback(feedback_msg)
+            time.sleep(1)
+
+        goal_handle.succeed()
+
+        result = Full_Scan.Result()
+        result.sequence = feedback_msg.partial_sequence
+        return result
 
     def clamp(self, angle, min, max):
         if angle < min:
@@ -71,7 +95,7 @@ class ServoControl(Node):
         
         if temp != self.servo.angle:
             temp = self.clamp(temp, ServoControl.MIN_ANGLE, ServoControl.MAX_ANGLE)
-            self.servo.angle = temp
+            self.sg90.set_angle(temp)
             self.get_logger().info(f'Angle: {self.servo.angle}')
 
     def btn_callback(self, msg):
@@ -91,7 +115,7 @@ class ServoControl(Node):
 
         if temp != self.servo.angle:
             temp = self.clamp(temp, ServoControl.MIN_ANGLE, ServoControl.MAX_ANGLE)
-            self.servo.angle = temp
+            self.sg90.set_angle(temp)
             self.get_logger().info(f'Angle: {self.servo.angle}')
 
 def main(args=None):

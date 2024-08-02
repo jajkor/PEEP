@@ -1,9 +1,11 @@
 import rclpy
 from rclpy.node import Node
+from rclpy.action import ActionClient
 from sensor_msgs.msg import Range
 from rpi_bot_interfaces.msg import Velocity
+from rpi_bot_interfaces.action import Full_Scan
 
-class HCS04_Subscriber(Node):
+class Auto_Nav(Node):
 
     def __init__(self):
         super().__init__('auto_nav')
@@ -17,6 +19,8 @@ class HCS04_Subscriber(Node):
         self.range_listener = self.create_subscription(Range, 'range', self.range_listener, 10)
         self.velocity_publisher = self.create_publisher(Velocity, 'motor_vel', 10)
         self.timer = self.create_timer(0.1, self.calculate_motor_velocity)
+
+        self._action_client = ActionClient(self, Full_Scan, 'full_scan')
 
         self.range_listener  # prevent unused variable warnings
         self.velocity_publisher  # prevent unused variable warnings
@@ -45,13 +49,45 @@ class HCS04_Subscriber(Node):
         self.velocity_publisher.publish(vel_msg)
         self.get_logger().info(f'Publishing Velocity: left={vel_msg.left_vel}, right={vel_msg.right_vel}')
 
+
+    def send_goal(self, order):
+        goal_msg = Full_Scan.Goal()
+        goal_msg.order = order
+
+        self._action_client.wait_for_server()
+
+        self._send_goal_future = self._action_client.send_goal_async(goal_msg, feedback_callback=self.feedback_callback)
+
+        self._send_goal_future.add_done_callback(self.goal_response_callback)
+
+    def goal_response_callback(self, future):
+        goal_handle = future.result()
+        if not goal_handle.accepted:
+            self.get_logger().info('Goal rejected :(')
+            return
+
+        self.get_logger().info('Goal accepted :)')
+
+        self._get_result_future = goal_handle.get_result_async()
+        self._get_result_future.add_done_callback(self.get_result_callback)
+
+    def get_result_callback(self, future):
+        result = future.result().result
+        self.get_logger().info('Result: {0}'.format(result.sequence))
+        rclpy.shutdown()
+
+    def feedback_callback(self, feedback_msg):
+        feedback = feedback_msg.feedback
+        self.get_logger().info('Received feedback: {0}'.format(feedback.partial_sequence))
+
 def main(args=None):
     rclpy.init(args=args)
 
-    hcs04_subscriber = HCS04_Subscriber()
-    rclpy.spin(hcs04_subscriber)
+    auto_nav = Auto_Nav()
+    auto_nav.send_goal(10)
+    rclpy.spin(auto_nav)
 
-    hcs04_subscriber.destroy_node()
+    auto_nav.destroy_node()
     rclpy.shutdown()
 
 if __name__ == '__main__':
