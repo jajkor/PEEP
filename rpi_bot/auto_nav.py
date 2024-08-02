@@ -32,7 +32,7 @@ class Auto_Nav(Node):
         self.distance = round(self.distance, 2)
 
         if self.distance <= 30:
-            self.send_goal(0, 180)
+            self.send_goal(0.0, 180.0)
         #else:
             #self.send_goal(60, 120)
 
@@ -83,7 +83,6 @@ def main(args=None):
     rclpy.init(args=args)
 
     auto_nav = Auto_Nav()
-    auto_nav.send_goal(0.0, 180.0)
     rclpy.spin(auto_nav)
 
     auto_nav.destroy_node()

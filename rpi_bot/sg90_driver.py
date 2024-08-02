@@ -40,7 +40,7 @@ class ServoControl(Node):
             feedback_msg = Scan.Feedback()
             result_msg = Scan.Result()
 
-            for i in range(goal_handle.request.start_angle, goal_handle.request.stop_angle, 10):
+            for i in range(int(goal_handle.request.start_angle), int(goal_handle.request.stop_angle), 10):
                 feedback_msg.current_angle = float(self.sg90.get_angle())
                 goal_handle.publish_feedback(feedback_msg)
                 self.get_logger().info(f'Feedback: {feedback_msg.current_angle}')
