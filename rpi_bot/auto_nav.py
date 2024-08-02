@@ -47,7 +47,7 @@ class Auto_Nav(Node):
         vel_msg.right_vel = self.speed * self.linear + self.differential * self.angular
 
         self.velocity_publisher.publish(vel_msg)
-        self.get_logger().info(f'Publishing Velocity: left={vel_msg.left_vel}, right={vel_msg.right_vel}')
+        #self.get_logger().info(f'Publishing Velocity: left={vel_msg.left_vel}, right={vel_msg.right_vel}')
 
 
     def send_goal(self, order):
