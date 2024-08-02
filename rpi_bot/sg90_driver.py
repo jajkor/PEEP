@@ -51,7 +51,7 @@ class ServoControl(Node):
                     self.get_logger().info('Goal canceled')
                     return Scan.Result()
 
-            result_msg.result = goal_handle.feedback.current_angle
+            result_msg.result = feedback_msg.current_angle
             goal_handle.succeed()
             self.get_logger().info('Goal succeeded')
             return result_msg
