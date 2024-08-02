@@ -28,14 +28,15 @@ class HCS04_Subscriber(Node):
     def calculate_wheel_velocity(self):
         #left_temp = self.left_vel
         #right_temp = self.right_vel
-        msg = Velocity()
-        left_temp = self.speed * msg.linear.x - self.differential * msg.angular.z
-        right_temp = self.speed * msg.linear.x + self.differential * msg.angular.z
+        vel_msg = Velocity()
+        left_temp = self.speed * self.linear.x - self.differential * self.angular.z
+        right_temp = self.speed * self.linear.x + self.differential * self.angular.z
 
-        msg.left_vel = left_temp
-        msg.right_vel = right_temp
+        vel_msg.left_vel = left_temp
+        vel_msg.right_vel = right_temp
 
-        self.velocity_publisher.publish(msg)
+        self.velocity_publisher.publish(vel_msg)
+        self.get_logger().info(f'Publishing Velocity: left_vel={vel_msg.left_vel}, right_vel={vel_msg.right_vel}')
             #self.get_logger().info(f'Publishing Velocity: left={left_temp}, right={right_temp}')
 
         
