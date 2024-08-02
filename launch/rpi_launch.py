@@ -19,7 +19,7 @@ def generate_launch_description():
         launch_ros.actions.Node(
             package='rpi_bot',
             executable='hcs04_driver_node',
-            name='hcs04_front',
+            name='hcs04_scanner',
             parameters=[{
                 'trig_pin': 15,
                 'echo_pin': 14
@@ -27,8 +27,8 @@ def generate_launch_description():
         ),
         launch_ros.actions.Node( # HC-S04 Servo
             package='rpi_bot',
-            executable='sub_sg90_node',
-            name='sub_hcs04_sg90',
+            executable='sg90_driver_node',
+            name='sg90_scanner',
             parameters=[{
                 'pwm_channel': 0,
                 'left_btn': 4,
