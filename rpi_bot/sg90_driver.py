@@ -2,8 +2,6 @@ import rclpy
 from rclpy.node import Node
 from rclpy.action import ActionServer
 from rpi_bot.rpi_interface import RPi_SG90
-from std_msgs.msg import Empty
-from std_msgs.msg import Float32
 from rpi_bot_interfaces.action import Scan
 import time
 
