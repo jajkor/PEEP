@@ -33,7 +33,7 @@ class Auto_Nav(Node):
 
         if self.distance <= 30:
             #self.send_goal(60.0, 120.0)
-            self.get_logger().info()
+            print()
         else:
             self.send_goal(60.0, 130.0)
 

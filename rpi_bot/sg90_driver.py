@@ -45,7 +45,7 @@ class ServoControl(Node):
                 time.sleep(0.5)
                 self.sg90.set_angle(i)
 
-                feedback_msg.current_angles.append(float(self.sg90.get_angle()))
+                feedback_msg.current_angles = float(self.sg90.get_angle())
                 goal_handle.publish_feedback(feedback_msg)
                 self.get_logger().info(f'Feedback: {feedback_msg.current_angles}')
                 if goal_handle.is_cancel_requested:
