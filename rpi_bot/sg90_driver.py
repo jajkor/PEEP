@@ -31,11 +31,12 @@ class ServoControl(Node):
         self.reverse = self.get_parameter('reverse').get_parameter_value().bool_value
         self.axes = self.get_parameter('axes').get_parameter_value().bool_value
         self.axes_btn = self.get_parameter('axes_btn').get_parameter_value().integer_value
-        self.servo.angle = 90
 
         self.sg90 = RPi_SG90(
             self.get_parameter('pwm_channel').get_parameter_value().integer_value
         )
+
+        self.sg90.set_angle(90)
 
         self._action_server = ActionServer(self, FullScan, 'full_scan', self.execute_callback)
         
