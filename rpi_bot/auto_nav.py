@@ -34,7 +34,7 @@ class HCS04_Subscriber(Node):
 
         if self.distance >= 30.0:
             self.linear = 0.5
-            self.angular = 0.5
+            self.angular = 0.0
         else:
             self.linear = 0.0
             self.angular = 0.0

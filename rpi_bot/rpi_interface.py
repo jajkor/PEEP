@@ -1,6 +1,11 @@
 import RPi.GPIO as GPIO
 import time
 
+import board
+import busio
+from adafruit_pca9685 import PCA9685
+from adafruit_motor import servo
+
 class RPi_Motors(object):
 
 	def __init__(self, ena, in1, in2, in3, in4, enb):
@@ -81,3 +86,18 @@ class RPi_HCS04(object):
 			pulseStop = time.time()
 
 		return pulseStop - pulseStart
+	
+class RPi_SG90(object):
+
+	def __init__(self, pwm_channel):
+		self.PWM_CHANNEL = pwm_channel
+
+		i2c = busio.I2C(board.SCL, board.SDA)
+		self.pca = PCA9685(i2c, address = 0x40)
+		self.pca.frequency = 50
+    
+		self.servo = servo.Servo(self.pca.channels[self.PWM_CHANNEL])
+        
+
+	def __del__(self):
+		self.pca.deinit()

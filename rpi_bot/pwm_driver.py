@@ -1,7 +1,7 @@
 import rclpy
 from rclpy.node import Node
-from rpi_bot.rpi_interface import RPi_Motors
 from rpi_bot_interfaces.msg import Velocity
+from rpi_bot.rpi_interface import RPi_Motors
 
 class PWM_Driver(Node):
 
