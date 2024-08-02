@@ -29,8 +29,8 @@ class ServoControl(Node):
 
         self.action_server = ActionServer(self, Scan, 'scan', self.execute_callback)
 
-        self.start_service = self.create_service(Empty, 'start', self.start_callback)
-        self.stop_service = self.create_service(Empty, 'stop', self.stop_callback)
+        #self.start_service = self.create_service(Empty, 'start', self.start_callback)
+        #self.stop_service = self.create_service(Empty, 'stop', self.stop_callback)
 
         self.get_logger().info('SG90 Subscriber Initialized')
 
