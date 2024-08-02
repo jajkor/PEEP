@@ -3,7 +3,6 @@ from rclpy.node import Node
 from sensor_msgs.msg import Range
 from rpi_bot.msg import Velocity
 
-
 class HCS04_Subscriber(Node):
 
     def __init__(self):
