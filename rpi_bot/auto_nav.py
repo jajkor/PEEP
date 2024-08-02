@@ -32,7 +32,7 @@ class HCS04_Subscriber(Node):
     def calculate_wheel_velocity(self):
         vel_msg = Velocity()
 
-        if self.distance >= 30:
+        if self.distance >= 30.0:
             self.linear = 0.5
             self.angular = 0.5
         else:
