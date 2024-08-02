@@ -75,7 +75,7 @@ class ServoControl(Node):
         return angle
 
     def axes_callback(self, msg):
-        temp = self.servo.angle
+        temp = self.sg90.get_angle()
 
         if self.axes:
             list = msg.axes[self.axes_btn]
@@ -94,13 +94,13 @@ class ServoControl(Node):
             else:
                 temp -= ServoControl.SPEED * -msg.axes[self.axes_btn]
         
-        if temp != self.servo.angle:
+        if temp != self.sg90.get_angle():
             temp = self.clamp(temp, ServoControl.MIN_ANGLE, ServoControl.MAX_ANGLE)
             self.sg90.set_angle(temp)
-            self.get_logger().info(f'Angle: {self.servo.angle}')
+            self.get_logger().info(f'Angle: {self.sg90.get_angle()}')
 
     def btn_callback(self, msg):
-        temp = self.servo.angle
+        temp = self.sg90.get_angle()
 
         if (msg.buttons[self.left_btn] == 1) and (msg.buttons[self.right_btn] == 0):
             if self.reverse:
@@ -114,10 +114,10 @@ class ServoControl(Node):
             else:
                 temp -= ServoControl.SPEED
 
-        if temp != self.servo.angle:
+        if temp != self.sg90.get_angle():
             temp = self.clamp(temp, ServoControl.MIN_ANGLE, ServoControl.MAX_ANGLE)
             self.sg90.set_angle(temp)
-            self.get_logger().info(f'Angle: {self.servo.angle}')
+            self.get_logger().info(f'Angle: {self.sg90.get_angle()}')
 
 def main(args=None):
     rclpy.init(args=args)

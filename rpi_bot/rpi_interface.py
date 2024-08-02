@@ -103,3 +103,6 @@ class RPi_SG90(object):
 
 	def set_angle(self, new_angle):
 		self.servo.angle = new_angle
+
+	def get_angle(self):
+		return self.servo.angle
