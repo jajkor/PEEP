@@ -1,7 +1,7 @@
 import rclpy
 from rclpy.node import Node
 from sensor_msgs.msg import Range
-from rpi_bot.msg import Velocity
+from rpi_bot_interfaces.msg import Velocity
 
 class HCS04_Subscriber(Node):
 
@@ -12,7 +12,7 @@ class HCS04_Subscriber(Node):
         self.differential = 75
 
         self.range_listener = self.create_subscription(Range, 'range', self.range_listener, 10)
-        self.velocity_publisher = self.create_publisher(Velocity, 'motor_vel', self.calculate_wheel_velocity_callback, 10)
+        self.velocity_publisher = self.create_publisher(Velocity, 'motor_vel', 10)
 
         self.range_listener  # prevent unused variable warnings
         self.velocity_publisher  # prevent unused variable warnings
@@ -25,10 +25,10 @@ class HCS04_Subscriber(Node):
 
         self.get_logger().info(f'Received Pulse: {range_msg.range}, Calculated Distance: {distance} cm')
 
-    def calculate_wheel_velocity_callback(self, msg):
+    def calculate_wheel_velocity_callback(self):
         #left_temp = self.left_vel
         #right_temp = self.right_vel
-
+        msg = Velocity()
         left_temp = self.speed * msg.linear.x - self.differential * msg.angular.z
         right_temp = self.speed * msg.linear.x + self.differential * msg.angular.z
 
