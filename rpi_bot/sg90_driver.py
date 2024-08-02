@@ -57,9 +57,9 @@ class ServoControl(Node):
         feedback_msg.current_distances = []
 
         for i in range (goal_handle.request.start_angle, goal_handle.request.end_angle, 10):
-            feedback_msg.current_angles.append(i)
-            self.get_logger().info('Feedback: {0}, {0}'.format(feedback_msg.current_angles, feedback_msg.current_distances))
-            feedback_msg.current_distances.append(self.get_distance())
+            feedback_msg.current_angles.append(float(i))
+            feedback_msg.current_distances.append(float(self.get_distance()))
+            self.get_logger().info('Feedback: {0}, {1}'.format(feedback_msg.current_angles, feedback_msg.current_distances))
 
             goal_handle.publish_feedback(feedback_msg)
 

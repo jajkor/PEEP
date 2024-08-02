@@ -72,17 +72,17 @@ class Auto_Nav(Node):
 
     def get_result_callback(self, future):
         result = future.result().result
-        self.get_logger().info('Feedback: {0}, {0}'.format(result.current_angles, result.current_distances))
-        rclpy.shutdown()
+        self.get_logger().info('Feedback: {0}, {1}'.format(result.list_angles, result.list_distances))
 
     def feedback_callback(self, feedback_msg):
         feedback = feedback_msg.feedback
-        self.get_logger().info('Feedback: {0}, {0}'.format(feedback.current_angles, feedback.current_distances))
+        self.get_logger().info('Feedback: {0}, {1}'.format(feedback.current_angles, feedback.current_distances))
 
 def main(args=None):
     rclpy.init(args=args)
 
     auto_nav = Auto_Nav()
+    auto_nav.send_goal(0.0, 180.0)
     rclpy.spin(auto_nav)
 
     auto_nav.destroy_node()
