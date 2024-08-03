@@ -35,8 +35,8 @@ class Auto_Nav(Node):
             #self.send_goal(60.0, 120.0)
             print()
         else:
-            self.send_goal(0.0, 180.0)
-            #self.send_goal(70.0, 110.0)
+            #self.send_goal(0.0, 180.0)
+            self.send_goal(70.0, 120.0)
 
         self.get_logger().info(f'Received Pulse: {range_msg.range}, Calculated Distance: {self.distance} cm')
 
