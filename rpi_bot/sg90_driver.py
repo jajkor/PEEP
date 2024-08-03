@@ -1,7 +1,7 @@
 import rclpy
 from rclpy.node import Node
 from rclpy.action import ActionServer
-from std_msgs.msg import Empty
+from std_srvs.srv import Empty
 from rpi_bot.rpi_interface import RPi_SG90
 from rpi_bot_interfaces.action import Scan
 import time
