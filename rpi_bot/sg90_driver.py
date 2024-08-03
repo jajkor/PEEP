@@ -29,7 +29,7 @@ class ServoControl(Node):
         self.reversed = self.get_parameter('reversed').get_parameter_value().bool_value
 
         self.action_server = ActionServer(self, Scan, 'scan', self.execute_callback)
-        self.interrupt_subscriber = self.create_subscriber(Bool, 'interrupt', self.pause_callback, 10)
+        self.interrupt_subscriber = self.create_subscription(Bool, 'interrupt', self.pause_callback, 10)
 
         self.start_service = self.create_service(Empty, 'start', self.start_callback)
         self.stop_service = self.create_service(Empty, 'stop', self.stop_callback)
