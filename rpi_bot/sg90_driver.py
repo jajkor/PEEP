@@ -56,6 +56,7 @@ class ServoControl(Node):
             self.get_logger().info('Goal succeeded')
             return result_msg
         else:
+            goal_handle.canceled()
             self.get_logger().info('Not Running')
 
     def start_callback(self, request, response):
