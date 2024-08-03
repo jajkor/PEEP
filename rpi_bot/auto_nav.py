@@ -36,7 +36,7 @@ class Auto_Nav(Node):
             print()
         else:
             #self.send_goal(0.0, 180.0)
-            self.send_goal(70.0, 120.0)
+            self.send_goal(80.0, 110.0)
 
         self.get_logger().info(f'Received Pulse: {range_msg.range}, Calculated Distance: {self.distance} cm')
 
@@ -75,7 +75,8 @@ class Auto_Nav(Node):
         self.get_result_future.add_done_callback(self.get_result_callback)
 
     def feedback_callback(self, feedback_msg):
-        self.get_logger().info(f'Feedback: {feedback_msg.feedback.current_angles}')
+        #self.get_logger().info(f'Feedback: {feedback_msg.feedback.current_angles}')
+        print()
 
     def get_result_callback(self, future):
         result = future.result().result

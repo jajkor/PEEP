@@ -1,6 +1,7 @@
 import rclpy
 from rclpy.node import Node
 from rclpy.action import ActionServer
+from std_msgs.msg import Empty
 from rpi_bot.rpi_interface import RPi_SG90
 from rpi_bot_interfaces.action import Scan
 import time
@@ -28,8 +29,8 @@ class ServoControl(Node):
 
         self.action_server = ActionServer(self, Scan, 'scan', self.execute_callback)
 
-        #self.start_service = self.create_service(Empty, 'start', self.start_callback)
-        #self.stop_service = self.create_service(Empty, 'stop', self.stop_callback)
+        self.start_service = self.create_service(Empty, 'start', self.start_callback)
+        self.stop_service = self.create_service(Empty, 'stop', self.stop_callback)
 
         self.get_logger().info('SG90 Subscriber Initialized')
 
