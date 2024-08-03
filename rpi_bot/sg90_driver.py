@@ -50,7 +50,7 @@ class ServoControl(Node):
                     return Scan.Result()
                 time.sleep(0.5)
 
-            result_msg.final_angles = feedback_msg.current_angles.copy()
+            result_msg.final_angles = feedback_msg.current_angles
             goal_handle.succeed()
             self.get_logger().info('Goal succeeded')
             return result_msg
