@@ -2,6 +2,7 @@ import rclpy
 from rclpy.node import Node
 from rclpy.action import ActionClient
 from sensor_msgs.msg import Range
+from std_msgs.msg import Bool
 from rpi_bot_interfaces.msg import Velocity
 from rpi_bot_interfaces.action import Scan
 
@@ -16,14 +17,18 @@ class Auto_Nav(Node):
         self.angular = 0
         self.distance = 0
 
+        self.is_running = True
+
         self.range_listener = self.create_subscription(Range, 'scanner_range', self.range_listener, 10)
         self.velocity_publisher = self.create_publisher(Velocity, 'motor_vel', 10)
+        self.interrupt_publisher = self.create_publisher(Bool, 'interrupt', 10)
         self.timer = self.create_timer(0.1, self.calculate_motor_velocity)
 
         self.action_client = ActionClient(self, Scan, 'scan')
 
         self.range_listener  # prevent unused variable warnings
         self.velocity_publisher  # prevent unused variable warnings
+        self.interrupt_publisher
         
         self.get_logger().info('Auto Nav Initialized')
 
@@ -32,13 +37,18 @@ class Auto_Nav(Node):
         self.distance = round(self.distance, 2)
 
         if self.distance <= 30:
-            #self.send_goal(60.0, 120.0)
-            print()
+            self.interrupt_handler
         else:
-            #self.send_goal(0.0, 180.0)
             self.send_goal(80.0, 110.0)
 
         self.get_logger().info(f'Received Pulse: {range_msg.range}, Calculated Distance: {self.distance} cm')
+
+    def interrupt_handler(self):
+        irq_msg = Bool()
+
+        self.is_running = not self.is_running
+        irq_msg.data = self.is_running
+        self.interrupt_publisher.publish(irq_msg)
 
     def calculate_motor_velocity(self):
         vel_msg = Velocity()

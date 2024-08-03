@@ -2,6 +2,7 @@ import rclpy
 from rclpy.node import Node
 from rclpy.action import ActionServer
 from std_srvs.srv import Empty
+from std_msgs.msg import Bool
 from rpi_bot.rpi_interface import RPi_SG90
 from rpi_bot_interfaces.action import Scan
 import time
@@ -28,36 +29,39 @@ class ServoControl(Node):
         self.reversed = self.get_parameter('reversed').get_parameter_value().bool_value
 
         self.action_server = ActionServer(self, Scan, 'scan', self.execute_callback)
+        self.interrupt_subscriber = self.create_subscriber(Bool, 'interrupt', self.pause_callback, 10)
 
         self.start_service = self.create_service(Empty, 'start', self.start_callback)
         self.stop_service = self.create_service(Empty, 'stop', self.stop_callback)
 
         self.get_logger().info('SG90 Subscriber Initialized')
 
+    def pause_callback(self, msg):
+        self.is_running = msg.data
+
     def execute_callback(self, goal_handle):
-        if self.is_running:
-            self.get_logger().info('Executing goal...')
-            feedback_msg = Scan.Feedback()
-            result_msg = Scan.Result()
+        self.get_logger().info('Executing goal...')
+        feedback_msg = Scan.Feedback()
+        result_msg = Scan.Result()
 
-            for i in range(int(goal_handle.request.start_angle), int(goal_handle.request.stop_angle), 10):
-                self.sg90.set_angle(i)
+        for i in range(int(goal_handle.request.start_angle), int(goal_handle.request.stop_angle), 10):
+            while not self.is_running:
+                time.sleep(0.1)
+                
+            self.sg90.set_angle(i)
 
-                feedback_msg.current_angles.append(float(self.sg90.get_angle()))
-                goal_handle.publish_feedback(feedback_msg)
-                if goal_handle.is_cancel_requested:
-                    goal_handle.canceled()
-                    self.get_logger().info('Goal canceled')
-                    return Scan.Result()
-                time.sleep(0.5)
+            feedback_msg.current_angles.append(float(self.sg90.get_angle()))
+            goal_handle.publish_feedback(feedback_msg)
+            if goal_handle.is_cancel_requested:
+                goal_handle.canceled()
+                self.get_logger().info('Goal canceled')
+                return Scan.Result()
+            time.sleep(0.5)
 
-            result_msg.final_angles = feedback_msg.current_angles
-            goal_handle.succeed()
-            self.get_logger().info('Goal succeeded')
-            return result_msg
-        else:
-            goal_handle.canceled()
-            self.get_logger().info('Not Running')
+        result_msg.final_angles = feedback_msg.current_angles
+        goal_handle.succeed()
+        self.get_logger().info('Goal succeeded')
+        return result_msg
 
     def start_callback(self, request, response):
         if not self.is_running:
