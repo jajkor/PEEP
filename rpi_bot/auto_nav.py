@@ -21,8 +21,9 @@ class Auto_Nav(Node):
 
         self.range_listener = self.create_subscription(Range, 'scanner_range', self.range_listener, 10)
         self.velocity_publisher = self.create_publisher(Velocity, 'motor_vel', 10)
+        self.velocity_timer = self.create_timer(0.1, self.calculate_motor_velocity)
+
         self.interrupt_publisher = self.create_publisher(Bool, 'interrupt', 10)
-        self.timer = self.create_timer(0.1, self.calculate_motor_velocity)
 
         self.action_client = ActionClient(self, Scan, 'scan')
 
@@ -36,29 +37,20 @@ class Auto_Nav(Node):
         self.distance = range_msg.range * 17150
         self.distance = round(self.distance, 2)
 
-        if self.distance <= 30:
-            self.interrupt_handler
-        else:
-            self.send_goal(80.0, 110.0)
-
         self.get_logger().info(f'Received Pulse: {range_msg.range}, Calculated Distance: {self.distance} cm')
 
     def interrupt_handler(self):
         irq_msg = Bool()
 
-        self.is_running = not self.is_running
-        irq_msg.data = self.is_running
+        if self.distance <= 30:
+            irq_msg.data = False
+        else:
+            irq_msg.data = True
+
         self.interrupt_publisher.publish(irq_msg)
 
     def calculate_motor_velocity(self):
         vel_msg = Velocity()
-
-        if self.distance <= 30.0:
-            self.linear = 0.0
-            self.angular = 0.0
-        else:
-            self.linear = 0.5
-            self.angular = 0.0
 
         vel_msg.left_vel = self.speed * self.linear - self.differential * self.angular
         vel_msg.right_vel = self.speed * self.linear + self.differential * self.angular
