@@ -63,7 +63,7 @@ class Auto_Nav(Node):
     def range_callback(self, range_msg):
         self.get_logger().info(f'Received Distance: {range_msg.range} cm')
 
-        if self.distance <= 30:
+        if range_msg.range <= 30:
             #self.send_request(0.0, 180.0)
             print()
 

@@ -32,9 +32,7 @@ class Servo_Scan(Node):
         self.range_listener = self.create_subscription(Range, 'range', self.range_listener_callback, 10,  callback_group=self.callback_group)
 
     def range_listener_callback(self, range_msg):
-        self.distance = range_msg.range * 17150
-        self.distance = round(self.distance, 2)
-        self.get_logger().info(f'Updated distance: {self.distance}')
+        self.distance = range_msg.range
 
     def scan_callback(self, request, response):
         if self.is_busy:
