@@ -35,8 +35,8 @@ class Servo_Scan(Node):
 
         for i in range(int(request.start_angle), int(request.stop_angle), 10):
             self.sg90.set_angle(i)
-            response.angle_list.append(float(self.sg90.get_angle()))
-            response.distance_list.append(float(self.distance))
+            response.list_angles.append(float(self.sg90.get_angle()))
+            response.list_distances.append(float(self.distance))
             time.sleep(0.5)
 
         return response
