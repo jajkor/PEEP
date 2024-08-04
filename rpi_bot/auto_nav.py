@@ -19,7 +19,7 @@ class Auto_Nav(Node):
 
         self.is_running = True
 
-        self.range_listener = self.create_subscription(Range, 'scanner_range', self.range_listener, 10)
+        self.range_listener = self.create_subscription(Range, 'range', self.range_listener, 10)
         self.velocity_publisher = self.create_publisher(Velocity, 'motor_vel', 10)
         self.velocity_timer = self.create_timer(0.1, self.calculate_motor_velocity)
 
