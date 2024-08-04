@@ -35,6 +35,12 @@ class Auto_Nav(Node):
 
         self.get_logger().info('Auto Nav Initialized')
 
+    def move(self):
+        self.get_logger().info('Moving forward')
+        #twist = Twist()
+        #twist.linear.x = 0.5
+        #self.cmd_vel_publisher.publish(twist)
+
     def scan(self):
         self.get_logger().info('Scanning for obstacles')
         # Implement scanning logic
