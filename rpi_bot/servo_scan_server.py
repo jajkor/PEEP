@@ -39,7 +39,6 @@ class Servo_Scan(Node):
     def scan_callback(self, request, response):
         if self.is_busy:
             self.get_logger().info('Service is busy. Cannot handle request:')
-            response.response_data = 'Service is currently busy. Please try again later.'
             return response
         
         self.is_busy = True
