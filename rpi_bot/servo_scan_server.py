@@ -8,7 +8,7 @@ from rpi_bot_interfaces.srv import Scan
 class Servo_Scan(Node):
 
     def __init__(self) -> None:
-        super().__init__(Scan, '/scan', self.create_request_handler, ["outcome1"], self.response_handler)
+        super().__init__('servo_scan')
 
         self.declare_parameters(
             namespace='',
@@ -22,8 +22,8 @@ class Servo_Scan(Node):
             self.get_parameter('pwm_channel').get_parameter_value().integer_value,
             self.get_parameter('starting_angle').get_parameter_value().integer_value
         )
-        
-        self.srv = self.create_service(Scan, 'scan', self.scan_callback)
+        self.is_busy = False
+        self.srv = self.create_service(Scan, 'servo_scan', self.scan_callback)
         self.range_listener = self.create_subscription(Range, 'range', self.range_listener, 10)
 
     def range_listener(self, range_msg):
@@ -31,6 +31,12 @@ class Servo_Scan(Node):
         self.distance = round(self.distance, 2)
 
     def scan_callback(self, request, response):
+        if self.is_busy:
+            self.get_logger().info('Service is busy. Cannot handle request: %s' % request.request_data)
+            response.response_data = 'Service is currently busy. Please try again later.'
+            return response
+        
+        self.is_busy = True
         self.get_logger.info(f"Servo Scan: {request.start_angle} to {request.stop_angle}")
 
         for i in range(int(request.start_angle), int(request.stop_angle), 10):
@@ -39,6 +45,7 @@ class Servo_Scan(Node):
             response.list_distances.append(float(self.distance))
             time.sleep(0.5)
 
+        self.is_busy = False
         return response
 
 def main(args=None):
