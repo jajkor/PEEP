@@ -23,13 +23,15 @@ class Servo_Scan(Node):
             self.get_parameter('starting_angle').get_parameter_value().integer_value
         )
         self.is_busy = False
-        self.srv = self.create_service(Scan, 'servo_scan', self.scan_callback)
-        self.range_listener = self.create_subscription(Range, 'range', self.range_listener, 10)
-        self.range_listener
+        self.distance = None
 
-    def range_listener(self, range_msg):
+        self.srv = self.create_service(Scan, 'servo_scan', self.scan_callback)
+        self.range_listener = self.create_subscription(Range, 'range', self.range_listener_callback, 10)
+
+    def range_listener_callback(self, range_msg):
         self.distance = range_msg.range * 17150
         self.distance = round(self.distance, 2)
+        self.get_logger().info(f'Updated distance: {self.distance}')
 
     def scan_callback(self, request, response):
         if self.is_busy:
@@ -42,11 +44,14 @@ class Servo_Scan(Node):
 
         for i in range(int(request.start_angle), int(request.stop_angle), 10):
             self.sg90.set_angle(i)
-            response.list_angle.append(float(self.sg90.get_angle()))
-            response.list_distance.append(float(self.distance))
             time.sleep(0.5)
+            if self.distance is not None:
+                response.list_angle.append(float(self.sg90.get_angle()))
+                response.list_distance.append(float(self.distance))
 
         self.is_busy = False
+        self.sg90.set_angle(90)
+
         self.get_logger().info(f'List_Angle: {response.list_angle}')
         self.get_logger().info(f'List_Distance: {response.list_distance}')
         return response
