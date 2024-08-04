@@ -43,6 +43,10 @@ class Auto_Nav(Node):
         self.range_listener = self.create_subscription(Range, 'range', self.range_callback, 10)
         self.velocity_publisher = self.create_publisher(Velocity, 'motor_vel', 10)
         
+        blackboard = Blackboard()
+        outcome = self.fsm(blackboard)
+        print(outcome)
+
         self.get_logger().info('Robot FSM Node Initialized')
 
     def move(self):
