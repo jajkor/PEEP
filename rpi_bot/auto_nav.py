@@ -3,64 +3,69 @@ from rclpy.node import Node
 from sensor_msgs.msg import Range
 from rpi_bot_interfaces.msg import Velocity
 from rpi_bot_interfaces.srv import Scan
-from yasmin import State
+from yasmin import CbState
 from yasmin import Blackboard
 from yasmin import StateMachine
+from yasmin_ros import ActionState
+from yasmin_ros.basic_outcomes import SUCCEED, ABORT, CANCEL
 from yasmin_viewer import YasminViewerPub
 import time
 
 class Auto_Nav(Node):
-
     def __init__(self):
-        super().__init__('auto_nav')
-
-        # Initialize FSM states
-        self.move_state = State('Move', on_enter=self.move)
-        self.scan_state = State('Scan', on_enter=self.scan)
-        self.readjust_state = State('Readjust', on_enter=self.readjust)
+        super().__init__('robot_fsm')
 
         # Initialize FSM and add transitions
-        self.fsm = StateMachine(self.move_state)
-        self.fsm.add_transition(self.move_state, self.scan_state, trigger='obstacle_detected')
-        self.fsm.add_transition(self.scan_state, self.readjust_state, trigger='scan_complete')
-        self.fsm.add_transition(self.readjust_state, self.move_state, trigger='readjust_complete')
+        self.fsm = StateMachine(outcomes=['obstacle_detected', 'scan_complete', 'readjust_complete'])
+        self.fsm.add_state(
+            "MOVE",
+            CbState(["obstacle_detected"], self.move),
+            transitions={
+                "obstacle_detected": "SCAN"
+            }
+        )
+        self.fsm.add_state(
+            "SCAN",
+            CbState(["scan_complete"], self.scan),
+            transitions={
+                "scan_complete": "READJUST"
+            }
+        )
+        self.fsm.add_state(
+            "READJUST",
+            CbState(["readjust_complete"], self.readjust),
+            transitions={
+                "readjust_complete": "MOVE"
+            }
+        )
 
         # ROS 2 subscriptions and publishers
         self.range_listener = self.create_subscription(Range, 'range', self.range_callback, 10)
-        #self.velocity_publisher = self.create_publisher(Velocity, 'motor_vel', 10)
-
-        self.client = self.create_client(Scan, 'servo_scan')     
-        while not self.client.wait_for_service(timeout_sec=1.0):
-            self.get_logger().info('service not available, waiting again...')
-
-        self.get_logger().info('Auto Nav Initialized')
+        self.velocity_publisher = self.create_publisher(Velocity, 'motor_vel', 10)
+        
+        self.get_logger().info('Robot FSM Node Initialized')
 
     def move(self):
-        self.get_logger().info('Moving forward')
-        #twist = Twist()
-        #twist.linear.x = 0.5
-        #self.cmd_vel_publisher.publish(twist)
+        self.get_logger().info("Entering Move State")
+        time.sleep(3)
+        return 'obstacle_detected'
 
     def scan(self):
-        self.get_logger().info('Scanning for obstacles')
-        # Implement scanning logic
+        self.get_logger().info("Entering Scan State")
         time.sleep(3)
-        # Transition to 'Readjust' state when scanning is complete
-        self.fsm.scan_complete()
+        return 'scan_complete'
 
     def readjust(self):
-        self.get_logger().info('Readjusting path')
-        # Implement path readjustment logic
+        self.get_logger().info("Entering Readjust State")
         time.sleep(3)
-        # Transition to 'Move' state when readjustment is complete
-        self.fsm.readjust_complete()
+        return 'readjust_complete'
 
     def range_callback(self, range_msg):
         self.get_logger().info(f'Received Distance: {range_msg.range} cm')
 
         if self.distance <= 30:
-            self.send_request(0.0, 180.0)
-            self.fsm.obstacle_detected()
+            #self.send_request(0.0, 180.0)
+            print()
 
     def send_request(self, start_angle, stop_angle):
         self.scan_request = Scan.Request()
@@ -83,40 +88,6 @@ def main(args=None):
 
     auto_nav = Auto_Nav()
     rclpy.spin(auto_nav)
-
-# create a FSM
-    sm = StateMachine(outcomes=["outcome4"])
-
-    # add states
-    sm.add_state(
-        "MOVING",
-        MovingState(),
-        transitions={
-            "outcome1": "SCANNING",
-            "outcome2": "MOVING"
-        }
-    )
-    sm.add_state(
-        "SCANNING",
-        ScanningState(),
-        transitions={
-            "outcome3": "TURNING"
-        }
-    )
-    sm.add_state(
-        "TURNING",
-        TurningState(),
-        transitions={
-            "outcome3": "MOVING"
-        }
-    )
-
-    # pub FSM info
-    YasminViewerPub("yasmin_demo", sm)
-
-    # execute FSM
-    outcome = sm()
-    print(outcome)
 
     auto_nav.destroy_node()
     rclpy.shutdown()
