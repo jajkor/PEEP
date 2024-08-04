@@ -26,14 +26,14 @@ class Servo_Scan(Node):
         self.distance = None
 
         self.srv = self.create_service(Scan, 'servo_scan', self.scan_callback)
-        self.range_listener = self.create_subscription(Range, 'range', self.range_listener_callback, 10)
+        self.range_listener = self.create_subscription(Range, 'range', self.scan_callback, 10)
 
     def range_listener_callback(self, range_msg):
         self.distance = range_msg.range * 17150
         self.distance = round(self.distance, 2)
         self.get_logger().info(f'Updated distance: {self.distance}')
 
-    def scan_callback(self, request, response):
+    def scan_callback(self, request, response, range_msg):
         if self.is_busy:
             self.get_logger().info('Service is busy. Cannot handle request: %s' % request.request_data)
             response.response_data = 'Service is currently busy. Please try again later.'
@@ -47,7 +47,7 @@ class Servo_Scan(Node):
             time.sleep(0.5)
             if self.distance is not None:
                 response.list_angle.append(float(self.sg90.get_angle()))
-                response.list_distance.append(float(self.distance))
+                response.list_distance.append(float(round(range_msg.range * 17150, 2)))
 
         self.is_busy = False
         self.sg90.set_angle(90)
