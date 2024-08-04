@@ -25,6 +25,7 @@ class Servo_Scan(Node):
         self.is_busy = False
         self.srv = self.create_service(Scan, 'servo_scan', self.scan_callback)
         self.range_listener = self.create_subscription(Range, 'range', self.range_listener, 10)
+        self.range_listener
 
     def range_listener(self, range_msg):
         self.distance = range_msg.range * 17150
