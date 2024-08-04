@@ -21,7 +21,7 @@ class Auto_Nav(Node):
         self.range_listener = self.create_subscription(Range, 'range', self.range_listener, 10)
         self.client = self.create_client(Scan, 'servo_scan')
         
-        while not self.cli.wait_for_service(timeout_sec=1.0):
+        while not self.client.wait_for_service(timeout_sec=1.0):
             self.get_logger().info('service not available, waiting again...')
 
         self.range_listener  # prevent unused variable warnings

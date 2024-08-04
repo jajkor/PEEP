@@ -52,6 +52,7 @@ def main(args=None):
     rclpy.init(args=args)
 
     servo_scan = Servo_Scan()
+    rclpy.spin(servo_scan)
 
     servo_scan.destroy_node()
     rclpy.shutdown()
