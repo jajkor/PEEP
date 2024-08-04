@@ -27,8 +27,8 @@ def generate_launch_description():
         ),
         launch_ros.actions.Node( # HC-S04 Servo
             package='rpi_bot',
-            executable='sg90_driver_node',
-            name='sg90_scanner',
+            executable='servo_scan_service',
+            name='servo_scan',
             parameters=[{
                 'pwm_channel': 0,
                 'starting_angle': 90
