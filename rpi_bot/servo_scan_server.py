@@ -41,11 +41,13 @@ class Servo_Scan(Node):
 
         for i in range(int(request.start_angle), int(request.stop_angle), 10):
             self.sg90.set_angle(i)
-            response.list_angles.append(float(self.sg90.get_angle()))
-            response.list_distances.append(float(self.distance))
+            response.list_angle.append(float(self.sg90.get_angle()))
+            response.list_distance.append(float(self.distance))
             time.sleep(0.5)
 
         self.is_busy = False
+        self.get_logger().info(f'List_Angle: {response.list_angle}')
+        self.get_logger().info(f'List_Distance: {response.list_distance}')
         return response
 
 def main(args=None):
