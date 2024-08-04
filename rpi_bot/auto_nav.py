@@ -25,8 +25,7 @@ class Auto_Nav(Node):
             self.get_logger().info('service not available, waiting again...')
 
         self.range_listener  # prevent unused variable warnings
-        self.velocity_publisher  # prevent unused variable warnings
-        self.interrupt_publisher
+        #self.velocity_publisher  # prevent unused variable warnings
         
         self.get_logger().info('Auto Nav Initialized')
 
@@ -39,10 +38,12 @@ class Auto_Nav(Node):
             self.send_request(0.0, 180.0)
 
     def send_request(self, start_angle, stop_angle):
+        self.scan_request = Scan.Request()
+
         self.scan_request.start_angle = start_angle
         self.scan_request.stop_angle = stop_angle
 
-        return self.cli.call_async(self.scan_request)
+        return self.client.call_async(self.scan_request)
 
     def calculate_motor_velocity(self):
         vel_msg = Velocity()

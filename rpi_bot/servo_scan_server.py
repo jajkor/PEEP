@@ -37,7 +37,7 @@ class Servo_Scan(Node):
             return response
         
         self.is_busy = True
-        self.get_logger.info(f"Servo Scan: {request.start_angle} to {request.stop_angle}")
+        self.get_logger().info(f"Servo Scan: {request.start_angle} to {request.stop_angle}")
 
         for i in range(int(request.start_angle), int(request.stop_angle), 10):
             self.sg90.set_angle(i)
