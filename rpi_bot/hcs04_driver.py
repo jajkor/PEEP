@@ -35,6 +35,7 @@ class HCS04_Driver(Node):
         range_msg.radiation_type = Range.ULTRASOUND
         range_msg.range = self.calculate_distance_cm(self.hcs04.measure_pulse_duration())
         self.range_publisher.publish(range_msg)
+        self.get_logger().info(f'Publishing Distance: {range_msg.range} cm')
 
 
     def destroy_node(self):
