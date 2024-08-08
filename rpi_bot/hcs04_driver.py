@@ -33,7 +33,7 @@ class HCS04_Driver(Node):
         range_msg = Range()
         range_msg.header.stamp = self.get_clock().now().to_msg()
         range_msg.radiation_type = Range.ULTRASOUND
-        range_msg.range = self.hcs04.calculate_distance_cm(self.hcs04.measure_pulse_duration())
+        range_msg.range = self.calculate_distance_cm(self.hcs04.measure_pulse_duration())
         self.range_publisher.publish(range_msg)
 
 
