@@ -39,10 +39,10 @@ def generate_launch_description():
             executable='servo_pan_tilt_node',
             name='servo_pan_tilt',
             parameters=[{
-                'pan_pwm_channel': 0,
+                'pan_pwm_channel': 1,
                 'pan_start_angle': 90,
                 'pan_axes': 6,
-                'tilt_pwm_channel': 1,
+                'tilt_pwm_channel': 2,
                 'tilt_start_angle': 90,
                 'tilt_axes': 7,
             }]
