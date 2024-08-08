@@ -34,4 +34,17 @@ def generate_launch_description():
                 'starting_angle': 90
             }]
         ),
+        launch_ros.actions.Node( # Pan/Tilt Servo
+            package='rpi_bot',
+            executable='servo_pan_tilt_node',
+            name='servo_pan_tilt',
+            parameters=[{
+                'pan_pwm_channel': 0,
+                'pan_start_angle': 90,
+                'pan_axes': 4,
+                'tilt_pwm_channel': 1,
+                'tilt_start_angle': 90,
+                'tilt_axes': 5,
+            }]
+        ),
     ])

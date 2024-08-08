@@ -27,6 +27,7 @@ setup(
             'auto_nav_node = rpi_bot.auto_nav:main',
             'hcs04_driver_node = rpi_bot.hcs04_driver:main',
             'servo_scan_service = rpi_bot.servo_scan_server:main',
+            'servo_pan_tilt_node = rpi_bot.servo_pan_tilt:main',
             'sub_usb_cam_node = rpi_bot.sub_usb_cam:main',
         ],
     },
