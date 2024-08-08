@@ -41,10 +41,10 @@ def generate_launch_description():
             parameters=[{
                 'pan_pwm_channel': 1,
                 'pan_start_angle': 90,
-                'pan_axes': 6,
+                'pan_axes': 3,
                 'tilt_pwm_channel': 2,
                 'tilt_start_angle': 90,
-                'tilt_axes': 7,
+                'tilt_axes': 4,
             }]
         ),
     ])
