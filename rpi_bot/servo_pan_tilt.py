@@ -1,7 +1,7 @@
 import rclpy
 from rclpy.node import Node
 from sensor_msgs.msg import Joy
-from rpi_interface import RPi_SG90
+from rpi_bot.rpi_interface import RPi_SG90
 
 class ServoControl(Node):
     MIN_ANGLE = 0
