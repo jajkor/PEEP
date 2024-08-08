@@ -26,6 +26,9 @@ class HCS04_Driver(Node):
 
         self.get_logger().info('HC-S04 Driver Initialized')
 
+    def calculate_distance_cm(self, pulse) -> float:
+        return round(float(pulse * 17150), 2)
+
     def timer_callback(self):
         range_msg = Range()
         range_msg.header.stamp = self.get_clock().now().to_msg()
@@ -33,8 +36,6 @@ class HCS04_Driver(Node):
         range_msg.range = self.hcs04.calculate_distance_cm(self.hcs04.measure_pulse_duration())
         self.range_publisher.publish(range_msg)
 
-    def calculate_distance_cm(self, pulse):
-        return round(float(pulse * 17150), 2)
 
     def destroy_node(self):
         self.get_logger().info('HC-S04 Driver Destroyed')
