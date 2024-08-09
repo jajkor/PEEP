@@ -33,12 +33,7 @@ class HCS04_Driver(Node):
         range_msg = Range()
         range_msg.header.stamp = self.get_clock().now().to_msg()
         range_msg.radiation_type = Range.ULTRASOUND
-        try:
-            print("COMMON CALL")
-            range_msg.range = self.calculate_distance_cm(self.hcs04.measure_pulse_duration())
-        except KeyboardInterrupt:
-            print("LAST CALL")
-            range_msg.range = None
+        range_msg.range = self.calculate_distance_cm(self.hcs04.measure_pulse_duration())
 
         self.range_publisher.publish(range_msg)
         self.get_logger().info(f'Publishing Distance: {range_msg.range} cm')

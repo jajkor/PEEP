@@ -91,7 +91,7 @@ class Auto_Nav(Node, yasmin.StateMachine):
     def idle(self, userdata=None):
         print('Entering Idle State')
         time.sleep(2)
-        if self.distance == None:
+        if self.count_subscribers('range') :
             return 'stream_interrupted'
         else:
             return 'stream_running'
@@ -101,7 +101,7 @@ class Auto_Nav(Node, yasmin.StateMachine):
         time.sleep(2)
         if self.obstacle_detected:
             return 'obstacle_detected'
-        elif self.distance == None:
+        elif self.count_subscribers('range') == 0:
             return 'stream_interrupted'
         else:
             return 'path_clear'
