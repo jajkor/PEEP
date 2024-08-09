@@ -91,7 +91,7 @@ class Auto_Nav(Node, yasmin.StateMachine):
     def idle(self, userdata=None):
         print('Entering Idle State')
         time.sleep(2)
-        if self.count_publishers('range') == 0:
+        if self.count_publishers('range') == 0: # May break if more range publishers are added
             return 'stream_interrupted'
         else:
             return 'stream_running'
@@ -101,14 +101,16 @@ class Auto_Nav(Node, yasmin.StateMachine):
         time.sleep(2)
         if self.obstacle_detected:
             return 'obstacle_detected'
-        elif self.count_publishers('range') == 0:
+        elif self.count_publishers('range') == 0: # May break if more range publishers are added
             return 'stream_interrupted'
         else:
             return 'path_clear'
 
     def scan(self, userdata=None):
         print('Entering Scan State')
-        time.sleep(2)
+        future = self.scan_request(0.0, 180.0)
+        response = future.result()
+        self.get_logger().info(f'{response.list_angle}, {response.list_distance}')
         return 'scan_complete'
 
     def readjust(self, userdata=None):
