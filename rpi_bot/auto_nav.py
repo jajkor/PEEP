@@ -13,7 +13,7 @@ import time
 class Auto_Nav(Node, yasmin.StateMachine):
     def __init__(self):
         Node.__init__(self, 'robot_fsm')
-        yasmin.StateMachine.__init__(self, outcomes=['path_clear', 'obstacle_detected', 'scan_complete', 'readjust_complete'])
+        yasmin.StateMachine.__init__(self, outcomes=['path_clear', 'obstacle_detected', 'scan_complete', 'readjust_complete', 'stream_running', 'stream_interrupted'])
         
         self.distance = None
         self.obstacle_detected = False
@@ -26,26 +26,35 @@ class Auto_Nav(Node, yasmin.StateMachine):
         #self.velocity_publisher = self.create_publisher(Velocity, 'motor_vel', 10)
 
         self.add_state(
-            "MOVE",
-            CbState(["obstacle_detected", "path_clear"], self.move),
+            'IDLE',
+            CbState(['stream_running', 'stream_interrupted'], self.idle),
             transitions={
-                "obstacle_detected": "SCAN",
-                "path_clear": "MOVE"
+                'stream_running': 'MOVE',
+                'stream_interrupted': 'IDLE'
             }
         )
         self.add_state(
-        "SCAN",
-        CbState(["scan_complete"], self.scan),
-        transitions={
-            "scan_complete": "READJUST"
-        }
+            'MOVE',
+            CbState(['obstacle_detected', 'path_clear', 'stream_interrupted'], self.move),
+            transitions={
+                'obstacle_detected': 'SCAN',
+                'path_clear': 'MOVE',
+                'stream_interrupted': 'IDLE'
+            }
         )
         self.add_state(
-            "READJUST",
-            CbState(["readjust_complete", "obstacle_detected"], self.readjust),
+            'SCAN',
+            CbState(['scan_complete'], self.scan),
             transitions={
-                "readjust_complete": "MOVE",
-                "obstacle_detected": "SCAN"
+                'scan_complete': 'READJUST'
+            }
+        )
+        self.add_state(
+            'READJUST',
+            CbState(['readjust_complete', 'obstacle_detected'], self.readjust),
+            transitions={
+                'readjust_complete': 'MOVE',
+                'obstacle_detected': 'SCAN'
             }
         )
 
@@ -79,21 +88,31 @@ class Auto_Nav(Node, yasmin.StateMachine):
 
         self.velocity_publisher.publish(vel_msg)
 
-    def move(self, userdata=None):
-        print("Entering Move State")
+    def idle(self, userdata=None):
+        print('Entering Idle State')
         time.sleep(2)
-        if self.obstacle_detected or self.distance == None:
+        if self.distance == None:
+            return 'stream_interrupted'
+        else:
+            return 'stream_running'
+
+    def move(self, userdata=None):
+        print('Entering Move State')
+        time.sleep(2)
+        if self.obstacle_detected:
             return 'obstacle_detected'
+        elif self.distance == None:
+            return 'stream_interrupted'
         else:
             return 'path_clear'
 
     def scan(self, userdata=None):
-        print("Entering Scan State")
+        print('Entering Scan State')
         time.sleep(2)
         return 'scan_complete'
 
     def readjust(self, userdata=None):
-        print("Entering Readjust State")
+        print('Entering Readjust State')
         time.sleep(2)
         if self.obstacle_detected:
             return 'obstacle_detected'
