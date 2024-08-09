@@ -91,7 +91,7 @@ class Auto_Nav(Node, yasmin.StateMachine):
     def idle(self, userdata=None):
         print('Entering Idle State')
         time.sleep(2)
-        if self.count_subscribers('range') == 0:
+        if self.count_publishers('range') == 0:
             return 'stream_interrupted'
         else:
             return 'stream_running'
