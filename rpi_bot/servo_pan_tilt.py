@@ -52,9 +52,13 @@ class ServoControl(Node):
 
         if (msg.axes[self.pan_axes] > 0):
             pan_temp += ServoControl.SPEED * msg.axes[self.pan_axes]
+        else :
+            pan_temp -= ServoControl.SPEED * -msg.axes[self.pan_axes]
 
-        if (msg.axes[self.tilt_axes] < 0):
-            tilt_temp += ServoControl.SPEED * -msg.axes[self.tilt_axes]
+        if (msg.axes[self.tilt_axes] > 0):
+            tilt_temp += ServoControl.SPEED * msg.axes[self.tilt_axes]
+        else:
+            tilt_temp -= ServoControl.SPEED * -msg.axes[self.tilt_axes]
         
         if pan_temp != self.pan_servo.get_angle():
             pan_temp = self.clamp(pan_temp, ServoControl.MIN_ANGLE, ServoControl.MAX_ANGLE)
