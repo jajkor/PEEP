@@ -1,14 +1,18 @@
+import time
+
 import rclpy
 from rclpy.node import Node
+from rclpy.action import ActionClient
+from rclpy.executors import MultiThreadedExecutor
+from rclpy.callback_groups import ReentrantCallbackGroup
+
 from sensor_msgs.msg import Range
 from rpi_bot_interfaces.msg import Velocity
 from rpi_bot_interfaces.srv import Scan
+
 import yasmin
 from yasmin import CbState
 from yasmin import Blackboard
-from rclpy.executors import MultiThreadedExecutor
-from rclpy.callback_groups import ReentrantCallbackGroup
-import time
 
 class Auto_Nav(Node, yasmin.StateMachine):
     def __init__(self):
@@ -24,6 +28,11 @@ class Auto_Nav(Node, yasmin.StateMachine):
         self.range_listener = self.create_subscription(Range, 'range', self.range_callback, 10, callback_group=self.callback_group)
         self.fsm_timer = self.create_timer(0.1, self.run)
         #self.velocity_publisher = self.create_publisher(Velocity, 'motor_vel', 10)
+
+        self.client = self.create_client(Scan, 'servo_scan')
+
+        #while not self.cli.wait_for_service(timeout_sec=1.0):
+        #    self.get_logger().info('service not available, waiting again...')
 
         self.add_state(
             'IDLE',
@@ -111,6 +120,7 @@ class Auto_Nav(Node, yasmin.StateMachine):
         future = self.scan_request(0.0, 180.0)
         response = future.result()
         self.get_logger().info(f'{response.list_angle}, {response.list_distance}')
+
         return 'scan_complete'
 
     def readjust(self, userdata=None):
