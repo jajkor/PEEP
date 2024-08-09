@@ -51,9 +51,9 @@ class ServoControl(Node):
         tilt_temp = self.tilt_servo.get_angle()
 
         if (msg.axes[self.pan_axes] > 0):
-            pan_temp += ServoControl.SPEED * msg.axes[self.pan_axes]
-        else :
             pan_temp -= ServoControl.SPEED * -msg.axes[self.pan_axes]
+        else :
+            pan_temp += ServoControl.SPEED * msg.axes[self.pan_axes]
 
         if (msg.axes[self.tilt_axes] > 0):
             tilt_temp += ServoControl.SPEED * msg.axes[self.tilt_axes]

@@ -82,7 +82,7 @@ class Auto_Nav(Node, yasmin.StateMachine):
     def move(self, userdata=None):
         print("Entering Move State")
         time.sleep(2)
-        if self.obstacle_detected:
+        if self.obstacle_detected or self.distance == None:
             return 'obstacle_detected'
         else:
             return 'path_clear'
@@ -103,7 +103,6 @@ class Auto_Nav(Node, yasmin.StateMachine):
     def run(self):
         # Run the FSM logic
         while rclpy.ok():
-            #rclpy.spin_once(self)  # Process incoming messages
             new_state_name = self.execute(self.blackboard)  # Run the FSM logic
             if new_state_name:
                 self.transition(new_state_name)
