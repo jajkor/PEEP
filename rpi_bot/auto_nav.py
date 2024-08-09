@@ -1,5 +1,6 @@
 import rclpy
 from rclpy.node import Node
+from rclpy.event_handler import PublisherEventCallbacks
 from sensor_msgs.msg import Range
 from rpi_bot_interfaces.msg import Velocity
 from rpi_bot_interfaces.srv import Scan
@@ -15,14 +16,15 @@ class Auto_Nav(Node, yasmin.StateMachine):
         Node.__init__(self, 'robot_fsm')
         yasmin.StateMachine.__init__(self, outcomes=['path_clear', 'obstacle_detected', 'scan_complete', 'readjust_complete', 'stream_running', 'stream_interrupted'])
         
-        self.distance = None
         self.obstacle_detected = False
+        self.range_publisher_active = False
 
         self.callback_group = ReentrantCallbackGroup()
 
         # ROS 2 subscriptions and publishers
         self.range_listener = self.create_subscription(Range, 'range', self.range_callback, 10, callback_group=self.callback_group)
         self.fsm_timer = self.create_timer(0.1, self.run)
+        self.range_listener.add_event_handler(PublisherEventCallbacks(on_unexpected_message_qos=self.on_publisher_destroyed))
         #self.velocity_publisher = self.create_publisher(Velocity, 'motor_vel', 10)
 
         self.add_state(
@@ -80,6 +82,10 @@ class Auto_Nav(Node, yasmin.StateMachine):
 
         #self.get_logger().info(f'Received Distance: {range_msg.range} cm')
 
+    def on_publisher_destroyed(self, event):
+        self.get_logger().info('Publisher has been destroyed!')
+        self.publisher_destroyed = True
+
     def velocity_callback(self):
         vel_msg = Velocity()
 
@@ -91,7 +97,7 @@ class Auto_Nav(Node, yasmin.StateMachine):
     def idle(self, userdata=None):
         print('Entering Idle State')
         time.sleep(2)
-        if self.count_subscribers('range') :
+        if self.count_subscribers('range') == 0:
             return 'stream_interrupted'
         else:
             return 'stream_running'
@@ -101,7 +107,7 @@ class Auto_Nav(Node, yasmin.StateMachine):
         time.sleep(2)
         if self.obstacle_detected:
             return 'obstacle_detected'
-        elif self.count_subscribers('range') == 0:
+        elif self.count_publishers('range') == 0:
             return 'stream_interrupted'
         else:
             return 'path_clear'

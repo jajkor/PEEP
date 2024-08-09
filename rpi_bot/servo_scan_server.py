@@ -62,11 +62,7 @@ def main(args=None):
     executor = MultiThreadedExecutor()
     executor.add_node(servo_scan)
 
-    try:
-        servo_scan.get_logger().info('Beginning client, shut down with CTRL-C')
-        executor.spin()
-    except KeyboardInterrupt:
-        servo_scan.get_logger().info('Keyboard interrupt, shutting down.\n')
+    executor.spin()
 
     servo_scan.destroy_node()
     rclpy.shutdown()
