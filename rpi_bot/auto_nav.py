@@ -1,6 +1,5 @@
 import rclpy
 from rclpy.node import Node
-from rclpy.event_handler import PublisherEventCallbacks
 from sensor_msgs.msg import Range
 from rpi_bot_interfaces.msg import Velocity
 from rpi_bot_interfaces.srv import Scan
@@ -8,7 +7,7 @@ import yasmin
 from yasmin import CbState
 from yasmin import Blackboard
 from rclpy.executors import MultiThreadedExecutor
-from rclpy.callback_groups import MutuallyExclusiveCallbackGroup, ReentrantCallbackGroup
+from rclpy.callback_groups import ReentrantCallbackGroup
 import time
 
 class Auto_Nav(Node, yasmin.StateMachine):
