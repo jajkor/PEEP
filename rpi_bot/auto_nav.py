@@ -24,7 +24,6 @@ class Auto_Nav(Node, yasmin.StateMachine):
         # ROS 2 subscriptions and publishers
         self.range_listener = self.create_subscription(Range, 'range', self.range_callback, 10, callback_group=self.callback_group)
         self.fsm_timer = self.create_timer(0.1, self.run)
-        self.range_listener.add_event_handler(PublisherEventCallbacks(on_unexpected_message_qos=self.on_publisher_destroyed))
         #self.velocity_publisher = self.create_publisher(Velocity, 'motor_vel', 10)
 
         self.add_state(
@@ -81,10 +80,6 @@ class Auto_Nav(Node, yasmin.StateMachine):
             self.obstacle_detected = False
 
         #self.get_logger().info(f'Received Distance: {range_msg.range} cm')
-
-    def on_publisher_destroyed(self, event):
-        self.get_logger().info('Publisher has been destroyed!')
-        self.publisher_destroyed = True
 
     def velocity_callback(self):
         vel_msg = Velocity()
