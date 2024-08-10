@@ -27,7 +27,7 @@ class Auto_Nav(Node, yasmin.StateMachine):
         # ROS 2 subscriptions and publishers
         self.range_listener = self.create_subscription(Range, 'range', self.range_callback, 10, callback_group=self.callback_group)
         self.fsm_timer = self.create_timer(0.1, self.run)
-        #self.velocity_publisher = self.create_publisher(Velocity, 'motor_vel', 10)
+        self.velocity_publisher = self.create_publisher(Velocity, 'motor_vel', 10)
 
         self.scan_client = self.create_client(Scan, 'servo_scan')
 
@@ -78,18 +78,6 @@ class Auto_Nav(Node, yasmin.StateMachine):
         self.scan_request.stop_angle = stop_angle
 
         self.future = self.scan_client.call_async(self.scan_request)
-
-    def get_response(self):
-        if self.future.done():
-            try:
-                response = self.future.result()
-                self.get_logger().info(f'Received distance: {response.distance}')
-                return response.distance
-            except Exception as e:
-                self.get_logger().error(f'Service call failed: {e}')
-                return None
-        else:
-            return None
     
     def range_callback(self, range_msg):
         self.distance = range_msg.range
@@ -119,20 +107,27 @@ class Auto_Nav(Node, yasmin.StateMachine):
 
     def move(self, userdata=None):
         print('Entering Move State')
-        time.sleep(2)
+        vel_msg = Velocity()
+
+        vel_msg.left_vel = 0.0
+        vel_msg.right_vel = 0.0
+        
         if self.obstacle_detected:
+            self.velocity_publisher.publish(vel_msg)
             return 'obstacle_detected'
         elif self.count_publishers('range') == 0: # May break if more range publishers are added
+            self.velocity_publisher.publish(vel_msg)
             return 'stream_interrupted'
         else:
+            vel_msg.left_vel = 0.8
+            vel_msg.right_vel = 0.8
+            self.velocity_publisher.publish(vel_msg)
             return 'path_clear'
 
     def scan(self, userdata=None):
         print('Entering Scan State')
         self.future = self.scan_request(40.0, 140.0)
         time.sleep(10)
-        self.response = self.get_response()
-        self.get_logger().info(f'{self.response.list_angle}, {self.response.list_distance}')
 
         return 'scan_complete'
 
