@@ -40,11 +40,6 @@ class HCS04_Driver(Node):
         self.range_publisher.publish(range_msg)
         self.get_logger().info(f'Publishing Distance: {range_msg.range} cm')
 
-
-    def destroy_node(self):        
-        self.get_logger().info('HC-S04 Driver Destroyed')
-        self.hcs04.__del__()
-
 def main(args=None):
     rclpy.init(args=args)
 
