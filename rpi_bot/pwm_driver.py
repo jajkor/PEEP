@@ -1,5 +1,7 @@
 import rclpy
 from rclpy.node import Node
+from rclpy.executors import ExternalShutdownException
+
 from rpi_bot_interfaces.msg import Velocity
 from rpi_bot.rpi_interface import RPi_Motors
 
@@ -47,10 +49,12 @@ def main(args=None):
     rclpy.init(args=args)
 
     velocity_subscriber = PWM_Driver()
-    rclpy.spin(velocity_subscriber)
-
-    velocity_subscriber.destroy_node()
-    rclpy.shutdown()
+    try:
+        rclpy.spin(velocity_subscriber)
+    except (KeyboardInterrupt, ExternalShutdownException):
+        pass
+    finally:
+        velocity_subscriber.destroy_node()
 
 
 if __name__ == '__main__':

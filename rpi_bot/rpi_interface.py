@@ -1,6 +1,6 @@
-import RPi.GPIO as GPIO
 import time
 
+import RPi.GPIO as GPIO
 import board
 import busio
 from adafruit_pca9685 import PCA9685

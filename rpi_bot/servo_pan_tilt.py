@@ -1,5 +1,7 @@
 import rclpy
 from rclpy.node import Node
+from rclpy.executors import ExternalShutdownException
+
 from sensor_msgs.msg import Joy
 from rpi_bot.rpi_interface import RPi_SG90
 
@@ -74,10 +76,12 @@ def main(args=None):
     rclpy.init(args=args)
 
     servo_control = ServoControl()
-    rclpy.spin(servo_control)
-
-    servo_control.destroy_node()
-    rclpy.shutdown()
+    try:
+        rclpy.spin(servo_control)
+    except (KeyboardInterrupt, ExternalShutdownException):
+        pass
+    finally:
+        servo_control.destroy_node()
 
 if __name__ == '__main__':
     main()

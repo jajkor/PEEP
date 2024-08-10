@@ -1,11 +1,14 @@
 import time
+
 import rclpy
 from rclpy.node import Node
+from rclpy.executors import MultiThreadedExecutor
+from rclpy.executors import ExternalShutdownException
+from rclpy.callback_groups import ReentrantCallbackGroup
+
 from sensor_msgs.msg import Range
 from rpi_bot.rpi_interface import RPi_SG90
 from rpi_bot_interfaces.srv import Scan
-from rclpy.executors import MultiThreadedExecutor
-from rclpy.callback_groups import MutuallyExclusiveCallbackGroup, ReentrantCallbackGroup
 
 class Servo_Scan(Node):
 
@@ -45,14 +48,15 @@ class Servo_Scan(Node):
         for i in range(int(request.start_angle), int(request.stop_angle), 10):
             self.sg90.set_angle(i)
             time.sleep(0.5)
-            response.list_angle.append(float(self.sg90.get_angle()))
-            response.list_distance.append(float(self.distance))
+            response.list_angle.append(round(float(self.sg90.get_angle()), 2))
+            response.list_distance.append(round(float(self.distance), 2))
 
-        self.is_busy = False
         self.sg90.set_angle(90)
 
         self.get_logger().info(f'List_Angle: {response.list_angle}')
         self.get_logger().info(f'List_Distance: {response.list_distance}')
+        
+        self.is_busy = False
         return response
 
 def main(args=None):
@@ -62,10 +66,12 @@ def main(args=None):
     executor = MultiThreadedExecutor()
     executor.add_node(servo_scan)
 
-    executor.spin()
-
-    servo_scan.destroy_node()
-    rclpy.shutdown()
+    try:
+        executor.spin()
+    except (KeyboardInterrupt, ExternalShutdownException):
+        pass
+    finally:
+        servo_scan.destroy_node()
 
 if __name__ == '__main__':
     main()

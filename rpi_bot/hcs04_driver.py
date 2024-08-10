@@ -1,5 +1,7 @@
 import rclpy
 from rclpy.node import Node
+from rclpy.executors import ExternalShutdownException
+
 from sensor_msgs.msg import Range
 from rpi_bot.rpi_interface import RPi_HCS04
 
@@ -47,10 +49,12 @@ def main(args=None):
     rclpy.init(args=args)
 
     hcs04_publisher = HCS04_Driver()
-    rclpy.spin(hcs04_publisher)
-
-    hcs04_publisher.destroy_node()
-    rclpy.shutdown()
+    try:
+        rclpy.spin(hcs04_publisher)
+    except (KeyboardInterrupt, ExternalShutdownException):
+        pass
+    finally:
+        hcs04_publisher.destroy_node()
 
 
 if __name__ == '__main__':

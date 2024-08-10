@@ -2,8 +2,8 @@ import time
 
 import rclpy
 from rclpy.node import Node
-from rclpy.action import ActionClient
 from rclpy.executors import MultiThreadedExecutor
+from rclpy.executors import ExternalShutdownException
 from rclpy.callback_groups import ReentrantCallbackGroup
 
 from sensor_msgs.msg import Range
@@ -29,7 +29,7 @@ class Auto_Nav(Node, yasmin.StateMachine):
         self.fsm_timer = self.create_timer(0.1, self.run)
         #self.velocity_publisher = self.create_publisher(Velocity, 'motor_vel', 10)
 
-        self.client = self.create_client(Scan, 'servo_scan')
+        self.scan_client = self.create_client(Scan, 'servo_scan')
 
         #while not self.cli.wait_for_service(timeout_sec=1.0):
         #    self.get_logger().info('service not available, waiting again...')
@@ -77,7 +77,19 @@ class Auto_Nav(Node, yasmin.StateMachine):
         self.scan_request.start_angle = start_angle
         self.scan_request.stop_angle = stop_angle
 
-        return self.client.call_async(self.scan_request)
+        self.future = self.scan_client.call_async(self.scan_request)
+
+    def get_response(self):
+        if self.future.done():
+            try:
+                response = self.future.result()
+                self.get_logger().info(f'Received distance: {response.distance}')
+                return response.distance
+            except Exception as e:
+                self.get_logger().error(f'Service call failed: {e}')
+                return None
+        else:
+            return None
     
     def range_callback(self, range_msg):
         self.distance = range_msg.range
@@ -117,9 +129,10 @@ class Auto_Nav(Node, yasmin.StateMachine):
 
     def scan(self, userdata=None):
         print('Entering Scan State')
-        future = self.scan_request(0.0, 180.0)
-        response = future.result()
-        self.get_logger().info(f'{response.list_angle}, {response.list_distance}')
+        self.future = self.scan_request(40.0, 140.0)
+        time.sleep(10)
+        self.response = self.get_response()
+        self.get_logger().info(f'{self.response.list_angle}, {self.response.list_distance}')
 
         return 'scan_complete'
 
@@ -145,10 +158,13 @@ def main(args=None):
     executor = MultiThreadedExecutor(num_threads=4)
 
     executor.add_node(auto_nav)
-    executor.spin()
 
-    auto_nav.destroy_node()
-    rclpy.shutdown()
+    try:
+        executor.spin()
+    except (KeyboardInterrupt, ExternalShutdownException):
+        pass
+    finally:
+        auto_nav.destroy_node()
 
 if __name__ == '__main__':
     main()

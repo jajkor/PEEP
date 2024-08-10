@@ -1,5 +1,7 @@
 import rclpy
 from rclpy.node import Node
+from rclpy.executors import ExternalShutdownException
+
 from sensor_msgs.msg import Image
 from cv_bridge import CvBridge
 import cv2
@@ -19,9 +21,13 @@ class ObjectDetectionNode(Node):
 def main(args=None):
     rclpy.init(args=args)
     node = ObjectDetectionNode()
-    rclpy.spin(node)
-    node.destroy_node()
-    rclpy.shutdown()
+    
+    try:
+        rclpy.spin(node)
+    except (KeyboardInterrupt, ExternalShutdownException):
+        pass
+    finally:
+        node.destroy_node()
 
 if __name__ == '__main__':
     main()
