@@ -8,7 +8,7 @@ from rpi_bot.rpi_interface import RPi_SG90
 class ServoControl(Node):
     MIN_ANGLE = 0
     MAX_ANGLE = 180
-    SPEED = 10.0
+    SPEED = float(10.0)
 
     def __init__(self):
         super().__init__('servo_pan_tilt')
@@ -49,11 +49,11 @@ class ServoControl(Node):
         return n
 
     def joy_callback(self, msg):
-        pan_temp = self.pan_servo.get_angle()
-        tilt_temp = self.tilt_servo.get_angle()
+        pan_temp = float(self.pan_servo.get_angle())
+        tilt_temp = float(self.tilt_servo.get_angle())
 
         if (msg.axes[self.pan_axes] > 0):
-            pan_temp -= ServoControl.SPEED * float(-msg.axes[self.pan_axes])
+            pan_temp -= ServoControl.SPEED * -float(msg.axes[self.pan_axes])
         else:
             pan_temp += ServoControl.SPEED * float(msg.axes[self.pan_axes])
 
