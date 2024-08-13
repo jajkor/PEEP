@@ -55,7 +55,7 @@ class Servo_Scan(Node):
             response.list_angle.append(round(float(self.sg90.get_angle()), 2))
             response.list_distance.append(round(float(self.distance), 2))
 
-        self.sg90.set_angle(self.start)
+        self.sg90.set_angle(self.start_angle)
 
         self.get_logger().info(f'List_Angle: {response.list_angle}')
         self.get_logger().info(f'List_Distance: {response.list_distance}')
