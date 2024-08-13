@@ -25,10 +25,10 @@ class Servo_Scan(Node):
 
         self.sg90 = RPi_SG90(
             self.get_parameter('pwm_channel').get_parameter_value().integer_value,
-            self.get_parameter('starting_angle').get_parameter_value().integer_value
+            self.get_parameter('start_angle').get_parameter_value().integer_value
         )
 
-        self.start_angle =  self.get_parameter('starting_angle').get_parameter_value().integer_value
+        self.start_angle = self.get_parameter('start_angle').get_parameter_value().integer_value
         self.sg90.set_angle(self.start_angle)
 
         self.is_busy = False
