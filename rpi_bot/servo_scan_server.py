@@ -57,17 +57,19 @@ class Servo_Scan(Node):
         self.get_logger().info(f'List_Distance: {response.list_distance}')
         
         self.is_busy = False
+        self.range_listener.destroy()
         return response
 
 def main(args=None):
     rclpy.init(args=args)
 
     servo_scan = Servo_Scan()
-    executor = MultiThreadedExecutor()
-    executor.add_node(servo_scan)
+    #executor = MultiThreadedExecutor()
+    #executor.add_node(servo_scan)
 
     try:
-        executor.spin()
+        servo_scan.spin()
+        #executor.spin()
     except (KeyboardInterrupt, ExternalShutdownException):
         pass
     finally:

@@ -27,7 +27,7 @@ def generate_launch_description():
         ),
         launch_ros.actions.Node( # HC-S04 Servo
             package='rpi_bot',
-            executable='servo_scan_service',
+            executable='servo_scan_server',
             name='servo_scan',
             parameters=[{
                 'pwm_channel': 0,

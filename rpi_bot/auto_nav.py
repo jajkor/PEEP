@@ -31,6 +31,7 @@ class Auto_Nav(Node, yasmin.StateMachine):
         self.range_listener = self.create_subscription(Range, 'range', self.range_callback, 10, callback_group=self.callback_group)
         self.fsm_timer = self.create_timer(0.1, self.run)
         self.velocity_publisher = self.create_publisher(Velocity, 'motor_vel', 10)
+        self.vel_rimer = self.create_timer(0.1, self.velocity_callback, callback_group=self.callback_group)
 
         self.scan_client = self.create_client(Scan, 'servo_scan')
 
@@ -95,39 +96,38 @@ class Auto_Nav(Node, yasmin.StateMachine):
     def velocity_callback(self):
         vel_msg = Velocity()
 
-        vel_msg.left_vel = self.speed * self.linear - self.differential * self.angular
-        vel_msg.right_vel = self.speed * self.linear + self.differential * self.angular
+        #vel_msg.left_vel = self.speed * self.linear - self.differential * self.angular
+        #vel_msg.right_vel = self.speed * self.linear + self.differential * self.angular
+        vel_msg.left_vel = self.linear
+        vel_msg.right_vel = self.angular
 
         self.velocity_publisher.publish(vel_msg)
-        self.get_logger().info(f'Publishing Velocity: left={vel_msg.left_vel}, right={vel_msg.right_vel}')
+        #self.get_logger().info(f'Publishing Velocity: left={vel_msg.left_vel}, right={vel_msg.right_vel}')
 
     def idle(self, userdata=None):
-        print('Entering Idle State')
         time.sleep(2)
+
         if self.count_publishers('range') == 0: # May break if more range publishers are added
             return 'stream_interrupted'
         else:
             return 'stream_running'
 
     def move(self, userdata=None):
-        print('Entering Move State')
+        time.sleep(0.1)
 
-        self.linear = 80.0
-        self.angular = 80.0
+        self.linear = 0.0
+        self.angular = 0.0
         
         if self.obstacle_detected:
             return 'obstacle_detected'
         elif self.count_publishers('range') == 0: # May break if more range publishers are added
-            self.linear = 0.0
-            self.angular = 0.0
             return 'stream_interrupted'
         else:
-            self.linear = 0.0
-            self.angular = 0.0
+            self.linear = 60.0
+            self.angular = 60.0
             return 'path_clear'
 
     def scan(self, userdata=None):
-        print('Entering Scan State')
         self.scan_request(40.0, 140.0)
         time.sleep(10)
 
