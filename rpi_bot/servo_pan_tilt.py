@@ -27,15 +27,15 @@ class ServoControl(Node):
 
         self.pan_servo = RPi_SG90(
             self.get_parameter('pan_pwm_channel').get_parameter_value().integer_value,
-            self.get_parameter('pan_start_angle').get_parameter_value().double_value,
+            self.get_parameter('pan_start_angle').get_parameter_value().integer_value,
         )
         self.tilt_servo = RPi_SG90(
             self.get_parameter('tilt_pwm_channel').get_parameter_value().integer_value,
-            self.get_parameter('tilt_start_angle').get_parameter_value().double_value,
+            self.get_parameter('tilt_start_angle').get_parameter_value().integer_value,
         )
 
-        self.pan_start_angle = self.get_parameter('pan_start_angle').get_parameter_value().double_value
-        self.tilt_start_angle = self.get_parameter('tilt_start_angle').get_parameter_value().double_value
+        self.pan_start_angle = self.get_parameter('pan_start_angle').get_parameter_value().integer_value
+        self.tilt_start_angle = self.get_parameter('tilt_start_angle').get_parameter_value().integer_value
 
         self.pan_servo.set_angle(self.pan_start_angle)
         self.tilt_servo.set_angle(self.tilt_start_angle)
