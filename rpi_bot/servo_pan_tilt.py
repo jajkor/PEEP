@@ -55,8 +55,8 @@ class ServoControl(Node):
         return n
 
     def joy_callback(self, msg):
-        pan_temp = float(self.pan_servo.get_angle())
-        tilt_temp = float(self.tilt_servo.get_angle())
+        pan_temp = self.pan_servo.get_angle()
+        tilt_temp = self.tilt_servo.get_angle()
 
         if (msg.axes[self.pan_axes] > 0):
             pan_temp -= ServoControl.SPEED * -float(msg.axes[self.pan_axes])
