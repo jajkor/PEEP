@@ -31,8 +31,8 @@ class PWM_Driver(Node):
             self.get_parameter('enb_pin').get_parameter_value().integer_value
         )
 
-        self.left = 0
-        self.right = 0
+        self.left = 0.0
+        self.right = 0.0
 
         self.subscription = self.create_subscription(Velocity, 'motor_vel', self.velocity_listener, 10)
         self.get_logger().info('PWM Driver Initialized')

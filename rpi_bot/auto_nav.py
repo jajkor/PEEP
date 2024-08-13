@@ -24,6 +24,9 @@ class Auto_Nav(Node, yasmin.StateMachine):
 
         self.callback_group = ReentrantCallbackGroup()
 
+        self.linear = 0.0
+        self.angular = 0.0
+
         # ROS 2 subscriptions and publishers
         self.range_listener = self.create_subscription(Range, 'range', self.range_callback, 10, callback_group=self.callback_group)
         self.fsm_timer = self.create_timer(0.1, self.run)
@@ -77,7 +80,7 @@ class Auto_Nav(Node, yasmin.StateMachine):
         self.scan_request.start_angle = start_angle
         self.scan_request.stop_angle = stop_angle
 
-        self.future = self.scan_client.call_async(self.scan_request)
+        self.scan_client.call_async(self.scan_request)
     
     def range_callback(self, range_msg):
         self.distance = range_msg.range
@@ -96,6 +99,7 @@ class Auto_Nav(Node, yasmin.StateMachine):
         vel_msg.right_vel = self.speed * self.linear + self.differential * self.angular
 
         self.velocity_publisher.publish(vel_msg)
+        self.get_logger().info(f'Publishing Velocity: left={vel_msg.left_vel}, right={vel_msg.right_vel}')
 
     def idle(self, userdata=None):
         print('Entering Idle State')
@@ -107,26 +111,24 @@ class Auto_Nav(Node, yasmin.StateMachine):
 
     def move(self, userdata=None):
         print('Entering Move State')
-        vel_msg = Velocity()
 
-        vel_msg.left_vel = 0.0
-        vel_msg.right_vel = 0.0
+        self.linear = 80.0
+        self.angular = 80.0
         
         if self.obstacle_detected:
-            self.velocity_publisher.publish(vel_msg)
             return 'obstacle_detected'
         elif self.count_publishers('range') == 0: # May break if more range publishers are added
-            self.velocity_publisher.publish(vel_msg)
+            self.linear = 0.0
+            self.angular = 0.0
             return 'stream_interrupted'
         else:
-            vel_msg.left_vel = 0.8
-            vel_msg.right_vel = 0.8
-            self.velocity_publisher.publish(vel_msg)
+            self.linear = 0.0
+            self.angular = 0.0
             return 'path_clear'
 
     def scan(self, userdata=None):
         print('Entering Scan State')
-        self.future = self.scan_request(40.0, 140.0)
+        self.scan_request(40.0, 140.0)
         time.sleep(10)
 
         return 'scan_complete'
