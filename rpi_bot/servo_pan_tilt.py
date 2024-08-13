@@ -34,6 +34,12 @@ class ServoControl(Node):
             self.get_parameter('tilt_start_angle').get_parameter_value().integer_value,
         )
 
+        self.pan_start_angle = self.get_parameter('pan_pwm_channel').get_parameter_value().integer_value
+        self.tilt_start_angle = self.get_parameter('tilt_start_angle').get_parameter_value().integer_value
+
+        self.pan_servo.set_angle(self.pan_start_angle)
+        self.tilt_servo.set_angle(self.tilt__start_angle)
+
         self.pan_axes = self.get_parameter('pan_axes').get_parameter_value().integer_value
         self.tilt_axes = self.get_parameter('tilt_axes').get_parameter_value().integer_value
 

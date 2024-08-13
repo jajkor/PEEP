@@ -19,7 +19,7 @@ class Servo_Scan(Node):
             namespace='',
             parameters=[
                 ('pwm_channel', rclpy.Parameter.Type.INTEGER),
-                ('starting_angle', 90)
+                ('start_angle', 90)
             ],
         )
 
@@ -27,6 +27,10 @@ class Servo_Scan(Node):
             self.get_parameter('pwm_channel').get_parameter_value().integer_value,
             self.get_parameter('starting_angle').get_parameter_value().integer_value
         )
+
+        self.start_angle =  self.get_parameter('starting_angle').get_parameter_value().integer_value
+        self.sg90.set_angle(self.start_angle)
+
         self.is_busy = False
         self.distance = None
 
@@ -51,7 +55,7 @@ class Servo_Scan(Node):
             response.list_angle.append(round(float(self.sg90.get_angle()), 2))
             response.list_distance.append(round(float(self.distance), 2))
 
-        self.sg90.set_angle(90)
+        self.sg90.set_angle(self.start)
 
         self.get_logger().info(f'List_Angle: {response.list_angle}')
         self.get_logger().info(f'List_Distance: {response.list_distance}')
