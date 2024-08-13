@@ -128,7 +128,10 @@ class Auto_Nav(Node, yasmin.StateMachine):
             return 'path_clear'
 
     def scan(self, userdata=None):
-        self.scan_request(40.0, 140.0)
+        self.future = self.scan_request(40.0, 140.0)
+        self.response = self.future.result()
+
+        self.get_logger().info(f'{self.response.list_angle}, {self.response.list_distance}')
         time.sleep(10)
 
         return 'scan_complete'

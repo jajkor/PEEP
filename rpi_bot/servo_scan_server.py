@@ -61,7 +61,6 @@ class Servo_Scan(Node):
         self.get_logger().info(f'List_Distance: {response.list_distance}')
         
         self.is_busy = False
-        self.range_listener.destroy()
         return response
 
 def main(args=None):
@@ -72,7 +71,7 @@ def main(args=None):
     executor.add_node(servo_scan)
 
     try:
-        executor.spin()
+        executor.spin_once_until_future_complete()
     except (KeyboardInterrupt, ExternalShutdownException):
         pass
     finally:
