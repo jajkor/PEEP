@@ -8,7 +8,7 @@ from rpi_bot.rpi_interface import RPi_SG90
 class ServoControl(Node):
     MIN_ANGLE = 0
     MAX_ANGLE = 180
-    SPEED = 10
+    SPEED = 10.0
 
     def __init__(self):
         super().__init__('servo_pan_tilt')
