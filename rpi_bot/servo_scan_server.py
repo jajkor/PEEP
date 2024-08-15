@@ -31,7 +31,7 @@ class Servo_Scan(Node):
 
         self.start_angle = self.get_parameter('start_angle').get_parameter_value().integer_value
         self.sg90.set_angle(self.start_angle)
-        self.scan_speed = self.get_parameter('scan_speed').get_parameter_value().integer_value
+        self.scan_speed = self.get_parameter('scan_speed').get_parameter_value().double_value
 
         self.distance = None
 
