@@ -2,11 +2,9 @@ import time
 
 import rclpy
 from rclpy.node import Node
-from rclpy.executors import MultiThreadedExecutor
 from rclpy.executors import ExternalShutdownException
 from rclpy.callback_groups import ReentrantCallbackGroup
 
-from sensor_msgs.msg import Range
 from rpi_bot.rpi_interface import RPi_SG90
 from rpi_bot_interfaces.srv import Scan
 
@@ -33,10 +31,8 @@ class Servo_Scan(Node):
 
         self.is_busy = False
 
-        #self.callback_group = ReentrantCallbackGroup()
-        self.scan_srv = self.create_service(Scan, 'servo_scan', self.scan_callback)
-        #self.srv = self.create_service(Scan, 'servo_scan', self.scan_callback, callback_group=self.callback_group)
-        #self.range_listener = self.create_subscription(Range, 'range', self.range_listener_callback, 10,  callback_group=self.callback_group)
+        self.callback_group = ReentrantCallbackGroup()
+        self.scan_srv = self.create_service(Scan, 'servo_scan', self.scan_callback, callback_group=self.callback_group)
 
     def scan_callback(self, request, response):
         if self.is_busy:
@@ -63,16 +59,13 @@ def main(args=None):
     rclpy.init(args=args)
 
     servo_scan = Servo_Scan()
-    #executor = MultiThreadedExecutor()
-    #executor.add_node(servo_scan)
 
     try:
-        #executor.spin()
         rclpy.spin(servo_scan)
     except (KeyboardInterrupt, ExternalShutdownException):
         pass
     finally:
-        rclpy.shutdown()
+        servo_scan.destroy_node()
 
 if __name__ == '__main__':
     main()

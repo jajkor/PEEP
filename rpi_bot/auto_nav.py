@@ -86,7 +86,7 @@ class Auto_Nav(Node, yasmin.StateMachine):
             return None
 
         self.future = self.scan_client.call_async(self.scan_request)
-        rclpy.spin_until_future_complete(self, self.future)
+        rclpy.spin_until_future_complete(self, self.future, timeout_sec=10.0)
         if self.future.result() is not None:
             return self.future.result()
         else:
@@ -101,7 +101,7 @@ class Auto_Nav(Node, yasmin.StateMachine):
         else:
             self.obstacle_detected = False
 
-        self.get_logger().info(f'Received Distance: {range_msg.range} cm')
+        #self.get_logger().info(f'Received Distance: {range_msg.range} cm')
 
     def velocity_callback(self):
         vel_msg = Velocity()
@@ -123,7 +123,7 @@ class Auto_Nav(Node, yasmin.StateMachine):
             return 'stream_running'
 
     def move(self, userdata=None):
-        time.sleep(0.1)
+        time.sleep(0.1) # Move or replace with ROS2 create_timer
 
         self.linear = 0.0
         self.angular = 0.0
