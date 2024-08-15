@@ -2,7 +2,7 @@ import rclpy
 from rclpy.node import Node
 from rclpy.executors import ExternalShutdownException
 
-from rpi_bot_interfaces.msg import Velocity
+from rpi_bot_interfaces.srv import Velocity
 from rpi_bot.rpi_interface import RPi_Motors
 
 class PWM_Driver(Node):
@@ -31,18 +31,30 @@ class PWM_Driver(Node):
             self.get_parameter('enb_pin').get_parameter_value().integer_value
         )
 
-        self.left = 0.0
-        self.right = 0.0
+        self.left_velocity = 0.0
+        self.right_velocity = 0.0
 
-        self.subscription = self.create_subscription(Velocity, 'motor_vel', self.velocity_listener, 10)
+        #self.subscription = self.create_subscription(Velocity, 'motor_vel', self.velocity_listener, 10)
+        self.srv = self.create_service(Velocity, 'motor_vel', self.scan_callback, callback_group=self.servo_scan_callback_group)
         self.get_logger().info('PWM Driver Initialized')
 
+    def velocity_callback(self, request, response):
+        if (self.left_velocity != request.left_velocity) and (self.right_velocity != request.right_velocity):
+            self.motors.set_motors(request.left_velocity, request.right_velocity)
+            self.get_logger().info(f"Left Velocity: {request.left_velocity}, Right Velocity: {request.right_velocity}")
+
+        self.left_velocity = request.left_velocity
+        self.right_velocity = request.right_velocity
+        
+        return response
+
     def velocity_listener(self, vel_msg):
-        if (self.left != vel_msg.left_vel) and (self.right != vel_msg.right_vel):
-            self.left = vel_msg.left_vel
-            self.right = vel_msg.right_vel
-            self.motors.set_motors(vel_msg.left_vel, vel_msg.right_vel)
-            self.get_logger().info(f'Setting Velocity: left={vel_msg.left_vel}, right={vel_msg.right_vel}')
+        if (self.left_velocity != vel_msg.left_velocity) and (self.right_velocity != vel_msg.right_velocity):
+            self.motors.set_motors(vel_msg.left_velocity, vel_msg.right_velocity)
+            self.get_logger().info(f"Left Velocity: {vel_msg.left_velocity}, Right Velocity: {vel_msg.right_velocity}")
+        
+        self.left_velocity = vel_msg.left_velocity
+        self.right_velocity = vel_msg.right_velocity
 
 def main(args=None):
     rclpy.init(args=args)

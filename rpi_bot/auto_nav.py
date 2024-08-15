@@ -7,7 +7,7 @@ from rclpy.executors import ExternalShutdownException
 from rclpy.callback_groups import ReentrantCallbackGroup
 
 from sensor_msgs.msg import Range
-from rpi_bot_interfaces.msg import Velocity
+from rpi_bot_interfaces.srv import Velocity
 from rpi_bot_interfaces.srv import Scan
 
 import yasmin
@@ -25,18 +25,21 @@ class Auto_Nav(Node, yasmin.StateMachine):
         self.callback_group = ReentrantCallbackGroup()
         self.srv_callback_group = ReentrantCallbackGroup()
 
-        self.linear = 0.0
-        self.angular = 0.0
+        self.left_vel = 0.0
+        self.right_vel = 0.0
         self.list_angle = None
         self.list_distance = None
 
         # ROS 2 subscriptions and publishers
         self.range_listener = self.create_subscription(Range, 'range', self.range_callback, 10, callback_group=self.callback_group)
         self.fsm_timer = self.create_timer(0.1, self.run)
-        self.velocity_publisher = self.create_publisher(Velocity, 'motor_vel', 10, callback_group=self.callback_group)
-        self.vel_timer = self.create_timer(0.1, self.velocity_callback, callback_group=self.callback_group)
+        #self.velocity_publisher = self.create_publisher(Velocity, 'motor_vel', 10, callback_group=self.callback_group)
+        #self.vel_timer = self.create_timer(0.1, self.velocity_callback, callback_group=self.callback_group)
         self.scan_client = self.create_client(Scan, 'servo_scan', callback_group=self.srv_callback_group)
         self.scan_request = Scan.Request()
+
+        self.motor_client = self.create_client(Velocity, 'motor_vel', callback_group=self.srv_callback_group)
+        self.motor_request = Velocity.Request()
 
         self.add_state(
             'IDLE',
@@ -72,16 +75,23 @@ class Auto_Nav(Node, yasmin.StateMachine):
         )
 
         self.blackboard = Blackboard()
-
         self.get_logger().info('Robot FSM Node Initialized')
 
-    def send_request(self, start_angle, stop_angle):
+    def scan_request(self, start_angle, stop_angle):
         self.scan_request.start_angle = start_angle
         self.scan_request.stop_angle = stop_angle
 
-        self.future = self.scan_client.call_async(self.scan_request)
-        self.executor.spin_until_future_complete(self.future, timeout_sec=10.0)
-        return self.future.result()
+        self.scan_future = self.scan_client.call_async(self.scan_request)
+        self.executor.spin_until_future_complete(self.scan_future, timeout_sec=10.0)
+        return self.scan_future.result()
+    
+    def motor_request(self, left_vel, right_vel):
+        self.motor_request.left_vel = left_vel
+        self.motor_request.right_vel = right_vel
+
+        self.motor_future = self.scan_client.call_async(self.motor_request)
+        self.executor.spin_until_future_complete(self.motor_future, timeout_sec=10.0)
+        return self.motor_future.result()
     
     def range_callback(self, range_msg):
         self.distance = range_msg.range
@@ -114,22 +124,28 @@ class Auto_Nav(Node, yasmin.StateMachine):
             return 'stream_running'
 
     def move(self, userdata=None):
-        time.sleep(0.1) # Move or replace with ROS2 create_timer
+        time.sleep(0.1) # Delete, Move, or replace with ROS2 create_timer
 
-        self.linear = 0.0
-        self.angular = 0.0
+        left_vel = 0.0
+        right_vel = 0.0
+        
+        self.list_distance = response.list_distance
+        self.list_angle = response.list_angle
         
         if self.obstacle_detected:
+            response = self.motor_request(left_vel, right_vel)
             return 'obstacle_detected'
         elif self.count_publishers('range') == 0: # May break if more range publishers are added
+            response = self.motor_request(left_vel, right_vel)
             return 'stream_interrupted'
         else:
-            self.linear = 60.0
-            self.angular = 60.0
+            self.left_vel = 60.0
+            self.right_vel = 60.0
+            response = self.motor_request(left_vel, right_vel)
             return 'path_clear'
 
     def scan(self, userdata=None):
-        response = self.send_request(40.0, 140.0)
+        response = self.scan_request(40.0, 140.0)
         
         self.list_distance = response.list_distance
         self.list_angle = response.list_angle

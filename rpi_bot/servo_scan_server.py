@@ -20,7 +20,7 @@ class Servo_Scan(Node):
             parameters=[
                 ('pwm_channel', rclpy.Parameter.Type.INTEGER),
                 ('start_angle', 90),
-                ('scan_speed', 0.5),
+                ('scan_speed', 0.2),
             ],
         )
 
@@ -32,13 +32,16 @@ class Servo_Scan(Node):
         self.start_angle = self.get_parameter('start_angle').get_parameter_value().integer_value
         self.sg90.set_angle(self.start_angle)
         self.scan_speed = self.get_parameter('scan_speed').get_parameter_value().double_value
+        self.get_logger().info(f'{self.scan_speed}')
 
         self.distance = None
 
         self.servo_scan_callback_group = ReentrantCallbackGroup()
         self.srv = self.create_service(Scan, 'servo_scan', self.scan_callback, callback_group=self.servo_scan_callback_group)
         self.range_listener = self.create_subscription(Range, 'range', self.range_listener_callback, 10, callback_group=self.servo_scan_callback_group)
-    
+        self.get_logger().info('Servo Scan Server Initialized')
+
+
     def range_listener_callback(self, range_msg):
         self.distance = range_msg.range
 
