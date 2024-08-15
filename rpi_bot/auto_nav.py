@@ -80,6 +80,8 @@ class Auto_Nav(Node, yasmin.StateMachine):
 
         self.scan_future = self.scan_client.call_async(self.scan_request)
         self.executor.spin_until_future_complete(self.scan_future, timeout_sec=10.0)
+        if self.scan_future.cancel:
+            self.get_logger().info('Scan Service Timed Out')
         return self.scan_future.result()
     
     def send_velocity_request(self, left_velocity, right_velocity):
@@ -87,7 +89,9 @@ class Auto_Nav(Node, yasmin.StateMachine):
         self.velocity_request.right_velocity = right_velocity
 
         self.velocity_future = self.velocity_client.call_async(self.velocity_request)
-        self.executor.spin_until_future_complete(self.velocity_future, timeout_sec=10.0)
+        self.executor.spin_until_future_complete(self.velocity_future, timeout_sec=1.0)
+        if self.velocity_future.cancel:
+            self.get_logger().info('Velocity Service Timed Out')
         return self.velocity_future.result()
     
     def range_callback(self, range_msg):
@@ -98,7 +102,7 @@ class Auto_Nav(Node, yasmin.StateMachine):
         else:
             self.obstacle_detected = False
 
-        self.get_logger().info(f'Received Distance: {range_msg.range} cm')
+        #self.get_logger().info(f'Received Distance: {range_msg.range} cm')
 
     def idle(self, userdata=None):
         time.sleep(0.1)
@@ -109,17 +113,17 @@ class Auto_Nav(Node, yasmin.StateMachine):
             return 'stream_running'
 
     def move(self, userdata=None):
-        time.sleep(0.5) # Delete, Move, or replace with ROS2 create_timer
+        time.sleep(0.1) # Delete, Move, or replace with ROS2 create_timer
         
         if self.obstacle_detected:
-            response = self.send_velocity_request(0.0, 0.0)
+            self.send_velocity_request(0.0, 0.0)
             return 'obstacle_detected'
         elif self.count_publishers('range') == 0: # May break if more range publishers are added
-            response = self.send_velocity_request(0.0, 0.0)
+            self.send_velocity_request(0.0, 0.0)
             return 'stream_interrupted'
         else:
-            response = self.send_velocity_request(60.0, 60.0)
-            self.get_logger().info(f'New velocity: {response.left_velocity}, {response.right_velocity}')
+            self.send_velocity_request(60.0, 60.0)
+            #self.get_logger().info(f'New velocity: {response}')
             return 'path_clear'
 
     def scan(self, userdata=None):
@@ -134,7 +138,7 @@ class Auto_Nav(Node, yasmin.StateMachine):
         print('Entering Readjust State')
         self.get_logger().info(f'Readjust Angle: {self.list_angle}')
         self.get_logger().info(f'Readjust Distance: {self.list_distance}')
-        time.sleep(2)
+        time.sleep(1)
         if self.obstacle_detected:
             return 'obstacle_detected'
         else:
