@@ -39,6 +39,12 @@ class Servo_Scan(Node):
         #self.range_listener = self.create_subscription(Range, 'range', self.range_listener_callback, 10,  callback_group=self.callback_group)
 
     def scan_callback(self, request, response):
+        if self.is_busy:
+                self.get_logger().warn('Servo is busy. Ignoring new request.')
+                return response  # Optionally set an error status in the response
+
+        self.is_busy = True
+
         self.get_logger().info(f"Servo Scan: {request.start_angle} to {request.stop_angle}")
 
         for i in range(int(request.start_angle), int(request.stop_angle), 10):
@@ -47,9 +53,9 @@ class Servo_Scan(Node):
             response.list_angle.append(round(float(self.sg90.get_angle()), 2))
 
         self.sg90.set_angle(self.start_angle)
+        self.is_busy = False
 
         self.get_logger().info(f'List_Angle: {response.list_angle}')
-        self.get_logger().info(f'List_Distance: {response.list_distance}')
         
         return response
 

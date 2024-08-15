@@ -81,9 +81,17 @@ class Auto_Nav(Node, yasmin.StateMachine):
         self.scan_request.start_angle = start_angle
         self.scan_request.stop_angle = stop_angle
 
+        if not self.scan_client.wait_for_service(timeout_sec=1.0):
+            self.get_logger().error('Service servo_scan not available, waiting...')
+            return None
+
         self.future = self.scan_client.call_async(self.scan_request)
         rclpy.spin_until_future_complete(self, self.future)
-        return self.future.result()
+        if self.future.result() is not None:
+            return self.future.result()
+        else:
+            self.get_logger().error('Service call failed!')
+            return None
     
     def range_callback(self, range_msg):
         self.distance = range_msg.range
@@ -132,7 +140,7 @@ class Auto_Nav(Node, yasmin.StateMachine):
     def scan(self, userdata=None):
         self.response = self.scan_request(40.0, 140.0)
 
-        self.get_logger().info(f'{self.response.list_angle}, {self.response.list_distance}')
+        #self.get_logger().info(f'{self.response.list_distance}')
         time.sleep(10)
 
         return 'scan_complete'
