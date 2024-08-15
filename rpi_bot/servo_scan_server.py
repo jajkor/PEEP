@@ -74,7 +74,8 @@ def main(args=None):
     except (KeyboardInterrupt, ExternalShutdownException):
         pass
     finally:
-        servo_scan.destroy_node()
+        #servo_scan.destroy_node()
+        print()
         
 if __name__ == '__main__':
     main()
