@@ -23,6 +23,7 @@ class Auto_Nav(Node, yasmin.StateMachine):
         self.range_publisher_active = False
 
         self.callback_group = ReentrantCallbackGroup()
+        self.srv_callback_group = ReentrantCallbackGroup()
 
         self.linear = 0.0
         self.angular = 0.0
@@ -34,7 +35,7 @@ class Auto_Nav(Node, yasmin.StateMachine):
         self.fsm_timer = self.create_timer(0.1, self.run)
         self.velocity_publisher = self.create_publisher(Velocity, 'motor_vel', 10, callback_group=self.callback_group)
         self.vel_timer = self.create_timer(0.1, self.velocity_callback, callback_group=self.callback_group)
-        self.scan_client = self.create_client(Scan, 'servo_scan', callback_group=self.callback_group)
+        self.scan_client = self.create_client(Scan, 'servo_scan', callback_group=self.srv_callback_group)
 
         self.add_state(
             'IDLE',
