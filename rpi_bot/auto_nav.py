@@ -32,12 +32,10 @@ class Auto_Nav(Node, yasmin.StateMachine):
         # ROS 2 subscriptions and publishers
         self.range_listener = self.create_subscription(Range, 'range', self.range_callback, 10, callback_group=self.callback_group)
         self.fsm_timer = self.create_timer(0.1, self.run)
-        #self.velocity_publisher = self.create_publisher(Velocity, 'velocity', 10, callback_group=self.callback_group)
-        #self.vel_timer = self.create_timer(0.1, self.velocity_callback, callback_group=self.callback_group)
+
         self.scan_client = self.create_client(Scan, 'servo_scan', callback_group=self.srv_callback_group)
         self.scan_request = Scan.Request()
-
-        self.velocity_client = self.create_client(Velocity, 'velocity', callback_group=self.srv_callback_group)
+        self.velocity_client = self.create_client(Velocity, 'set_vel', callback_group=self.srv_callback_group)
         self.velocity_request = Velocity.Request()
 
         self.add_state(
@@ -102,18 +100,6 @@ class Auto_Nav(Node, yasmin.StateMachine):
 
         self.get_logger().info(f'Received Distance: {range_msg.range} cm')
 
-    #def velocity_callback(self):
-        #vel_msg = Velocity()
-
-        #vel_msg.left_vel = self.speed * self.linear - self.differential * self.angular
-        #vel_msg.right_vel = self.speed * self.linear + self.differential * self.angular
-        #vel_msg.left_vel = self.linear
-        #vel_msg.right_vel = self.angular
-
-        #if self.count_subscribers('motor_vel') > 0:
-            #self.velocity_publisher.publish(vel_msg)
-            #self.get_logger().info(f'Publishing Velocity: left={vel_msg.left_vel}, right={vel_msg.right_vel}')
-
     def idle(self, userdata=None):
         time.sleep(0.1)
 
@@ -123,7 +109,7 @@ class Auto_Nav(Node, yasmin.StateMachine):
             return 'stream_running'
 
     def move(self, userdata=None):
-        time.sleep(0.1) # Delete, Move, or replace with ROS2 create_timer
+        time.sleep(0.5) # Delete, Move, or replace with ROS2 create_timer
         
         if self.obstacle_detected:
             response = self.velocity_request(0.0, 0.0)
@@ -165,7 +151,7 @@ def main(args=None):
     rclpy.init(args=args)
 
     auto_nav = Auto_Nav()
-    executor = MultiThreadedExecutor(num_threads=4)
+    executor = MultiThreadedExecutor(num_threads=6)
 
     executor.add_node(auto_nav)
 

@@ -10,7 +10,7 @@ from rpi_bot.rpi_interface import RPi_Motors
 class PWM_Driver(Node):
 
     def __init__(self):
-        super().__init__('pwm_driver')
+        super().__init__('set_vel')
 
         self.declare_parameters(
             namespace='',
