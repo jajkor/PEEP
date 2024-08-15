@@ -112,18 +112,16 @@ class Auto_Nav(Node, yasmin.StateMachine):
         else:
             return 'stream_running'
 
-    def move(self, userdata=None):
-        time.sleep(0.1) # Delete, Move, or replace with ROS2 create_timer
-        
+    def move(self, userdata=None):        
         if self.obstacle_detected:
-            self.send_velocity_request(0.0, 0.0)
+            response = self.send_velocity_request(0.0, 0.0)
             return 'obstacle_detected'
         elif self.count_publishers('range') == 0: # May break if more range publishers are added
-            self.send_velocity_request(0.0, 0.0)
+            response = self.send_velocity_request(0.0, 0.0)
             return 'stream_interrupted'
         else:
-            self.send_velocity_request(60.0, 60.0)
-            #self.get_logger().info(f'New velocity: {response}')
+            response = self.send_velocity_request(60.0, 60.0)
+            self.get_logger().info(f'New velocity: {response}')
             return 'path_clear'
 
     def scan(self, userdata=None):
