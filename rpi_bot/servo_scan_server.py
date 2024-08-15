@@ -1,7 +1,4 @@
 import time
-import pdb
-pdb.set_trace()
-
 
 import rclpy
 from rclpy.node import Node
@@ -78,7 +75,6 @@ def main(args=None):
         pass
     finally:
         servo_scan.get_logger().debug('Destroying node')
-        pdb.set_trace()
         servo_scan.destroy_node()
         
 if __name__ == '__main__':
