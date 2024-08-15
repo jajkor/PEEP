@@ -36,6 +36,7 @@ class Auto_Nav(Node, yasmin.StateMachine):
         self.velocity_publisher = self.create_publisher(Velocity, 'motor_vel', 10, callback_group=self.callback_group)
         self.vel_timer = self.create_timer(0.1, self.velocity_callback, callback_group=self.callback_group)
         self.scan_client = self.create_client(Scan, 'servo_scan', callback_group=self.srv_callback_group)
+        self.scan_request = Scan.Request()
 
         self.add_state(
             'IDLE',
@@ -74,23 +75,13 @@ class Auto_Nav(Node, yasmin.StateMachine):
 
         self.get_logger().info('Robot FSM Node Initialized')
 
-    def scan_request(self, start_angle, stop_angle):
-        self.scan_request = Scan.Request()
-
+    def send_request(self, start_angle, stop_angle):
         self.scan_request.start_angle = start_angle
         self.scan_request.stop_angle = stop_angle
 
-        if not self.scan_client.wait_for_service(timeout_sec=1.0):
-            self.get_logger().error('Service servo_scan not available, waiting...')
-            return None
-
         self.future = self.scan_client.call_async(self.scan_request)
         self.executor.spin_until_future_complete(self.future, timeout_sec=10.0)
-        if self.future.result() is not None:
-            return self.future.result()
-        else:
-            self.get_logger().error('Service call failed!')
-            return None
+        return self.future.result()
     
     def range_callback(self, range_msg):
         self.distance = range_msg.range
@@ -112,7 +103,7 @@ class Auto_Nav(Node, yasmin.StateMachine):
 
         if self.count_subscribers('motor_vel') > 0:
             self.velocity_publisher.publish(vel_msg)
-            self.get_logger().info(f'Publishing Velocity: left={vel_msg.left_vel}, right={vel_msg.right_vel}')
+            #self.get_logger().info(f'Publishing Velocity: left={vel_msg.left_vel}, right={vel_msg.right_vel}')
 
     def idle(self, userdata=None):
         time.sleep(0.1)
@@ -138,9 +129,10 @@ class Auto_Nav(Node, yasmin.StateMachine):
             return 'path_clear'
 
     def scan(self, userdata=None):
-        self.response = self.scan_request(40.0, 140.0)
-#
-        self.list_distance = self.response.list_distance
+        response = self.send_request(40.0, 140.0)
+        
+        self.list_distance = response.list_distance
+        self.list_angle = response.list_angle
 
         return 'scan_complete'
 
@@ -150,7 +142,7 @@ class Auto_Nav(Node, yasmin.StateMachine):
         if self.obstacle_detected:
             return 'obstacle_detected'
         else:
-            #self.get_logger().info(f'Readjust: {self.list_distance}')
+            self.get_logger().info(f'Readjust: {self.list_distance}')
             return 'readjust_complete'
 
     def run(self):

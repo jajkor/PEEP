@@ -6,8 +6,10 @@ from rclpy.executors import MultiThreadedExecutor
 from rclpy.executors import ExternalShutdownException
 from rclpy.callback_groups import ReentrantCallbackGroup
 
+from sensor_msgs.msg import Range
 from rpi_bot.rpi_interface import RPi_SG90
 from rpi_bot_interfaces.srv import Scan
+
 
 class Servo_Scan(Node):
 
@@ -31,9 +33,14 @@ class Servo_Scan(Node):
         self.sg90.set_angle(self.start_angle)
 
         self.is_busy = False
+        self.distance = None
 
-        #self.servo_scan_callback_group = ReentrantCallbackGroup()
+        self.servo_scan_callback_group = ReentrantCallbackGroup()
         self.srv = self.create_service(Scan, 'servo_scan', self.scan_callback)
+        self.range_listener = self.create_subscription(Range, 'range', self.range_listener_callback, 10,  callback_group=self.callback_group)
+    
+    def range_listener_callback(self, range_msg):
+        self.distance = range_msg.range
 
     def scan_callback(self, request, response):
         if self.is_busy:
@@ -47,6 +54,7 @@ class Servo_Scan(Node):
             self.sg90.set_angle(i)
             time.sleep(0.5)
             response.list_angle.append(round(float(self.sg90.get_angle()), 2))
+            response.list_distance.append(self.distance)
 
         self.sg90.set_angle(self.start_angle)
 
