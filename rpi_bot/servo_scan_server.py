@@ -70,7 +70,7 @@ def main(args=None):
     #servo_scan_executor.add_node(servo_scan)
 
     try:
-        servo_scan.spin()
+        rclpy.spin(servo_scan)
     except (KeyboardInterrupt, ExternalShutdownException):
         pass
     finally:
