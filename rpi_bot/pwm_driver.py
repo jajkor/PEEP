@@ -1,6 +1,8 @@
 import rclpy
 from rclpy.node import Node
 from rclpy.executors import ExternalShutdownException
+from rclpy.executors import MultiThreadedExecutor
+from rclpy.callback_groups import ReentrantCallbackGroup
 
 from rpi_bot_interfaces.srv import Velocity
 from rpi_bot.rpi_interface import RPi_Motors
@@ -34,8 +36,9 @@ class PWM_Driver(Node):
         self.left_velocity = 0.0
         self.right_velocity = 0.0
 
-        #self.subscription = self.create_subscription(Velocity, 'motor_vel', self.velocity_listener, 10)
-        self.srv = self.create_service(Velocity, 'motor_vel', self.velocity_callback)
+        self.velocity_callback_group = ReentrantCallbackGroup()
+        #self.subscription = self.create_subscription(Velocity, 'velocity', self.velocity_listener, 10)
+        self.srv = self.create_service(Velocity, 'velocity', self.velocity_callback, callback_group=self.velocity_callback_group)
         self.get_logger().info('PWM Driver Initialized')
 
     def velocity_callback(self, request, response):
@@ -59,13 +62,16 @@ class PWM_Driver(Node):
 def main(args=None):
     rclpy.init(args=args)
 
-    velocity_subscriber = PWM_Driver()
+    velocity = PWM_Driver()
+    velocity_executor = MultiThreadedExecutor()
+    velocity_executor.add_node(velocity)
+
     try:
-        rclpy.spin(velocity_subscriber)
+        velocity_executor.spin()
     except (KeyboardInterrupt, ExternalShutdownException):
         pass
     finally:
-        velocity_subscriber.destroy_node()
+        velocity.destroy_node()
 
 
 if __name__ == '__main__':

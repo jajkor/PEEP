@@ -32,13 +32,13 @@ class Auto_Nav(Node, yasmin.StateMachine):
         # ROS 2 subscriptions and publishers
         self.range_listener = self.create_subscription(Range, 'range', self.range_callback, 10, callback_group=self.callback_group)
         self.fsm_timer = self.create_timer(0.1, self.run)
-        #self.velocity_publisher = self.create_publisher(Velocity, 'motor_vel', 10, callback_group=self.callback_group)
+        #self.velocity_publisher = self.create_publisher(Velocity, 'velocity', 10, callback_group=self.callback_group)
         #self.vel_timer = self.create_timer(0.1, self.velocity_callback, callback_group=self.callback_group)
         self.scan_client = self.create_client(Scan, 'servo_scan', callback_group=self.srv_callback_group)
         self.scan_request = Scan.Request()
 
-        self.motor_client = self.create_client(Velocity, 'motor_vel', callback_group=self.srv_callback_group)
-        self.motor_request = Velocity.Request()
+        self.velocity_client = self.create_client(Velocity, 'velocity', callback_group=self.srv_callback_group)
+        self.velocity_request = Velocity.Request()
 
         self.add_state(
             'IDLE',
@@ -84,13 +84,13 @@ class Auto_Nav(Node, yasmin.StateMachine):
         self.executor.spin_until_future_complete(self.scan_future, timeout_sec=10.0)
         return self.scan_future.result()
     
-    def motor_request(self, left_vel, right_vel):
-        self.motor_request.left_vel = left_vel
-        self.motor_request.right_vel = right_vel
+    def velocity_request(self, left_velocity, right_velocity):
+        self.velocity_request.left_velocity = left_velocity
+        self.velocity_request.right_velocity = right_velocity
 
-        self.motor_future = self.motor_client.call_async(self.motor_request)
-        self.executor.spin_until_future_complete(self.motor_future, timeout_sec=10.0)
-        return self.motor_future.result()
+        self.velocity_future = self.velocity_client.call_async(self.velocity_request)
+        self.executor.spin_until_future_complete(self.velocity_future, timeout_sec=10.0)
+        return self.velocity_future.result()
     
     def range_callback(self, range_msg):
         self.distance = range_msg.range
@@ -102,16 +102,16 @@ class Auto_Nav(Node, yasmin.StateMachine):
 
         self.get_logger().info(f'Received Distance: {range_msg.range} cm')
 
-    def velocity_callback(self):
-        vel_msg = Velocity()
+    #def velocity_callback(self):
+        #vel_msg = Velocity()
 
         #vel_msg.left_vel = self.speed * self.linear - self.differential * self.angular
         #vel_msg.right_vel = self.speed * self.linear + self.differential * self.angular
-        vel_msg.left_vel = self.linear
-        vel_msg.right_vel = self.angular
+        #vel_msg.left_vel = self.linear
+        #vel_msg.right_vel = self.angular
 
-        if self.count_subscribers('motor_vel') > 0:
-            self.velocity_publisher.publish(vel_msg)
+        #if self.count_subscribers('motor_vel') > 0:
+            #self.velocity_publisher.publish(vel_msg)
             #self.get_logger().info(f'Publishing Velocity: left={vel_msg.left_vel}, right={vel_msg.right_vel}')
 
     def idle(self, userdata=None):
@@ -124,20 +124,15 @@ class Auto_Nav(Node, yasmin.StateMachine):
 
     def move(self, userdata=None):
         time.sleep(0.1) # Delete, Move, or replace with ROS2 create_timer
-
-        left_vel = 0.0
-        right_vel = 0.0
         
         if self.obstacle_detected:
-            response = self.motor_request(left_vel, right_vel)
+            self.velocity_request(0.0, 0.0)
             return 'obstacle_detected'
         elif self.count_publishers('range') == 0: # May break if more range publishers are added
-            response = self.motor_request(left_vel, right_vel)
+            self.velocity_request(0.0, 0.0)
             return 'stream_interrupted'
         else:
-            self.left_vel = 60.0
-            self.right_vel = 60.0
-            response = self.motor_request(left_vel, right_vel)
+            self.velocity_request(60.0, 60.0)
             return 'path_clear'
 
     def scan(self, userdata=None):
