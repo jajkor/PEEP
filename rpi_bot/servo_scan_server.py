@@ -10,7 +10,6 @@ from sensor_msgs.msg import Range
 from rpi_bot.rpi_interface import RPi_SG90
 from rpi_bot_interfaces.srv import Scan
 
-
 class Servo_Scan(Node):
 
     def __init__(self) -> None:
@@ -32,7 +31,6 @@ class Servo_Scan(Node):
         self.start_angle = self.get_parameter('start_angle').get_parameter_value().integer_value
         self.sg90.set_angle(self.start_angle)
 
-        self.is_busy = False
         self.distance = None
 
         self.servo_scan_callback_group = ReentrantCallbackGroup()
@@ -43,24 +41,18 @@ class Servo_Scan(Node):
         self.distance = range_msg.range
 
     def scan_callback(self, request, response):
-        if self.is_busy:
-            self.get_logger().info('Service is busy. Cannot handle request:')
-            return response
-        
-        self.is_busy = True
         self.get_logger().info(f"Servo Scan: {request.start_angle} to {request.stop_angle}")
 
         for i in range(int(request.start_angle), int(request.stop_angle), 10):
             self.sg90.set_angle(i)
-            time.sleep(0.5)
+            time.sleep(0.1)
             response.list_angle.append(round(float(self.sg90.get_angle()), 2))
             response.list_distance.append(self.distance)
 
         self.sg90.set_angle(self.start_angle)
 
-        self.get_logger().info(f'Service Response: {response.list_angle}')
+        self.get_logger().info(f'Service Response: {response.list_angle}, {response.list_distance}')
         
-        self.is_busy = False
         return response
 
 def main(args=None):

@@ -138,11 +138,12 @@ class Auto_Nav(Node, yasmin.StateMachine):
 
     def readjust(self, userdata=None):
         print('Entering Readjust State')
+        self.get_logger().info(f'Readjust Angle: {self.list_angle}')
+        self.get_logger().info(f'Readjust Distance: {self.list_distance}')
         time.sleep(2)
         if self.obstacle_detected:
             return 'obstacle_detected'
         else:
-            self.get_logger().info(f'Readjust: {self.list_distance}')
             return 'readjust_complete'
 
     def run(self):
