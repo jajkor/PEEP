@@ -19,7 +19,8 @@ class Servo_Scan(Node):
             namespace='',
             parameters=[
                 ('pwm_channel', rclpy.Parameter.Type.INTEGER),
-                ('start_angle', 90)
+                ('start_angle', 90),
+                ('scan_speed'), 0.5
             ],
         )
 
@@ -30,6 +31,7 @@ class Servo_Scan(Node):
 
         self.start_angle = self.get_parameter('start_angle').get_parameter_value().integer_value
         self.sg90.set_angle(self.start_angle)
+        self.scan_speed = self.get_parameter('scan_speed').get_parameter_value().integer_value
 
         self.distance = None
 
@@ -45,7 +47,7 @@ class Servo_Scan(Node):
 
         for i in range(int(request.start_angle), int(request.stop_angle), 10):
             self.sg90.set_angle(i)
-            time.sleep(0.1)
+            time.sleep(self.scan_speed)
             response.list_angle.append(round(float(self.sg90.get_angle()), 2))
             response.list_distance.append(self.distance)
 
@@ -68,7 +70,6 @@ def main(args=None):
     except (KeyboardInterrupt, ExternalShutdownException):
         pass
     finally:
-        servo_scan.get_logger().debug('Destroying node')
         servo_scan.destroy_node()
         
 if __name__ == '__main__':
