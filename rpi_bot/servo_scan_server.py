@@ -71,7 +71,7 @@ def main(args=None):
     executor.add_node(servo_scan)
 
     try:
-        executor.spin_once()
+        executor.spin()
     except (KeyboardInterrupt, ExternalShutdownException):
         pass
     finally:

@@ -93,7 +93,7 @@ class Auto_Nav(Node, yasmin.StateMachine):
         else:
             self.obstacle_detected = False
 
-        #self.get_logger().info(f'Received Distance: {range_msg.range} cm')
+        self.get_logger().info(f'Received Distance: {range_msg.range} cm')
 
     def velocity_callback(self):
         vel_msg = Velocity()
