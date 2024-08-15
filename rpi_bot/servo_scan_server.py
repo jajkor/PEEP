@@ -66,11 +66,11 @@ def main(args=None):
     rclpy.init(args=args)
 
     servo_scan = Servo_Scan()
-    servo_scan_executor = MultiThreadedExecutor()
-    servo_scan_executor.add_node(servo_scan)
+    #servo_scan_executor = MultiThreadedExecutor()
+    #servo_scan_executor.add_node(servo_scan)
 
     try:
-        servo_scan_executor.spin()
+        servo_scan.spin()
     except (KeyboardInterrupt, ExternalShutdownException):
         pass
     finally:

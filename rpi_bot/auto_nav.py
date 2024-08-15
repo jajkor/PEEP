@@ -109,8 +109,9 @@ class Auto_Nav(Node, yasmin.StateMachine):
         vel_msg.left_vel = self.linear
         vel_msg.right_vel = self.angular
 
-        self.velocity_publisher.publish(vel_msg)
-        self.get_logger().info(f'Publishing Velocity: left={vel_msg.left_vel}, right={vel_msg.right_vel}')
+        if self.count_subscribers('motor_vel') > 0:
+            self.velocity_publisher.publish(vel_msg)
+            self.get_logger().info(f'Publishing Velocity: left={vel_msg.left_vel}, right={vel_msg.right_vel}')
 
     def idle(self, userdata=None):
         time.sleep(0.1)
