@@ -38,7 +38,7 @@ class HCS04_Driver(Node):
         range_msg.range = self.calculate_distance_cm(self.hcs04.measure_pulse_duration())
 
         self.range_publisher.publish(range_msg)
-        self.get_logger().info(f'Publishing Distance: {range_msg.range} cm')
+        #self.get_logger().info(f'Publishing Distance: {range_msg.range} cm')
 
 def main(args=None):
     rclpy.init(args=args)
