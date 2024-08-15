@@ -20,7 +20,7 @@ class Servo_Scan(Node):
             parameters=[
                 ('pwm_channel', rclpy.Parameter.Type.INTEGER),
                 ('start_angle', 90),
-                ('scan_speed'), 0.5
+                ('scan_speed', 0.5),
             ],
         )
 
