@@ -73,7 +73,7 @@ def main(args=None):
 
     try:
         #executor.spin()
-        servo_scan.spin()
+        rclpy.spin(servo_scan)
     except (KeyboardInterrupt, ExternalShutdownException):
         pass
     finally:
