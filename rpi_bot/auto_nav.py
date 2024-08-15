@@ -1,4 +1,5 @@
 import time
+import pdb
 
 import rclpy
 from rclpy.node import Node
@@ -138,6 +139,7 @@ class Auto_Nav(Node, yasmin.StateMachine):
             return 'path_clear'
 
     def scan(self, userdata=None):
+        pdb.set_trace()
         self.response = self.scan_request(40.0, 140.0)
 
         self.list_angle = self.response.list_angle
