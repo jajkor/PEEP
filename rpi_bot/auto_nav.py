@@ -32,11 +32,7 @@ class Auto_Nav(Node, yasmin.StateMachine):
         self.fsm_timer = self.create_timer(0.1, self.run)
         self.velocity_publisher = self.create_publisher(Velocity, 'motor_vel', 10)
         self.vel_rimer = self.create_timer(0.1, self.velocity_callback, callback_group=self.callback_group)
-
-        self.scan_client = self.create_client(Scan, 'servo_scan')
-
-        #while not self.cli.wait_for_service(timeout_sec=1.0):
-        #    self.get_logger().info('service not available, waiting again...')
+        self.scan_client = self.create_client(Scan, 'servo_scan', callback_group=self.callback_group)
 
         self.add_state(
             'IDLE',
@@ -140,8 +136,8 @@ class Auto_Nav(Node, yasmin.StateMachine):
     def scan(self, userdata=None):
         self.response = self.scan_request(40.0, 140.0)
 
-        #self.get_logger().info(f'{self.response.list_distance}')
         time.sleep(10)
+        self.get_logger().info(f'{self.response}')
 
         return 'scan_complete'
 
