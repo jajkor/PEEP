@@ -97,7 +97,7 @@ class Auto_Nav(Node, yasmin.StateMachine):
         else:
             self.obstacle_detected = False
 
-        #self.get_logger().info(f'Received Distance: {range_msg.range} cm')
+        self.get_logger().info(f'Received Distance: {range_msg.range} cm')
 
     def velocity_callback(self):
         vel_msg = Velocity()
@@ -160,7 +160,7 @@ def main(args=None):
     rclpy.init(args=args)
 
     auto_nav = Auto_Nav()
-    executor = MultiThreadedExecutor(num_threads=4)
+    executor = MultiThreadedExecutor(num_threads=6)
 
     executor.add_node(auto_nav)
 

@@ -77,5 +77,7 @@ def main(args=None):
     finally:
         servo_scan.destroy_node()
 
+    rclpy.shutdown()
+
 if __name__ == '__main__':
     main()
