@@ -4,8 +4,8 @@ from rclpy.executors import ExternalShutdownException
 from rclpy.executors import MultiThreadedExecutor
 from rclpy.callback_groups import ReentrantCallbackGroup
 
-from rpi_bot_interfaces.srv import Velocity
 from rpi_bot.rpi_interface import RPi_Motors
+from rpi_bot_interfaces.srv import Velocity
 
 class PWM_Driver(Node):
 
@@ -37,7 +37,6 @@ class PWM_Driver(Node):
         self.right_velocity = 0.0
 
         self.velocity_callback_group = ReentrantCallbackGroup()
-        #self.subscription = self.create_subscription(Velocity, 'velocity', self.velocity_listener, 10)
         self.srv = self.create_service(Velocity, 'velocity', self.velocity_callback, callback_group=self.velocity_callback_group)
         self.get_logger().info('PWM Driver Initialized')
 
@@ -50,14 +49,6 @@ class PWM_Driver(Node):
         response.right_velocity = request.right_velocity
         
         return response
-
-    def velocity_listener(self, vel_msg):
-        if (self.left_velocity != vel_msg.left_velocity) and (self.right_velocity != vel_msg.right_velocity):
-            self.motors.set_motors(vel_msg.left_velocity, vel_msg.right_velocity)
-            self.get_logger().info(f"Left Velocity: {vel_msg.left_velocity}, Right Velocity: {vel_msg.right_velocity}")
-        
-        self.left_velocity = vel_msg.left_velocity
-        self.right_velocity = vel_msg.right_velocity
 
 def main(args=None):
     rclpy.init(args=args)

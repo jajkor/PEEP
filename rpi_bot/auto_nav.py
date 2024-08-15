@@ -74,7 +74,7 @@ class Auto_Nav(Node, yasmin.StateMachine):
         self.blackboard = Blackboard()
         self.get_logger().info('Robot FSM Node Initialized')
 
-    def scan_request(self, start_angle, stop_angle):
+    def send_scan_request(self, start_angle, stop_angle):
         self.scan_request.start_angle = start_angle
         self.scan_request.stop_angle = stop_angle
 
@@ -82,7 +82,7 @@ class Auto_Nav(Node, yasmin.StateMachine):
         self.executor.spin_until_future_complete(self.scan_future, timeout_sec=10.0)
         return self.scan_future.result()
     
-    def velocity_request(self, left_velocity, right_velocity):
+    def send_velocity_request(self, left_velocity, right_velocity):
         self.velocity_request.left_velocity = left_velocity
         self.velocity_request.right_velocity = right_velocity
 
@@ -112,18 +112,18 @@ class Auto_Nav(Node, yasmin.StateMachine):
         time.sleep(0.5) # Delete, Move, or replace with ROS2 create_timer
         
         if self.obstacle_detected:
-            response = self.velocity_request(0.0, 0.0)
+            response = self.send_velocity_request(0.0, 0.0)
             return 'obstacle_detected'
         elif self.count_publishers('range') == 0: # May break if more range publishers are added
-            response = self.velocity_request(0.0, 0.0)
+            response = self.send_velocity_request(0.0, 0.0)
             return 'stream_interrupted'
         else:
-            response = self.velocity_request(60.0, 60.0)
+            response = self.send_velocity_request(60.0, 60.0)
             self.get_logger().info(f'New velocity: {response.left_velocity}, {response.right_velocity}')
             return 'path_clear'
 
     def scan(self, userdata=None):
-        response = self.scan_request(40.0, 140.0)
+        response = self.send_scan_request(40.0, 140.0)
         
         self.list_distance = response.list_distance
         self.list_angle = response.list_angle
