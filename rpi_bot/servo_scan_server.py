@@ -36,8 +36,8 @@ class Servo_Scan(Node):
         self.distance = None
 
         self.servo_scan_callback_group = ReentrantCallbackGroup()
-        self.srv = self.create_service(Scan, 'servo_scan', self.scan_callback)
-        self.range_listener = self.create_subscription(Range, 'range', self.range_listener_callback, 10,  callback_group=self.callback_group)
+        self.srv = self.create_service(Scan, 'servo_scan', self.scan_callback, callback_group=self.servo_scan_callback_group)
+        self.range_listener = self.create_subscription(Range, 'range', self.range_listener_callback, 10, callback_group=self.servo_scan_callback_group)
     
     def range_listener_callback(self, range_msg):
         self.distance = range_msg.range
