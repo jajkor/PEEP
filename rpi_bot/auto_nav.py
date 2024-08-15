@@ -20,7 +20,6 @@ class Auto_Nav(Node, yasmin.StateMachine):
         yasmin.StateMachine.__init__(self, outcomes=['path_clear', 'obstacle_detected', 'scan_complete', 'readjust_complete', 'stream_running', 'stream_interrupted'])
         
         self.obstacle_detected = False
-        self.range_publisher_active = False
 
         self.callback_group = ReentrantCallbackGroup()
         self.srv_callback_group = ReentrantCallbackGroup()
