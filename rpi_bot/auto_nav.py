@@ -85,7 +85,7 @@ class Auto_Nav(Node, yasmin.StateMachine):
             return None
 
         self.future = self.scan_client.call_async(self.scan_request)
-        rclpy.spin_until_future_complete(self, self.future, timeout_sec=10.0)
+        self.executor.spin_until_future_complete(self.future, timeout_sec=10.0)
         if self.future.result() is not None:
             return self.future.result()
         else:
@@ -139,8 +139,7 @@ class Auto_Nav(Node, yasmin.StateMachine):
 
     def scan(self, userdata=None):
         self.response = self.scan_request(40.0, 140.0)
-
-        self.list_angle = self.response.list_angle
+#
         self.list_distance = self.response.list_distance
 
         return 'scan_complete'
@@ -151,7 +150,7 @@ class Auto_Nav(Node, yasmin.StateMachine):
         if self.obstacle_detected:
             return 'obstacle_detected'
         else:
-            self.get_logger().info(f'Readjust: {self.list_angle}, {self.list_distance}')
+            #self.get_logger().info(f'Readjust: {self.list_distance}')
             return 'readjust_complete'
 
     def run(self):
@@ -165,7 +164,7 @@ def main(args=None):
     rclpy.init(args=args)
 
     auto_nav = Auto_Nav()
-    executor = MultiThreadedExecutor(num_threads=6)
+    executor = MultiThreadedExecutor(num_threads=4)
 
     executor.add_node(auto_nav)
 
