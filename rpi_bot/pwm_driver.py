@@ -35,7 +35,7 @@ class PWM_Driver(Node):
         self.right_velocity = 0.0
 
         #self.subscription = self.create_subscription(Velocity, 'motor_vel', self.velocity_listener, 10)
-        self.srv = self.create_service(Velocity, 'motor_vel', self.scan_callback, callback_group=self.servo_scan_callback_group)
+        self.srv = self.create_service(Velocity, 'motor_vel', self.scan_callback)
         self.get_logger().info('PWM Driver Initialized')
 
     def velocity_callback(self, request, response):

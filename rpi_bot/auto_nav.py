@@ -89,7 +89,7 @@ class Auto_Nav(Node, yasmin.StateMachine):
         self.motor_request.left_vel = left_vel
         self.motor_request.right_vel = right_vel
 
-        self.motor_future = self.scan_client.call_async(self.motor_request)
+        self.motor_future = self.motor_client.call_async(self.motor_request)
         self.executor.spin_until_future_complete(self.motor_future, timeout_sec=10.0)
         return self.motor_future.result()
     
@@ -128,9 +128,6 @@ class Auto_Nav(Node, yasmin.StateMachine):
 
         left_vel = 0.0
         right_vel = 0.0
-        
-        self.list_distance = response.list_distance
-        self.list_angle = response.list_angle
         
         if self.obstacle_detected:
             response = self.motor_request(left_vel, right_vel)
