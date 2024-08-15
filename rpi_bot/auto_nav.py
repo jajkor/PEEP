@@ -26,12 +26,14 @@ class Auto_Nav(Node, yasmin.StateMachine):
 
         self.linear = 0.0
         self.angular = 0.0
+        self.list_angle = None
+        self.list_distance = None
 
         # ROS 2 subscriptions and publishers
         self.range_listener = self.create_subscription(Range, 'range', self.range_callback, 10, callback_group=self.callback_group)
         self.fsm_timer = self.create_timer(0.1, self.run)
-        self.velocity_publisher = self.create_publisher(Velocity, 'motor_vel', 10)
-        self.vel_rimer = self.create_timer(0.1, self.velocity_callback, callback_group=self.callback_group)
+        self.velocity_publisher = self.create_publisher(Velocity, 'motor_vel', 10, callback_group=self.callback_group)
+        self.vel_timer = self.create_timer(0.1, self.velocity_callback, callback_group=self.callback_group)
         self.scan_client = self.create_client(Scan, 'servo_scan', callback_group=self.callback_group)
 
         self.add_state(
@@ -108,10 +110,10 @@ class Auto_Nav(Node, yasmin.StateMachine):
         vel_msg.right_vel = self.angular
 
         self.velocity_publisher.publish(vel_msg)
-        #self.get_logger().info(f'Publishing Velocity: left={vel_msg.left_vel}, right={vel_msg.right_vel}')
+        self.get_logger().info(f'Publishing Velocity: left={vel_msg.left_vel}, right={vel_msg.right_vel}')
 
     def idle(self, userdata=None):
-        time.sleep(2)
+        time.sleep(0.1)
 
         if self.count_publishers('range') == 0: # May break if more range publishers are added
             return 'stream_interrupted'
@@ -136,8 +138,8 @@ class Auto_Nav(Node, yasmin.StateMachine):
     def scan(self, userdata=None):
         self.response = self.scan_request(40.0, 140.0)
 
-        time.sleep(10)
-        self.get_logger().info(f'{self.response}')
+        self.list_angle = self.response.list_angle
+        self.list_distance = self.response.list_distance
 
         return 'scan_complete'
 
@@ -147,6 +149,7 @@ class Auto_Nav(Node, yasmin.StateMachine):
         if self.obstacle_detected:
             return 'obstacle_detected'
         else:
+            self.get_logger().info(f'Readjust: {self.list_angle}, {self.list_distance}')
             return 'readjust_complete'
 
     def run(self):

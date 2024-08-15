@@ -57,8 +57,7 @@ class Servo_Scan(Node):
 
         self.sg90.set_angle(self.start_angle)
 
-        self.get_logger().info(f'List_Angle: {response.list_angle}')
-        self.get_logger().info(f'List_Distance: {response.list_distance}')
+        self.get_logger().info(f'Service Response: {response.list_angle}, {response.list_distance}')
         
         self.is_busy = False
         return response
@@ -67,17 +66,15 @@ def main(args=None):
     rclpy.init(args=args)
 
     servo_scan = Servo_Scan()
-    executor = MultiThreadedExecutor()
-    executor.add_node(servo_scan)
+    servo_scan_executor = MultiThreadedExecutor()
+    servo_scan_executor.add_node(servo_scan)
 
     try:
-        executor.spin()
+        servo_scan_executor.spin()
     except (KeyboardInterrupt, ExternalShutdownException):
         pass
     finally:
         servo_scan.destroy_node()
-
-    rclpy.shutdown()
-
+        
 if __name__ == '__main__':
     main()
