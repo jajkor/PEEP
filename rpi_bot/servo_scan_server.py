@@ -34,9 +34,9 @@ class Servo_Scan(Node):
         self.is_busy = False
         self.distance = None
 
-        self.callback_group = ReentrantCallbackGroup()
-        self.srv = self.create_service(Scan, 'servo_scan', self.scan_callback, callback_group=self.callback_group)
-        self.range_listener = self.create_subscription(Range, 'range', self.range_listener_callback, 10,  callback_group=self.callback_group)
+        #self.callback_group = ReentrantCallbackGroup()
+        self.srv = self.create_service(Scan, 'servo_scan', self.scan_callback)
+        self.range_listener = self.create_subscription(Range, 'range', self.range_listener_callback, 10)
 
     def range_listener_callback(self, range_msg):
         self.distance = range_msg.range
@@ -66,11 +66,11 @@ def main(args=None):
     rclpy.init(args=args)
 
     servo_scan = Servo_Scan()
-    #servo_scan_executor = MultiThreadedExecutor()
-    #servo_scan_executor.add_node(servo_scan)
+    servo_scan_executor = MultiThreadedExecutor()
+    servo_scan_executor.add_node(servo_scan)
 
     try:
-        rclpy.spin(servo_scan)
+        servo_scan_executor.spin()
     except (KeyboardInterrupt, ExternalShutdownException):
         pass
     finally:
