@@ -35,7 +35,7 @@ class Auto_Nav(Node, yasmin.StateMachine):
 
         self.scan_client = self.create_client(Scan, 'servo_scan', callback_group=self.srv_callback_group)
         self.scan_request = Scan.Request()
-        self.velocity_client = self.create_client(Velocity, 'set_vel', callback_group=self.srv_callback_group)
+        self.velocity_client = self.create_client(Velocity, 'set_velocity', callback_group=self.srv_callback_group)
         self.velocity_request = Velocity.Request()
 
         self.add_state(
@@ -89,7 +89,7 @@ class Auto_Nav(Node, yasmin.StateMachine):
         self.velocity_request.right_velocity = right_velocity
 
         self.velocity_future = self.velocity_client.call_async(self.velocity_request)
-        self.executor.spin_until_future_complete(self.velocity_future, timeout_sec=1.0)
+        self.executor.spin_until_future_complete(self.velocity_future, timeout_sec=0.2)
         if self.velocity_future.cancel:
             self.get_logger().info('Velocity Service Timed Out')
         return self.velocity_future.result()

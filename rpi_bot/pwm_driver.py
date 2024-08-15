@@ -37,7 +37,7 @@ class PWM_Driver(Node):
         self.right_velocity = 0.0
 
         self.velocity_callback_group = ReentrantCallbackGroup()
-        self.srv = self.create_service(Velocity, 'velocity', self.velocity_callback, callback_group=self.velocity_callback_group)
+        self.srv = self.create_service(Velocity, 'set_velocity', self.velocity_callback, callback_group=self.velocity_callback_group)
         self.get_logger().info('PWM Driver Initialized')
 
     def velocity_callback(self, request, response):
