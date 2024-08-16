@@ -45,7 +45,7 @@ class PWM_Driver(Node):
             self.left_velocity = request.left_velocity
             self.right_velocity = request.right_velocity
             self.motors.set_motors(request.left_velocity, request.right_velocity)
-            self.get_logger().info(f"Left Velocity: {request.left_velocity}, Right Velocity: {request.right_velocity}")
+            #self.get_logger().info(f"Left Velocity: {request.left_velocity}, Right Velocity: {request.right_velocity}")
         
         response.left_velocity = request.left_velocity
         response.right_velocity = request.right_velocity

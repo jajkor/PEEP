@@ -113,8 +113,6 @@ class Auto_Nav(Node, yasmin.StateMachine):
             return 'stream_running'
 
     def move(self, userdata=None):  
-        #time.sleep(0.1)
-
         if self.obstacle_detected:
             self.send_velocity_request(0.0, 0.0)
             return 'obstacle_detected'
@@ -123,7 +121,6 @@ class Auto_Nav(Node, yasmin.StateMachine):
             return 'stream_interrupted'
         else:
             self.send_velocity_request(60.0, 60.0)
-            #self.get_logger().info(f'New velocity: {response}')
             return 'path_clear'
 
     def scan(self, userdata=None):
@@ -146,13 +143,12 @@ class Auto_Nav(Node, yasmin.StateMachine):
         self.get_logger().info(f'Angle: {temp_k}, Distance: {temp_v}')
         time.sleep(2)
 
-
         while self.distance <= temp_v:
             if temp_k >= 90:
-                self.send_velocity_request(60.0, -30.0)
+                self.send_velocity_request(60.0, -60.0)
             elif temp_k < 90:
-                self.send_velocity_request(-30.0, 60.0)
-            self.get_logger().info(f'Distance: {self.distance} cm')
+                self.send_velocity_request(-60.0, 60.0)
+            #self.get_logger().info(f'Distance: {self.distance} cm')
 
         self.send_velocity_request(0.0, 0.0)
 
