@@ -32,7 +32,7 @@ def generate_launch_description():
             parameters=[{
                 'pwm_channel': 0,
                 'start_angle': 90,
-                'scan_speed': 0.3
+                'scan_speed': 0.2
             }]
         ),
         launch_ros.actions.Node( # Pan/Tilt Servo

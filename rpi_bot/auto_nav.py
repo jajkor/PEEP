@@ -136,18 +136,20 @@ class Auto_Nav(Node, yasmin.StateMachine):
         temp_k = 180.0
         temp_v = Auto_Nav.THRESHHOLD_DISTANCE
         for key, value in self.dict.items():
-            if temp_v < value:
+            if temp_v < value and value < 1200.0:
                 temp_k = key
                 temp_v = value
 
         self.get_logger().info(f'Angle: {temp_k}, Distance: {temp_v}')
         time.sleep(2)
 
-        while self.distance <= temp_v:
-            if temp_k >= 90:
-                self.send_velocity_request(60.0, -60.0)
+        while (self.distance <= temp_v) and (self.distance <= Auto_Nav.THRESHHOLD_DISTANCE):
+            if temp_k == 180:
+                self.send_velocity_request(-60.0, -60.0)
+            elif temp_k >= 90 and temp_k < 180:
+                self.send_velocity_request(60.0, -50.0)
             elif temp_k < 90:
-                self.send_velocity_request(-60.0, 60.0)
+                self.send_velocity_request(-50.0, 60.0)
             #self.get_logger().info(f'Distance: {self.distance} cm')
 
         self.send_velocity_request(0.0, 0.0)
