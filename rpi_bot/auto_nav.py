@@ -16,6 +16,8 @@ from yasmin import CbState
 from yasmin import Blackboard
 
 class Auto_Nav(Node, yasmin.StateMachine):
+    THRESHHOLD_DISTANCE = 50.0
+
     def __init__(self):
         Node.__init__(self, 'robot_fsm')
         yasmin.StateMachine.__init__(self, outcomes=['path_clear', 'obstacle_detected', 'scan_complete', 'readjust_complete', 'stream_running', 'stream_interrupted'])
@@ -95,15 +97,15 @@ class Auto_Nav(Node, yasmin.StateMachine):
     def range_callback(self, range_msg):
         self.distance = range_msg.range
 
-        if range_msg.range <= 30.0:
+        if range_msg.range <= Auto_Nav.THRESHHOLD_DISTANCE:
             self.obstacle_detected = True
         else:
             self.obstacle_detected = False
 
-        self.get_logger().info(f'Received Distance: {range_msg.range} cm')
+        #self.get_logger().info(f'Received Distance: {range_msg.range} cm')
 
     def idle(self, userdata=None):
-        #time.sleep(0.1)
+        time.sleep(0.1)
 
         if self.count_publishers('range') == 0: # May break if more range publishers are added
             return 'stream_interrupted'
@@ -125,7 +127,7 @@ class Auto_Nav(Node, yasmin.StateMachine):
             return 'path_clear'
 
     def scan(self, userdata=None):
-        response = self.send_scan_request(40.0, 150.0)
+        response = self.send_scan_request(00.0, 190.0)
 
         self.dict = {response.list_angle[i]: response.list_distance[i] for i in range(len(response.list_angle))}
 
@@ -134,16 +136,27 @@ class Auto_Nav(Node, yasmin.StateMachine):
     def readjust(self, userdata=None):
         print('Entering Readjust State')
         
-        temp_k = 0.0
-        temp_v = 0.0
+        temp_k = 180.0
+        temp_v = Auto_Nav.THRESHHOLD_DISTANCE
         for key, value in self.dict.items():
             if temp_v < value:
                 temp_k = key
                 temp_v = value
 
-        self.get_logger().info(f'{temp_k}, {temp_v}')
+        self.get_logger().info(f'Angle: {temp_k}, Distance: {temp_v}')
+        time.sleep(2)
 
-        time.sleep(1)
+
+        while self.distance <= temp_v:
+            if temp_k >= 90:
+                self.send_velocity_request(60.0, -30.0)
+            elif temp_k < 90:
+                self.send_velocity_request(-30.0, 60.0)
+            self.get_logger().info(f'Distance: {self.distance} cm')
+
+        self.send_velocity_request(0.0, 0.0)
+
+        time.sleep(2)
         if self.obstacle_detected:
             return 'obstacle_detected'
         else:
