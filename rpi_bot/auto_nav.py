@@ -1,6 +1,7 @@
 import time
 
 import rclpy
+from rclpy import qos
 from rclpy.node import Node
 from rclpy.executors import MultiThreadedExecutor
 from rclpy.executors import ExternalShutdownException
@@ -30,13 +31,14 @@ class Auto_Nav(Node, yasmin.StateMachine):
         self.list_distance = None
 
         # ROS 2 subscriptions and publishers
-        self.range_listener = self.create_subscription(Range, 'range', self.range_callback, 10, callback_group=self.callback_group)
-        self.fsm_timer = self.create_timer(0.1, self.run)
+        self.range_listener = self.create_subscription(Range, 'range', self.range_callback, qos.qos_profile_sensor_data, callback_group=self.callback_group)
 
         self.scan_client = self.create_client(Scan, 'servo_scan', callback_group=self.srv_callback_group)
         self.scan_request = Scan.Request()
         self.velocity_client = self.create_client(Velocity, 'set_velocity', callback_group=self.srv_callback_group)
         self.velocity_request = Velocity.Request()
+
+        self.fsm_timer = self.create_timer(0.1, self.run)
 
         self.add_state(
             'IDLE',
@@ -80,8 +82,6 @@ class Auto_Nav(Node, yasmin.StateMachine):
 
         self.scan_future = self.scan_client.call_async(self.scan_request)
         self.executor.spin_until_future_complete(self.scan_future, timeout_sec=10.0)
-        if self.scan_future.cancel:
-            self.get_logger().info('Scan Service Timed Out')
         return self.scan_future.result()
     
     def send_velocity_request(self, left_velocity, right_velocity):
@@ -89,9 +89,7 @@ class Auto_Nav(Node, yasmin.StateMachine):
         self.velocity_request.right_velocity = right_velocity
 
         self.velocity_future = self.velocity_client.call_async(self.velocity_request)
-        self.executor.spin_until_future_complete(self.velocity_future, timeout_sec=0.2)
-        if self.velocity_future.cancel:
-            self.get_logger().info('Velocity Service Timed Out')
+        self.executor.spin_until_future_complete(self.velocity_future, timeout_sec=1.0)
         return self.velocity_future.result()
     
     def range_callback(self, range_msg):
@@ -102,40 +100,49 @@ class Auto_Nav(Node, yasmin.StateMachine):
         else:
             self.obstacle_detected = False
 
-        #self.get_logger().info(f'Received Distance: {range_msg.range} cm')
+        self.get_logger().info(f'Received Distance: {range_msg.range} cm')
 
     def idle(self, userdata=None):
-        time.sleep(0.1)
+        #time.sleep(0.1)
 
         if self.count_publishers('range') == 0: # May break if more range publishers are added
             return 'stream_interrupted'
         else:
             return 'stream_running'
 
-    def move(self, userdata=None):        
+    def move(self, userdata=None):  
+        #time.sleep(0.1)
+
         if self.obstacle_detected:
-            response = self.send_velocity_request(0.0, 0.0)
+            self.send_velocity_request(0.0, 0.0)
             return 'obstacle_detected'
         elif self.count_publishers('range') == 0: # May break if more range publishers are added
-            response = self.send_velocity_request(0.0, 0.0)
+            self.send_velocity_request(0.0, 0.0)
             return 'stream_interrupted'
         else:
-            response = self.send_velocity_request(60.0, 60.0)
-            self.get_logger().info(f'New velocity: {response}')
+            self.send_velocity_request(60.0, 60.0)
+            #self.get_logger().info(f'New velocity: {response}')
             return 'path_clear'
 
     def scan(self, userdata=None):
-        response = self.send_scan_request(40.0, 140.0)
-        
-        self.list_distance = response.list_distance
-        self.list_angle = response.list_angle
+        response = self.send_scan_request(40.0, 150.0)
+
+        self.dict = {response.list_angle[i]: response.list_distance[i] for i in range(len(response.list_angle))}
 
         return 'scan_complete'
 
     def readjust(self, userdata=None):
         print('Entering Readjust State')
-        self.get_logger().info(f'Readjust Angle: {self.list_angle}')
-        self.get_logger().info(f'Readjust Distance: {self.list_distance}')
+        
+        temp_k = 0.0
+        temp_v = 0.0
+        for key, value in self.dict.items():
+            if temp_v < value:
+                temp_k = key
+                temp_v = value
+
+        self.get_logger().info(f'{temp_k}, {temp_v}')
+
         time.sleep(1)
         if self.obstacle_detected:
             return 'obstacle_detected'
