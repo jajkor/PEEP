@@ -10,13 +10,17 @@ from rclpy.callback_groups import ReentrantCallbackGroup
 from sensor_msgs.msg import Range
 from rpi_bot_interfaces.srv import Velocity
 from rpi_bot_interfaces.srv import Scan
+from rpi_bot.utils import clamp
 
 import yasmin
 from yasmin import CbState
 from yasmin import Blackboard
 
 class Auto_Nav(Node, yasmin.StateMachine):
-    THRESHHOLD_DISTANCE = 50.0
+    THRESHHOLD_DISTANCE = 34.48 # 1 Foot (30.48) + Distance to Sensor
+    MAX_SPEED = 80.0
+    ADJUST_SPEED = MAX_SPEED / 2.0
+    MAX_DISTANCE = 1200.0
 
     def __init__(self):
         Node.__init__(self, 'robot_fsm')
@@ -27,10 +31,7 @@ class Auto_Nav(Node, yasmin.StateMachine):
         self.callback_group = ReentrantCallbackGroup()
         self.srv_callback_group = ReentrantCallbackGroup()
 
-        self.left_vel = 0.0
-        self.right_vel = 0.0
-        self.list_angle = None
-        self.list_distance = None
+        self.velocity = Auto_Nav.MAX_SPEED
 
         # ROS 2 subscriptions and publishers
         self.range_listener = self.create_subscription(Range, 'range', self.range_callback, qos.qos_profile_sensor_data, callback_group=self.callback_group)
@@ -68,7 +69,7 @@ class Auto_Nav(Node, yasmin.StateMachine):
         )
         self.add_state(
             'READJUST',
-            CbState(['readjust_complete', 'obstacle_detected'], self.readjust),
+            CbState(['readjust_complete', 'readjust_complete', 'obstacle_detected'], self.readjust),
             transitions={
                 'readjust_complete': 'MOVE',
                 'obstacle_detected': 'SCAN'
@@ -93,9 +94,11 @@ class Auto_Nav(Node, yasmin.StateMachine):
         self.velocity_future = self.velocity_client.call_async(self.velocity_request)
         self.executor.spin_until_future_complete(self.velocity_future, timeout_sec=1.0)
         return self.velocity_future.result()
-    
+
     def range_callback(self, range_msg):
-        self.distance = range_msg.range
+        self.distance = clamp(range_msg.range, 0, Auto_Nav.MAX_DISTANCE)
+
+        self.velocity = clamp(((self.distance * 1) - (Auto_Nav.THRESHHOLD_DISTANCE)), 0.0, Auto_Nav.MAX_SPEED)
 
         if range_msg.range <= Auto_Nav.THRESHHOLD_DISTANCE:
             self.obstacle_detected = True
@@ -120,11 +123,11 @@ class Auto_Nav(Node, yasmin.StateMachine):
             self.send_velocity_request(0.0, 0.0)
             return 'stream_interrupted'
         else:
-            self.send_velocity_request(60.0, 60.0)
+            self.send_velocity_request(self.velocity, self.velocity)
             return 'path_clear'
 
     def scan(self, userdata=None):
-        response = self.send_scan_request(00.0, 190.0)
+        response = self.send_scan_request(0.0, 190.0)
 
         self.dict = {response.list_angle[i]: response.list_distance[i] for i in range(len(response.list_angle))}
 
@@ -136,25 +139,27 @@ class Auto_Nav(Node, yasmin.StateMachine):
         temp_k = 180.0
         temp_v = Auto_Nav.THRESHHOLD_DISTANCE
         for key, value in self.dict.items():
-            if temp_v < value and value < 1200.0:
+            if temp_v < value and value < Auto_Nav.MAX_DISTANCE:
                 temp_k = key
                 temp_v = value
 
         self.get_logger().info(f'Angle: {temp_k}, Distance: {temp_v}')
-        time.sleep(2)
 
         while (self.distance <= temp_v) and (self.distance <= Auto_Nav.THRESHHOLD_DISTANCE):
-            if temp_k == 180:
-                self.send_velocity_request(-60.0, -60.0)
-            elif temp_k >= 90 and temp_k < 180:
-                self.send_velocity_request(60.0, -50.0)
-            elif temp_k < 90:
-                self.send_velocity_request(-50.0, 60.0)
-            #self.get_logger().info(f'Distance: {self.distance} cm')
+            self.get_logger().info(f'Distance: {temp_v}')
+            if temp_k == 180.0:
+                self.send_velocity_request(-Auto_Nav.ADJUST_SPEED, -Auto_Nav.ADJUST_SPEED)
+                time.sleep(1)
+                self.send_velocity_request(0.0, 0.0)
+                return 'obstacle_detected'
+            elif temp_k >= 90.0 and temp_k < 180.0:
+                self.send_velocity_request(Auto_Nav.ADJUST_SPEED, -Auto_Nav.ADJUST_SPEED)
+            elif temp_k < 90.0:
+                self.send_velocity_request(-Auto_Nav.ADJUST_SPEED , Auto_Nav.ADJUST_SPEED)
 
         self.send_velocity_request(0.0, 0.0)
 
-        time.sleep(2)
+        #time.sleep(2)
         if self.obstacle_detected:
             return 'obstacle_detected'
         else:

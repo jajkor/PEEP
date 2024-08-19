@@ -28,7 +28,7 @@ setup(
             'hcs04_driver_node = rpi_bot.hcs04_driver:main',
             'servo_scan_server = rpi_bot.servo_scan_server:main',
             'servo_pan_tilt_node = rpi_bot.servo_pan_tilt:main',
-            'sub_usb_cam_node = rpi_bot.sub_usb_cam:main',
+            'sub_image_processing_node = rpi_bot.sub_image_processing:main',
         ],
     },
 )

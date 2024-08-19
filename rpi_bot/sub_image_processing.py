@@ -9,7 +9,7 @@ import cv2
 class ObjectDetectionNode(Node):
     def __init__(self):
         super().__init__('object_detection_node')
-        self.subscription = self.create_subscription(Image, '/image_raw', self.listener_callback, 10)
+        self.subscription = self.create_subscription(Image, '/camera1/image_raw/uncompressed', self.listener_callback, 10)
         self.bridge = CvBridge()
 
     def listener_callback(self, msg):
