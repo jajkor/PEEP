@@ -70,6 +70,7 @@ def generate_launch_description():
                 'camera_frame_id': 'camera_link_optical',
                 'time_per_frame': [1,30], # Time between successive frames, 30 Hz
                 'brightness': 128,
+                'output_encoding': 'bgr8',
             }]
         )
     ])
