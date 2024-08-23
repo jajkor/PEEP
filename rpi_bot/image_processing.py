@@ -101,14 +101,14 @@ def main(args=None):
     cascade.load(options.cascade)
     br = CvBridge()
 
-    node = rclpy.create_node('rosfacedetect')
+    node = rclpy.create_node('image_processing')
     node_logger = node.get_logger()
     #sub_img = node.create_subscription(sensor_msgs.msg.Image, options.topic, lambda msg: detect_and_draw(msg, br, cascade), 10)
     sub_cpimg = node.create_subscription(sensor_msgs.msg.CompressedImage, options.ctopic, lambda msg: compressed_detect_and_draw(msg, br, cascade), 10)
 
     while rclpy.ok():
       try:
-        rclpy.spin_once(node)
+        rclpy.spin(node)
       except KeyboardInterrupt:
         node_logger.info("shutting down: keyboard interrupt")
         break
