@@ -38,9 +38,9 @@ def generate_launch_description():
             executable='auto_nav_node',
             name='auto_nav',
         ),
-        launch_ros.actions.Node(
-            package='rpi_bot',
-            executable='image_processing_node',
-            name='image_processing',
-        ),
+        #launch_ros.actions.Node(
+        #    package='rpi_bot',
+        #    executable='image_processing_node',
+        #    name='image_processing',
+        #),
     ])

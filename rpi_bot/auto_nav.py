@@ -8,6 +8,8 @@ from rclpy.executors import ExternalShutdownException
 from rclpy.callback_groups import ReentrantCallbackGroup
 
 from sensor_msgs.msg import Range
+from sensor_msgs.msg import Joy
+from geometry_msgs.msg import Twist
 from rpi_bot_interfaces.srv import Velocity
 from rpi_bot_interfaces.srv import Scan
 from rpi_bot.utils import clamp
@@ -21,20 +23,26 @@ class Auto_Nav(Node, yasmin.StateMachine):
     MAX_SPEED = 80.0
     ADJUST_SPEED = MAX_SPEED / 2.0
     MAX_DISTANCE = 1200.0
+    DIFFERENTIAL = 50.0
 
     def __init__(self):
         Node.__init__(self, 'robot_fsm')
         yasmin.StateMachine.__init__(self, outcomes=['path_clear', 'obstacle_detected', 'scan_complete', 'readjust_complete', 'stream_running', 'stream_interrupted'])
         
         self.obstacle_detected = False
+        self.user_mode_enabled = False
 
         self.callback_group = ReentrantCallbackGroup()
         self.srv_callback_group = ReentrantCallbackGroup()
 
         self.velocity = Auto_Nav.MAX_SPEED
+        self.user_linear = 0.0
+        self.user_angular = 0.0
 
         # ROS 2 subscriptions and publishers
         self.range_listener = self.create_subscription(Range, 'range', self.range_callback, qos.qos_profile_sensor_data, callback_group=self.callback_group)
+        self.joy_listener = self.create_subscription(Joy, 'joy', self.joy_callback, 10, callback_group=self.callback_group)
+        self.twist_listener = self.create_subscription(Twist, 'cmd_vel', self.twist_callback, 10, callback_group=self.callback_group)
 
         self.scan_client = self.create_client(Scan, 'servo_scan', callback_group=self.srv_callback_group)
         self.scan_request = Scan.Request()
@@ -45,18 +53,20 @@ class Auto_Nav(Node, yasmin.StateMachine):
 
         self.add_state(
             'IDLE',
-            CbState(['stream_running', 'stream_interrupted'], self.idle),
+            CbState(['stream_running', 'stream_interrupted', 'user_enabled'], self.idle),
             transitions={
                 'stream_running': 'MOVE',
-                'stream_interrupted': 'IDLE'
+                'stream_interrupted': 'IDLE',
+                'user_enabled': 'USER_MODE',
             }
         )
         self.add_state(
             'MOVE',
-            CbState(['obstacle_detected', 'path_clear', 'stream_interrupted'], self.move),
+            CbState(['obstacle_detected', 'path_clear', 'stream_interrupted', 'user_enabled'], self.move),
             transitions={
                 'obstacle_detected': 'SCAN',
                 'path_clear': 'MOVE',
+                'user_enabled': 'USER_MODE',
                 'stream_interrupted': 'IDLE'
             }
         )
@@ -73,6 +83,14 @@ class Auto_Nav(Node, yasmin.StateMachine):
             transitions={
                 'readjust_complete': 'MOVE',
                 'obstacle_detected': 'SCAN'
+            }
+        )
+        self.add_state(
+            'USER_MODE',
+            CbState(['user_enabled', 'user_disabled'], self.user_mode),
+            transitions={
+                'user_enabled': 'USER_MODE',
+                'user_disabled': 'IDLE'
             }
         )
 
@@ -107,11 +125,26 @@ class Auto_Nav(Node, yasmin.StateMachine):
 
         #self.get_logger().info(f'Received Distance: {range_msg.range} cm')
 
+    def joy_callback(self, msg):
+        if msg.buttons[3] == 1:
+            self.user_mode_enabled = True
+        else:
+            self.user_mode_enabled = False
+        #self.get_logger().info(f'User Mode Enabled: {self.user_mode_enabled}')
+
+    def twist_callback(self, msg):
+        self.user_linear = msg.linear.x
+        self.user_angular = msg.angular.z
+
+        #self.get_logger().info(f'User Mode Linear: {self.user_linear}, Angular: {self.user_angular}')
+
     def idle(self, userdata=None):
         time.sleep(0.1)
 
         if self.count_publishers('range') == 0: # May break if more range publishers are added
             return 'stream_interrupted'
+        elif self.user_mode_enabled:
+            return 'user_enabled'
         else:
             return 'stream_running'
 
@@ -122,6 +155,8 @@ class Auto_Nav(Node, yasmin.StateMachine):
         elif self.count_publishers('range') == 0: # May break if more range publishers are added
             self.send_velocity_request(0.0, 0.0)
             return 'stream_interrupted'
+        elif self.user_mode_enabled:
+            return 'user_enabled'
         else:
             self.send_velocity_request(self.velocity, self.velocity)
             return 'path_clear'
@@ -130,6 +165,11 @@ class Auto_Nav(Node, yasmin.StateMachine):
         response = self.send_scan_request(0.0, 190.0)
 
         self.dict = {response.list_angle[i]: response.list_distance[i] for i in range(len(response.list_angle))}
+
+        for i in range(0, self.dict.size() / 2):
+            print(f"LEFT {i}")
+        for i in range(self.dict.size() / 2, self.dict.size()):
+            print(f"RIGHT {i}")
 
         return 'scan_complete'
 
@@ -159,11 +199,23 @@ class Auto_Nav(Node, yasmin.StateMachine):
 
         self.send_velocity_request(0.0, 0.0)
 
-        #time.sleep(2)
         if self.obstacle_detected:
             return 'obstacle_detected'
         else:
             return 'readjust_complete'
+        
+    def user_mode(self, userdata=None):
+        if self.user_mode_enabled:
+            left_speed = Auto_Nav.MAX_SPEED * self.user_linear -  Auto_Nav.DIFFERENTIAL * self.user_angular
+            right_speed = Auto_Nav.MAX_SPEED * self.user_linear +  Auto_Nav.DIFFERENTIAL * self.user_angular
+            
+            #self.get_logger().info(f'{left_speed}, {right_speed}')
+
+            self.send_velocity_request(left_speed, right_speed)
+            return 'user_enabled'
+        else:
+            self.send_velocity_request(0.0, 0.0)
+            return 'user_disabled'
 
     def run(self):
         # Run the FSM logic

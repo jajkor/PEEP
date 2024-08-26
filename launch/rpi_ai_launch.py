@@ -49,19 +49,6 @@ def generate_launch_description():
             }]
         ),
         launch_ros.actions.Node(
-            package='rpi_bot',
-            executable='servo_pan_tilt_node',
-            name='servo_pan_tilt',
-            parameters=[{
-                'pan_pwm_channel': 1,
-                'pan_start_angle': 90,
-                'pan_axes': 4,
-                'tilt_pwm_channel': 2,
-                'tilt_start_angle': 90,
-                'tilt_axes': 3,
-            }]
-        ),
-        launch_ros.actions.Node(
             package='v4l2_camera',
             executable='v4l2_camera_node',
             output='screen',
@@ -70,6 +57,7 @@ def generate_launch_description():
                 'camera_frame_id': 'camera_link_optical',
                 'time_per_frame': [1,30], # Time between successive frames, 30 Hz
                 'brightness': 128,
+                'pixel_format': 'YUYV',
                 'output_encoding': 'bgr8',
             }]
         )
