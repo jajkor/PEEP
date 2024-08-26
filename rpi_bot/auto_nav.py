@@ -22,7 +22,6 @@ class Auto_Nav(Node, yasmin.StateMachine):
     THRESHHOLD_DISTANCE = 34.48 # 1 Foot (30.48) + Distance to Sensor
     MAX_SPEED = 80.0
     ADJUST_SPEED = MAX_SPEED / 2.0
-    MAX_DISTANCE = 1200.0
     DIFFERENTIAL = 50.0
 
     def __init__(self):
@@ -38,6 +37,9 @@ class Auto_Nav(Node, yasmin.StateMachine):
         self.velocity = Auto_Nav.MAX_SPEED
         self.user_linear = 0.0
         self.user_angular = 0.0
+
+        self.left_sum = 0.0
+        self.right_sum = 0.0
 
         # ROS 2 subscriptions and publishers
         self.range_listener = self.create_subscription(Range, 'range', self.range_callback, qos.qos_profile_sensor_data, callback_group=self.callback_group)
@@ -114,7 +116,7 @@ class Auto_Nav(Node, yasmin.StateMachine):
         return self.velocity_future.result()
 
     def range_callback(self, range_msg):
-        self.distance = clamp(range_msg.range, 0, Auto_Nav.MAX_DISTANCE)
+        self.distance = clamp(range_msg.range, 0, 1200.0)
 
         self.velocity = clamp(((self.distance * 1) - (Auto_Nav.THRESHHOLD_DISTANCE)), 0.0, Auto_Nav.MAX_SPEED)
 
@@ -166,10 +168,15 @@ class Auto_Nav(Node, yasmin.StateMachine):
 
         self.dict = {response.list_angle[i]: response.list_distance[i] for i in range(len(response.list_angle))}
 
-        for i in range(0, self.dict.size() / 2):
-            print(f"LEFT {i}")
-        for i in range(self.dict.size() / 2, self.dict.size()):
-            print(f"RIGHT {i}")
+        for i in range(0, int(len(self.dict) / 2)):
+            self.get_logger().info(f"LEFT: {i}")
+            self.left_sum += response.list_distance[i]
+
+        for i in range(int(len(self.dict) / 2), int(len(self.dict))):
+            self.get_logger().info(f"RIGHT: {i}")
+            self.right_sum += response.list_distance[i]
+
+        self.get_logger().info(f"LEFT SUM: {self.left_sum}, RIGHT SUM: {self.right_sum}")
 
         return 'scan_complete'
 

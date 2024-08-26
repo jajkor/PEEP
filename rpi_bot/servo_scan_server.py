@@ -2,13 +2,12 @@ import time
 
 import rclpy
 from rclpy.node import Node
-from rclpy.executors import MultiThreadedExecutor
-from rclpy.executors import ExternalShutdownException
 from rclpy.callback_groups import ReentrantCallbackGroup
 
 from sensor_msgs.msg import Range
 from rpi_bot.rpi_interface import RPi_SG90
 from rpi_bot_interfaces.srv import Scan
+from rpi_bot.utils import clamp
 
 class Servo_Scan(Node):
 
@@ -43,7 +42,7 @@ class Servo_Scan(Node):
 
 
     def range_listener_callback(self, range_msg):
-        self.distance = range_msg.range
+        self.distance = clamp(range_msg.range, 0, 1200.0)
 
     def scan_callback(self, request, response):
         self.get_logger().info(f"Servo Scan: {request.start_angle} to {request.stop_angle}")
