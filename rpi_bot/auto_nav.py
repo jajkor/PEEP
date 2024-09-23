@@ -21,8 +21,9 @@ from yasmin import Blackboard
 class Auto_Nav(Node, yasmin.StateMachine):
     THRESHHOLD_DISTANCE = 34.48 # 1 Foot (30.48) + Distance to Sensor
     MAX_SPEED = 80.0
-    ADJUST_SPEED = MAX_SPEED / 2.0
+    ADJUST_SPEED = MAX_SPEED * 0.75
     DIFFERENTIAL = 50.0
+    MAX_DISTANCE = 1200.0
 
     def __init__(self):
         Node.__init__(self, 'robot_fsm')
@@ -118,7 +119,7 @@ class Auto_Nav(Node, yasmin.StateMachine):
     def range_callback(self, range_msg):
         self.distance = clamp(range_msg.range, 0, 1200.0)
 
-        self.velocity = clamp(((self.distance * 1) - (Auto_Nav.THRESHHOLD_DISTANCE)), 0.0, Auto_Nav.MAX_SPEED)
+        self.velocity = clamp(((self.distance * 1.25) - (Auto_Nav.THRESHHOLD_DISTANCE)), 0.0, Auto_Nav.MAX_SPEED)
 
         if range_msg.range <= Auto_Nav.THRESHHOLD_DISTANCE:
             self.obstacle_detected = True
@@ -166,16 +167,18 @@ class Auto_Nav(Node, yasmin.StateMachine):
     def scan(self, userdata=None):
         response = self.send_scan_request(0.0, 190.0)
 
-        self.dict = {response.list_angle[i]: response.list_distance[i] for i in range(len(response.list_angle))}
+        self.left_dict = {response.list_angle[i]: response.list_distance[i] for i in range(0, int(len(response.list_angle) / 2))}
+        self.right_dict = {response.list_angle[i]: response.list_distance[i] for i in range(int(len(response.list_angle) / 2), int(len(response.list_angle)))}
+            
+        self.get_logger().info(f"LEFT: {self.left_dict}")
+        self.get_logger().info(f"RIGHT: {self.right_dict}")
 
-        for i in range(0, int(len(self.dict) / 2)):
-            self.get_logger().info(f"LEFT: {i}")
+        for i in range(0, int(len(self.left_dict))):
             self.left_sum += response.list_distance[i]
 
-        for i in range(int(len(self.dict) / 2), int(len(self.dict))):
-            self.get_logger().info(f"RIGHT: {i}")
+        for i in range(0, int(len(self.right_dict))):
             self.right_sum += response.list_distance[i]
-
+            
         self.get_logger().info(f"LEFT SUM: {self.left_sum}, RIGHT SUM: {self.right_sum}")
 
         return 'scan_complete'
@@ -185,10 +188,18 @@ class Auto_Nav(Node, yasmin.StateMachine):
         
         temp_k = 180.0
         temp_v = Auto_Nav.THRESHHOLD_DISTANCE
-        for key, value in self.dict.items():
-            if temp_v < value and value < Auto_Nav.MAX_DISTANCE:
-                temp_k = key
-                temp_v = value
+        if self.left_sum > self.right_sum:
+            for key, value in self.left_dict.items():
+                if value > temp_v and value < Auto_Nav.MAX_DISTANCE:
+                    temp_k = key
+                    temp_v = value
+                    self.get_logger().info(f'Left Distance: {temp_v}')
+        else:
+            for key, value in self.right_dict.items():
+                if value > temp_v and value < Auto_Nav.MAX_DISTANCE:
+                    temp_k = key
+                    temp_v = value
+                    self.get_logger().info(f'Right Distance: {temp_v}')
 
         self.get_logger().info(f'Angle: {temp_k}, Distance: {temp_v}')
 
@@ -209,6 +220,8 @@ class Auto_Nav(Node, yasmin.StateMachine):
         if self.obstacle_detected:
             return 'obstacle_detected'
         else:
+            self.left_sum = 0.0
+            self.right_sum = 0.0
             return 'readjust_complete'
         
     def user_mode(self, userdata=None):
